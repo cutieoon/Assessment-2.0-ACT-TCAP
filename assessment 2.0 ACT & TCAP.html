@@ -5318,9 +5318,47 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .its-footer button.primary{background:#7c3aed;color:#fff;border-color:#7c3aed}
 .its-footer button.primary:hover{background:#6d28d9;color:#fff}
 .its-footer .pgs{font-size:12px;color:#71717a;font-weight:600}
+
+/* ── Gate / Password Screen (mirrors survey-prototype) ── */
+#gate{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:opacity .6s ease}
+#gate.hide{opacity:0;pointer-events:none}
+#gate canvas{position:absolute;inset:0;width:100%;height:100%}
+#gate .g-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0;transform:translateY(-3.5vh)}
+#gate .g-lines{position:relative;width:36rem;height:9rem;pointer-events:none}
+#gate .g-title{font-size:clamp(1.8rem,4.6vw,3.6rem);font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1.05;text-align:center;white-space:nowrap}
+#gate .g-sub{font-size:.85rem;color:#71717a;margin-top:.85rem;letter-spacing:.06em;text-transform:uppercase}
+#gate .g-form{margin-top:.85rem;display:flex;flex-direction:column;align-items:center;gap:.75rem}
+#gate .g-input{width:14rem;padding:.65rem 1rem;border-radius:.75rem;border:1px solid #27272a;background:#0a0a0a;color:#fff;font-size:1.1rem;letter-spacing:.3em;text-align:center;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit}
+#gate .g-input:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,.25)}
+#gate .g-input.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.2);animation:gateShake .35s ease}
+@keyframes gateShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+#gate .g-btn{padding:.6rem 2rem;border-radius:.75rem;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-size:.85rem;font-weight:600;border:none;cursor:pointer;transition:opacity .15s,transform .15s;letter-spacing:.03em;font-family:inherit}
+#gate .g-btn:hover{opacity:.9;transform:translateY(-1px)}
+#gate .g-err{font-size:.78rem;color:#f87171;height:1rem}
 </style>
 </head>
 <body class="lang-en">
+
+<!-- ══ PASSWORD GATE (mirrors survey-prototype) ══ -->
+<div id="gate">
+  <canvas id="sparkleCanvas"></canvas>
+  <div class="g-content">
+    <h1 class="g-title">Assessment 2.0 ACT &amp; TCAP</h1>
+    <p class="g-sub">Prototype · Internal Preview</p>
+    <div class="g-lines">
+      <div style="position:absolute;left:10%;right:10%;top:0;height:2px;background:linear-gradient(90deg,transparent,#6366f1,transparent);filter:blur(2px)"></div>
+      <div style="position:absolute;left:10%;right:10%;top:0;height:1px;background:linear-gradient(90deg,transparent,#6366f1,transparent)"></div>
+      <div style="position:absolute;left:30%;right:30%;top:0;height:5px;background:linear-gradient(90deg,transparent,#38bdf8,transparent);filter:blur(3px)"></div>
+      <div style="position:absolute;left:30%;right:30%;top:0;height:1px;background:linear-gradient(90deg,transparent,#38bdf8,transparent)"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 22rem 8rem at top,transparent 20%,#000)"></div>
+    </div>
+    <div class="g-form">
+      <input id="gateInput" class="g-input" type="password" placeholder="· · ·" maxlength="10" autocomplete="off"/>
+      <button class="g-btn" onclick="checkGate()">Enter</button>
+      <span class="g-err" id="gateErr"></span>
+    </div>
+  </div>
+</div>
 
 <!-- ===================== PAGE: Homepage ===================== -->
 <div class="page-view active" id="page-homepage">
@@ -26531,6 +26569,88 @@ function stuModal({icon='⚠️',iconType='warn',title,body,confirmText='Confirm
   confirmBtn.onclick=()=>{ov.classList.remove('open');cancelBtn.style.display='';if(onConfirm)onConfirm()};
   cancelBtn.onclick=()=>{ov.classList.remove('open');cancelBtn.style.display=''};
 }
+</script>
+
+<!-- ══ GATE: Sparkles + Password Logic (mirrors survey-prototype) ══ -->
+<script>
+(function(){
+  const canvas=document.getElementById('sparkleCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const DENSITY=1200;
+  let particles=[];
+  let raf;
+
+  function resize(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    spawnParticles();
+  }
+  function rand(min,max){return Math.random()*(max-min)+min;}
+  function spawnParticles(){
+    const area=canvas.width*canvas.height;
+    const count=Math.floor(area/1e6*DENSITY);
+    particles=Array.from({length:count},()=>mkParticle());
+  }
+  function mkParticle(){
+    return{
+      x:rand(0,canvas.width),
+      y:rand(0,canvas.height),
+      size:rand(0.4,1.2),
+      opacity:rand(0,1),
+      delta:rand(0.003,0.012)*(Math.random()<.5?1:-1),
+      speed:{x:rand(-.08,.08),y:rand(-.08,.08)},
+    };
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of particles){
+      p.opacity+=p.delta;
+      if(p.opacity<=0||p.opacity>=1){p.delta*=-1;p.opacity=Math.max(0,Math.min(1,p.opacity));}
+      p.x+=p.speed.x; p.y+=p.speed.y;
+      if(p.x<-2)p.x=canvas.width+2;
+      if(p.x>canvas.width+2)p.x=-2;
+      if(p.y<-2)p.y=canvas.height+2;
+      if(p.y>canvas.height+2)p.y=-2;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${p.opacity})`;
+      ctx.fill();
+    }
+    raf=requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize',resize);
+  resize();
+  draw();
+
+  const PASS='007';
+  const gate=document.getElementById('gate');
+  const input=document.getElementById('gateInput');
+  const err=document.getElementById('gateErr');
+
+  if(sessionStorage.getItem('kira_unlocked')==='1'){
+    gate.style.display='none';
+    cancelAnimationFrame(raf);
+  } else {
+    setTimeout(()=>{try{input.focus();}catch(e){}},100);
+  }
+
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')checkGate();});
+
+  window.checkGate=function(){
+    if(input.value===PASS){
+      sessionStorage.setItem('kira_unlocked','1');
+      gate.classList.add('hide');
+      setTimeout(()=>{gate.style.display='none';cancelAnimationFrame(raf);},650);
+    } else {
+      err.textContent='Incorrect password';
+      input.classList.add('error');
+      input.value='';
+      setTimeout(()=>{input.classList.remove('error');err.textContent='';},1500);
+    }
+  };
+})();
 </script>
 </body>
 </html>
