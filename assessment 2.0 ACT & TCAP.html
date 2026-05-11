@@ -26891,7 +26891,16 @@ let currentRole = 'teacher';
 
 const teacherPages = [
   {id:'homepage',label:'Home',icon:'🏠',title:'Homepage'},
-  {id:'session-detail',label:'Monitor',icon:'📡',title:'Assignment Monitor'},
+  {id:'session-detail',label:'Monitor',icon:'📡',title:'Assignment Monitor',
+    // Monitor opens to whichever Assignment was last selected. The dropdown
+    // gives an explicit ACT vs TCAP entry so reviewers can land on the right
+    // session without going through the homepage list each time. Each item
+    // calls loadSessionDetail() directly with the canonical demo session id
+    // (sess-act-1 / sess-tcap-1), mirroring the dev-panel quick nav.
+    subs:[
+      {kind:'monitor-session',label:'ACT',  icon:'📝',meta:'ACT Practice Exam #3',                    action:"loadSessionDetail('sess-act-1')"},
+      {kind:'monitor-session',label:'TCAP', icon:'🏛',meta:'Grade 5 ELA · TN Pilot · 4 SP',           action:"loadSessionDetail('sess-tcap-1')"},
+    ]},
   {id:'act',label:'ACT Editor',icon:'📝',title:'ACT Editor'},
   {id:'tcap-edit',label:'TCAP Editor',icon:'🏛',title:'TCAP Sections Editor'},
   {id:'new-edit',label:'Tag Edit',icon:'🏷️',title:'Tag Edit'},
