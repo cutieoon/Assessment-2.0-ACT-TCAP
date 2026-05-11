@@ -22,26 +22,30 @@ pnpm preview
 .
 ├── index.html               # HTML shell (markup only — no inline <style>/<script>)
 ├── src/
-│   ├── main.ts              # Entry: imports styles + injects app scripts
-│   ├── app.ts               # Main application logic (Phase-1: one big module)
+│   ├── main.ts              # Entry: imports styles + concatenates app slices
+│   ├── vite-env.d.ts        # Ambient declarations for ?raw imports
+│   ├── app/                 # 29 per-flow slices (data → editor → runner → reports)
+│   │   ├── 01-data-core.ts
+│   │   ├── 02-canonical-skills.ts
+│   │   ├── …
+│   │   └── 29-init.ts
 │   ├── shared/
 │   │   ├── stu-modal.ts     # Student modal + ACT Practice Focus modal helpers
 │   │   └── sparkle.ts       # Login-gate sparkle canvas animation
-│   ├── styles/
-│   │   ├── base.css         # Main stylesheet (~7k lines)
-│   │   └── student-runner.css
-│   ├── data/                # Reserved for Phase 2: mock-data modules
-│   ├── state/               # Reserved for Phase 2: shared mutable state
-│   └── flows/               # Reserved for Phase 2: per-page-flow modules
+│   └── styles/
+│       ├── base.css         # Main stylesheet (~7k lines)
+│       └── student-runner.css
 └── docs/
-    └── refactor-split-plan.md  # Split strategy and Phase-2 plan
+    └── refactor-split-plan.md  # Split strategy
 ```
 
-This project was split out of a 34k-line single-file HTML prototype. **Phase 1** (this commit) extracts CSS and JS into separate files and wires up Vite + TS, preserving 100% behavior parity. **Phase 2** (planned) will slice the still-monolithic `src/app.ts` into per-flow modules (Editor, Monitor, Analytics, Score reports, Test runners, etc.) — see `docs/refactor-split-plan.md`.
+This project was split out of a 34k-line single-file HTML prototype:
+- **Phase 1** — extracted CSS and JS into separate files, wired up Vite + TS.
+- **Phase 2** — sliced the 25k-line `app.ts` into 29 per-flow files under `src/app/` (data / editor / monitor / analytics / runners / reports / etc.). 1:1 behavior preserved.
 
-### Why `?raw` script injection?
+### Why `?raw` script concatenation?
 
-The original prototype loaded its JS via classic `<script>` blocks, so 900+ top-level `function foo(){…}` declarations landed on `window`, and the HTML uses `onclick="foo()"` throughout. ES modules don't expose top-level bindings globally, so `src/main.ts` imports `app.ts` / `stu-modal.ts` / `sparkle.ts` via Vite's `?raw` suffix and injects them as classic `<script>` elements at runtime. Phase 2 will rewrite this to proper ES module exports.
+The original prototype loaded its JS via classic `<script>` blocks, so 900+ top-level `function foo(){…}` declarations landed on `window`, and 640+ inline `onclick="foo()"` handlers (both in `index.html` and inside JS template strings) rely on that. ES modules don't expose top-level bindings globally, so `src/main.ts` imports each slice via Vite's `?raw` suffix, concatenates them in order, and injects the result as one classic `<script>` element at runtime. This gives us a multi-file source layout with zero behavioral change.
 
 ## What's covered
 
