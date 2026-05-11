@@ -1,31 +1,1680 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Assessment 2.0 — ACT & TCAP Prototype</title>
-  <meta http-equiv="refresh" content="0; url=./assessment%202.0%20ACT%20%26%20TCAP.html" />
-  <link rel="canonical" href="./assessment%202.0%20ACT%20%26%20TCAP.html" />
-  <style>
-    html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;background:#f7f7f8;color:#111}
-    .wrap{display:flex;align-items:center;justify-content:center;height:100%;padding:24px;box-sizing:border-box}
-    .card{max-width:520px;text-align:center;padding:32px 28px;background:#fff;border:1px solid #e5e5ea;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-    h1{margin:0 0 8px;font-size:18px;font-weight:600;letter-spacing:-.01em}
-    p{margin:0 0 16px;font-size:14px;color:#52525b;line-height:1.5}
-    a{display:inline-block;padding:10px 16px;background:#7c3aed;color:#fff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:500}
-    a:hover{background:#6d28d9}
-  </style>
-  <script>
-    location.replace('./assessment%202.0%20ACT%20%26%20TCAP.html');
-  </script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Assessment 2.0 — ACT &amp; TCAP Prototype</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Assessment 2.0 — ACT & TCAP</h1>
-      <p>Loading prototype…</p>
-      <a href="./assessment%202.0%20ACT%20%26%20TCAP.html">Open prototype</a>
+<body class="lang-en">
+
+<!-- ══ PASSWORD GATE (mirrors survey-prototype) ══ -->
+<div id="gate">
+  <canvas id="sparkleCanvas"></canvas>
+  <div class="g-content">
+    <h1 class="g-title">Assessment 2.0 ACT &amp; TCAP</h1>
+    <p class="g-sub">Prototype · Internal Preview</p>
+    <div class="g-lines">
+      <div style="position:absolute;left:10%;right:10%;top:0;height:2px;background:linear-gradient(90deg,transparent,#6366f1,transparent);filter:blur(2px)"></div>
+      <div style="position:absolute;left:10%;right:10%;top:0;height:1px;background:linear-gradient(90deg,transparent,#6366f1,transparent)"></div>
+      <div style="position:absolute;left:30%;right:30%;top:0;height:5px;background:linear-gradient(90deg,transparent,#38bdf8,transparent);filter:blur(3px)"></div>
+      <div style="position:absolute;left:30%;right:30%;top:0;height:1px;background:linear-gradient(90deg,transparent,#38bdf8,transparent)"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 22rem 8rem at top,transparent 20%,#000)"></div>
+    </div>
+    <div class="g-form">
+      <input id="gateInput" class="g-input" type="password" placeholder="· · ·" maxlength="10" autocomplete="off"/>
+      <button class="g-btn" onclick="checkGate()">Enter</button>
+      <span class="g-err" id="gateErr"></span>
     </div>
   </div>
+</div>
+
+<!-- ===================== PAGE: Homepage ===================== -->
+<div class="page-view active" id="page-homepage">
+  <div style="height:48px;display:flex;align-items:center;gap:8px;padding:0 38px;background:#fff;border-bottom:1px solid #e4e4e7;flex-shrink:0">
+    <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--kira),var(--kira-light));border-radius:6px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px">K</div>
+    <span style="font-size:15px;font-weight:700;color:#190d40">Kira</span>
+  </div>
+  <div class="homepage-layout">
+    <div class="homepage-main">
+      <div class="homepage-wrap">
+      <div style="margin-bottom:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+        <div>
+          <h1 style="font-size:22px;font-weight:600;color:#18181b;margin-bottom:4px"><span class="en">What would you like to create?</span><span class="cn">你想创建什么考试？</span></h1>
+          <p style="font-size:14px;color:#71717a;margin:0"><span class="en">Describe it in natural language, or pick a template below</span><span class="cn">用自然语言描述，或从下方选择模板</span></p>
+        </div>
+        <button class="ask-kira-btn" onclick="openAskKira(document.getElementById('promptTextarea')?.value || '')" title="Ask Kira to help create an assessment">✦ Ask Kira</button>
+      </div>
+      <div class="prompt-card" id="promptCard">
+        <div class="prompt-inner">
+          <div class="prompt-top">
+            <div class="ai-spark">✦</div>
+            <div style="flex:1;position:relative">
+              <textarea class="prompt-textarea" id="promptTextarea" oninput="promptAutoGrow(this)" onfocus="promptFocusIn()" onblur="promptFocusOut()" rows="1"></textarea>
+              <div class="prompt-placeholder" id="promptPlaceholder">Describe the assessment you want to create...</div>
+            </div>
+          </div>
+          <div class="prompt-files" id="promptFiles" style="display:none"></div>
+          <div class="prompt-bottom">
+            <div class="prompt-tags">
+              <span class="prompt-tag" onclick="this.classList.toggle('checked')">📐 Subject</span>
+              <span class="prompt-tag" onclick="this.classList.toggle('checked')">🧠 Core Concepts</span>
+              <span class="prompt-tag" onclick="this.classList.toggle('checked')">🎓 Grade Level</span>
+              <span class="prompt-tag" onclick="this.classList.toggle('checked')">📊 Difficulty</span>
+              <span class="prompt-tag" onclick="this.classList.toggle('checked')">🎯 Goal</span>
+            </div>
+            <div class="prompt-actions">
+              <input type="file" id="promptFileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.png,.csv" style="display:none" onchange="promptHandleFiles(this)">
+              <button class="prompt-upload-btn" onclick="document.getElementById('promptFileInput').click()" title="Upload files">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              </button>
+              <button class="btn-improve" onclick="event.stopPropagation();openAskKira(document.getElementById('promptTextarea')?.value || '')">✨ Improve</button>
+              <button class="btn-gen" onclick="promptGenerate()">Generate <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <h2><span class="en">Create New</span><span class="cn">新建考试</span></h2>
+        <div style="font-size:13px;color:#71717a;margin-bottom:16px"><span class="en">Choose a starting point for your assessment</span><span class="cn">选择一种方式创建考试</span></div>
+        <div class="create-tabs" id="createTabs">
+          <button class="create-tab active" onclick="filterCreate('all',this)">All</button>
+          <button class="create-tab" onclick="filterCreate('custom',this)">Custom</button>
+          <button class="create-tab" onclick="filterCreate('standardized',this)">Standardized</button>
+        </div>
+        <div class="create-grid" id="createGrid">
+          <div class="create-item" data-cat="standardized" style="position:relative;overflow:visible" onclick="openTemplateLauncher('act')">
+            <span style="position:absolute;top:-7px;right:-7px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 2px 6px rgba(239,68,68,.35);letter-spacing:.3px;z-index:2;line-height:1.3;pointer-events:none">🔥 Hot</span>
+            <div class="ci-icon" style="background:linear-gradient(135deg,#1e3a5f,#4a90d9);color:#fff">📝</div>
+            <div class="ci-body"><div class="ci-title">ACT Practice</div><div class="ci-desc">ACT-aligned practice · Composite score · optional Science & Writing</div></div>
+          </div>
+          <div class="create-item" data-cat="standardized" style="position:relative;overflow:visible" onclick="openDrawer('tcap')">
+            <span style="position:absolute;top:-7px;right:-7px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 2px 6px rgba(239,68,68,.35);letter-spacing:.3px;line-height:1.3;z-index:2;pointer-events:none">🔥 Hot</span>
+            <div class="ci-icon" style="background:linear-gradient(135deg,#6040ca,#8b5cf6);color:#fff">🏛</div>
+            <div class="ci-body"><div class="ci-title">TCAP Assessment</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and personalized practice on submit</div></div>
+          </div>
+          <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('upload-materials')">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#ede9fe,#fef3c7)">📄</div>
+            <div class="ci-body"><div class="ci-title">Upload Materials</div><div class="ci-desc">Create from your teaching materials, documents, or slides</div></div>
+          </div>
+          <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('upload-existing')">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#dbeafe,#fce7f3)">📋</div>
+            <div class="ci-body"><div class="ci-title">Upload Existing Exam</div><div class="ci-desc">Digitize an existing exam from PDF, Word, or Excel</div></div>
+          </div>
+          <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('course-lessons')">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#fce7f3,#fef3c7)">📚</div>
+            <div class="ci-body"><div class="ci-title">Course & Lessons</div><div class="ci-desc">Generate from your Kira courses and lesson content</div></div>
+          </div>
+          <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('quick-test')">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#dbeafe,#fce7f3)">⚡</div>
+            <div class="ci-body"><div class="ci-title">Quick Test</div><div class="ci-desc">Quickly create a focused quiz on a specific topic</div></div>
+          </div>
+          <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('timed-exam')">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#ede9fe,#fef3c7)">⏱</div>
+            <div class="ci-body"><div class="ci-title">Timed Exam</div><div class="ci-desc">Create a formal timed exam with sections and time limits</div></div>
+          </div>
+          <div class="create-item disabled" data-cat="standardized">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#0d2240,#2d6bc4);color:#fff">📘</div>
+            <div class="ci-body"><div class="ci-title">SAT Practice <span class="ci-badge">Coming Soon</span></div><div class="ci-desc">Digital SAT simulation · Reading & Writing and Math modules</div></div>
+          </div>
+          <div class="create-item disabled" data-cat="standardized">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0)">📊</div>
+            <div class="ci-body"><div class="ci-title">MAP Growth <span class="ci-badge">Coming Soon</span></div><div class="ci-desc">Adaptive assessment aligned to MAP format</div></div>
+          </div>
+          <div class="create-item disabled" data-cat="standardized">
+            <div class="ci-icon" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">⭐</div>
+            <div class="ci-body"><div class="ci-title">STAAR <span class="ci-badge">Coming Soon</span></div><div class="ci-desc">Texas state assessment practice</div></div>
+          </div>
+        </div>
+        <div class="template-inline-panel" id="templateInlinePanel"></div>
+      </div>
+      <div class="section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <h2 style="margin-bottom:0"><span class="en">Active Sessions & Recent</span><span class="cn">活跃 Session & 最近</span></h2>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div id="generationLoadingCardSlot" style="display:contents"></div>
+          <div class="assess-card" onclick="openAssessmentDetail('sess-generic-1')">
+            <div class="card-top"><div class="cover">📝</div><div class="card-info"><div class="card-badges"><span class="badge badge-cyan">Assessment</span><span class="badge badge-secondary">Upload Materials</span></div><div class="card-title">Mid-Term Science Review</div><div class="card-meta"><span>Ms. Johnson</span><span class="dot">·</span><span class="date">Mar 15, 2026</span></div><div class="card-stats"><span class="stat">12 questions</span><span class="stat">Passing: 70%</span></div></div></div>
+            <div class="card-bottom" data-aid="sess-generic-1"></div>
+          </div>
+          <div class="assess-card" onclick="openAssessmentDetail('sess-act-1')">
+            <div class="card-top"><div class="cover" style="background:linear-gradient(135deg,#e8e0ff,#f5f3ff)">📝</div><div class="card-info"><div class="card-badges"><span class="badge badge-cyan">Assessment</span><span class="badge badge-secondary">ACT</span></div><div class="card-title">ACT Practice Exam #3</div><div class="card-meta"><span>Ms. Johnson</span><span class="dot">·</span><span class="date">Apr 2, 2026</span></div><div class="card-stats"><span class="stat">131 core items</span><span class="stat">Core: E · M · R</span><span class="stat">Science &amp; Writing optional</span></div></div></div>
+            <div class="card-bottom" data-aid="sess-act-1"></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+          <div class="assess-card" onclick="openAssessmentDetail('sess-sat-1')">
+            <div class="card-top"><div class="cover" style="background:linear-gradient(135deg,#dbeafe,#eff6ff)">📘</div><div class="card-info"><div class="card-badges"><span class="badge badge-cyan">Assessment</span><span class="badge badge-secondary">SAT</span></div><div class="card-title">SAT Practice Test — March</div><div class="card-meta"><span>Ms. Johnson</span><span class="dot">·</span><span class="date">Mar 28, 2026</span></div><div class="card-stats"><span class="stat">98 questions</span><span class="stat">4 modules</span></div></div></div>
+            <div class="card-bottom" data-aid="sess-sat-1"></div>
+          </div>
+          <div class="assess-card" onclick="openAssessmentDetail('sess-tcap-1')">
+            <div class="card-top"><div class="cover" style="background:linear-gradient(135deg,#6040ca,#8b5cf6);color:#fff">🏛</div><div class="card-info"><div class="card-badges"><span class="badge badge-cyan">Diagnostic</span><span class="badge badge-secondary">TCAP</span><span style="font-size:9px;font-weight:700;letter-spacing:.3px;color:#a16207;background:#fffbeb;border:1px solid #fde68a;padding:2px 7px;border-radius:999px;text-transform:uppercase">Pilot · Aug 3, 2025</span></div><div class="card-title">Grade 5 ELA — TCAP Diagnostic Aug 2025</div><div class="card-meta"><span>Mr. Rivera</span><span class="dot">·</span><span class="date">Aug 14–17, 2025</span></div><div class="card-stats"><span class="stat">SP1·SP2·SP3·SP4</span></div></div></div>
+            <div class="card-bottom" data-aid="sess-tcap-1"></div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="homepage-ai-slot" id="homepageAskKiraSlot">
+      <aside class="ask-kira-panel">
+        <div class="ask-kira-head">
+          <div>
+            <div class="ask-kira-kicker">Assessment copilot</div>
+            <div class="ask-kira-title">Ask Kira</div>
+            <div class="ask-kira-sub">Tell Kira what you want to assess. If anything important is missing, Kira will ask a follow-up before creating it.</div>
+          </div>
+          <button class="ask-kira-close" onclick="closeAskKira()" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <div class="ask-kira-body" id="askKiraMessages"></div>
+        <div class="ask-kira-footer">
+          <div class="ask-kira-input-wrap">
+            <textarea class="ask-kira-input" id="askKiraInput" rows="1" placeholder="Ask anything..." onkeydown="askKiraKeydown(event)" oninput="promptAutoGrow(this)"></textarea>
+            <button class="ask-kira-send" onclick="sendAskKira()">Send</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Assessment Detail ===================== -->
+<div class="page-view" id="page-assessment-detail">
+  <div class="assessment-detail-shell">
+    <div class="assessment-detail-wrap" id="assessmentDetailBody"></div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Assignment Monitor ===================== -->
+<!--
+  Layout mirrors production session detail page (FE: src/app/assessment/session/[sessionId]/page.tsx):
+    1. ad-topbar      = thin white bar (Back to Assessment + secondary actions)
+    2. monitor-hero   = 2-column hero card (left: cover + title meta + Session
+                        Code + AI Insights gradient card; right: SessionTimerView
+                        – LIVE circular timer or SCHEDULED window timeline)
+    3. tabs + panels  = Overview / Analytics
+
+  ScheduleType drives the timer card variant:
+    - LIVE       → circular countdown + Pause/Continue/End controls
+    - SCHEDULED  → Available From / Until timeline + End Session only
+-->
+<div class="page-view" id="page-session-detail">
+  <div class="ad-container">
+    <div class="ad-topbar" id="sessionDetailHeader"></div>
+    <div class="ad-content">
+      <div class="monitor-hero" id="sessionDetailHero"></div>
+      <div id="sessionAiInsightsWrap"></div>
+      <div id="sessionSubpartTabsWrap"></div>
+      <div class="session-detail-tabs" id="sessionDetailTabs"></div>
+      <div class="session-detail-panel" id="sessionOverviewPanel">
+        <div class="session-card">
+          <div class="session-participants-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <h3 style="margin:0">Participants</h3>
+            <div id="sessionStudentToolsSlot"></div>
+          </div>
+          <div class="session-table-wrap" id="sessionStudentTableWrap"></div>
+        </div>
+      </div>
+      <div class="session-detail-panel" id="sessionAnalyticsPanel">
+        <div id="sessionAnalyticsWrap"></div>
+      </div>
+      <!-- Cut Scores tab panel · TCAP-only · in-page swap (not nav-away).
+           Hosts the same cut-score editor as the standalone tcap-config page
+           but inline so the teacher keeps session context. The Subparts strip
+           above visually disables when this tab is active because cut scores
+           apply to the composite scale score, not per-Subpart. -->
+      <div class="session-detail-panel" id="sessionCutScoresPanel">
+        <div id="sessionCutScoresInlineBody"></div>
+      </div>
+      </div>
+    </div>
+</div>
+
+<!-- ===================== Drawer ===================== -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer-panel" id="drawerPanel">
+  <div class="drawer-header">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div style="min-width:0;flex:1">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:18px;font-weight:600" id="drawerTitle">ACT Practice</span><span class="badge badge-secondary" id="drawerBadge">ACT</span><span id="drawerBadgeExt" style="display:none"></span></div>
+        <p style="font-size:13px;color:#666;margin:4px 0 0" id="drawerDesc"></p>
+      </div>
+      <button onclick="closeDrawer()" aria-label="Close" style="flex-shrink:0;background:transparent;border:none;cursor:pointer;color:#888;width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;line-height:1;transition:all .15s" onmouseover="this.style.background='#f4f4f5';this.style.color='#18181b'" onmouseout="this.style.background='transparent';this.style.color='#888'">×</button>
+    </div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer-bar" id="drawerFooterBar"></div>
+</div>
+
+<!-- ===================== Template Setup Modal ===================== -->
+<div class="template-setup-overlay" id="templateSetupOverlay" onclick="closeTemplateSetup()">
+  <div class="template-setup-modal" onclick="event.stopPropagation()">
+    <div class="ts-head">
+      <div>
+        <div class="ts-eyebrow" id="tsEyebrow">Standardized Template</div>
+        <div class="ts-title" id="tsTitle">Configure TCAP Diagnostic</div>
+        <div class="ts-desc" id="tsDesc">Use a wider setup flow for state-test templates so teachers can compare subjects, modes, length, reporting output, and practice implications before generating the assessment.</div>
+        <div class="ts-steps">
+          <span class="ts-step done">1 Template</span>
+          <span class="ts-step active">2 Configure</span>
+          <span class="ts-step active">3 Preview Impact</span>
+          <span class="ts-step">4 Create</span>
+        </div>
+      </div>
+      <button class="ts-close" onclick="closeTemplateSetup()" aria-label="Close">×</button>
+    </div>
+    <div class="ts-body" id="templateSetupBody"></div>
+    <div class="ts-footer">
+      <div class="ts-footer-summary" id="templateSetupFooterSummary"></div>
+      <div class="ts-actions">
+        <button class="ts-secondary" onclick="closeTemplateSetup()">Cancel</button>
+        <button class="ts-primary" onclick="templateSetupGenerate()">Create Diagnostic</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="template-quick-panel" id="templateQuickPanel"></div>
+
+<!-- ===================== Assign Modal ===================== -->
+<div class="stu-modal-overlay" id="assignModalOverlay">
+  <div class="assign-modal">
+    <div class="assign-modal-header">
+      <div class="assign-modal-title">
+        <h3 id="assignModalTitle">Assign to Students</h3>
+        <button class="assign-modal-close" onclick="closeAssignModal()" aria-label="Close">✕</button>
+      </div>
+    </div>
+    <div class="assign-modal-body" id="assignModalBody"></div>
+    <div class="assign-modal-footer">
+      <button class="btn-kira-outline" onclick="closeAssignModal()">Cancel</button>
+      <button class="btn-kira-default" onclick="assignNextStep()" id="assignNextBtn">Assign</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Practice Assign Confirm Modal ===================== -->
+<div class="stu-modal-overlay" id="practiceAssignModalOverlay" onclick="if(event.target===this)closePracticeAssignModal()">
+  <div class="stu-modal" onclick="event.stopPropagation()">
+    <div class="stu-modal-header">
+      <div class="modal-icon info" id="practiceAssignIcon">🎯</div>
+      <div>
+        <div class="stu-modal-title" id="practiceAssignTitle">Assign practice?</div>
+        <div style="font-size:12px;color:#71717a;margin-top:3px" id="practiceAssignSubtitle">Confirm before creating practice plans.</div>
+      </div>
+    </div>
+    <div class="stu-modal-body" id="practiceAssignBody"></div>
+    <div class="stu-modal-footer">
+      <button class="modal-cancel" id="practiceAssignCancelBtn" onclick="closePracticeAssignModal()">Cancel</button>
+      <button class="modal-confirm" id="practiceAssignConfirmBtn" onclick="confirmPracticeAssign()">Assign practice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TCAP Practice Preview Modal (Student) ===================== -->
+<!-- Used by TCAP Student Diagnostic Report. Opens via openTcapPracticePreview('all'|standardCode). -->
+<div class="stu-modal-overlay" id="tcapPracticePreviewOverlay" onclick="if(event.target===this)closeTcapPracticePreview()">
+  <div class="stu-modal" style="width:680px;max-width:94vw" onclick="event.stopPropagation()">
+    <div class="stu-modal-header">
+      <div class="modal-icon" id="tcapPracticePreviewIcon" style="background:#f5f3ff;color:#5b21b6">📋</div>
+      <div style="min-width:0">
+        <div class="stu-modal-title" id="tcapPracticePreviewTitle">Your practice plan</div>
+        <div style="font-size:12px;color:#71717a;margin-top:3px" id="tcapPracticePreviewSubtitle">~15 min · 5 standards</div>
+      </div>
+    </div>
+    <div class="stu-modal-body" id="tcapPracticePreviewBody"></div>
+    <div class="stu-modal-footer">
+      <button class="modal-cancel" id="tcapPracticePreviewDlBtn" onclick="downloadTcapPracticePreview()" style="display:flex;align-items:center;gap:7px">
+        <span id="tcapPracticePreviewDlIcon" style="display:inline-flex;align-items:center" aria-hidden="true">
+          <!-- Lucide Download icon (shadcn convention) — currentColor so it inherits button text color -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </span>
+        <span id="tcapPracticePreviewDlLabel">Download as image</span>
+      </button>
+      <button class="modal-confirm" onclick="closeTcapPracticePreview()" style="background:#6040ca;box-shadow:0 2px 8px rgba(96,64,202,.25)" onmouseover="this.style.boxShadow='0 4px 16px rgba(96,64,202,.35)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(96,64,202,.25)'">Got it</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Remove Student Confirm Modal ===================== -->
+<div class="stu-modal-overlay" id="removeStudentModalOverlay" onclick="if(event.target===this)closeRemoveStudentModal()">
+  <div class="stu-modal" onclick="event.stopPropagation()">
+    <div class="stu-modal-header">
+      <div class="modal-icon warn">⚠️</div>
+      <div>
+        <div class="stu-modal-title">Remove student from assignment?</div>
+        <div style="font-size:12px;color:#71717a;margin-top:3px" id="removeStudentSubtitle">This action affects this session only.</div>
+      </div>
+    </div>
+    <div class="stu-modal-body">
+      <p style="margin:0">Removing this student will remove their row from the monitor and recalculate Overview / Analytics for this assignment.</p>
+      <div class="stat">
+        <div class="stat-item"><span class="val" id="removeStudentName">Student</span><span class="lbl">Student</span></div>
+        <div class="stat-item"><span class="val">Session</span><span class="lbl">Scope</span></div>
+      </div>
+      <p style="margin:14px 0 0;color:#b45309;font-weight:700">Production note: if the student is online, their active attempt should stop and they should see the removed overlay.</p>
+    </div>
+    <div class="stu-modal-footer">
+      <button class="modal-cancel" onclick="closeRemoveStudentModal()">Cancel</button>
+      <button class="modal-confirm danger" onclick="confirmRemoveStudent()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Item Properties Modal (Canonical Skill Editor) ===================== -->
+<div class="item-props-overlay" id="itemPropsOverlay" onclick="if(event.target===this)closeItemProperties()">
+  <div class="item-props-modal">
+    <div class="item-props-head">
+      <div>
+        <div class="item-props-kicker">Assessment Tagging</div>
+        <h3>Item Properties <span style="font-size:12px;font-weight:600;color:#71717a;margin-left:6px" id="ipQuestionRef">Q1</span></h3>
+        <div class="sub">Tag what the item measures first. Standards and test blueprint mappings appear only when this assessment has that context attached.</div>
+      </div>
+      <button class="item-props-close" onclick="closeItemProperties()" aria-label="Close">×</button>
+    </div>
+    <div class="item-props-body" id="itemPropsBody"></div>
+    <div class="item-props-foot">
+      <div class="hint">↳ Changes flow into item bank search, Teacher Analytics, and student reports.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-kira-outline" onclick="closeItemProperties()">Cancel</button>
+        <button class="btn-kira-default" onclick="closeItemProperties()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Student Launch ===================== -->
+<div class="page-view" id="page-stu-launch">
+  <div class="session-shell">
+    <div class="launch-card" id="studentLaunchCard"></div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Student Ready Check ===================== -->
+<div class="page-view" id="page-stu-ready">
+  <div class="session-shell">
+    <div class="launch-card" id="studentReadyCard"></div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Assessment Editor · Generic Template ===================== -->
+<div class="page-view" id="page-generic">
+  <!-- Header.tsx -->
+  <div class="editor-header">
+    <div class="left">
+      <button class="btn-kira-ghost" onclick="nav('homepage')" title="Back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      </button>
+      <button class="title-btn" id="genericTitle" title="Double-click to rename" ondblclick="startTitleRename(this)">Mid-Term Science Review</button>
+    </div>
+    <div class="right">
+      <button class="btn-kira-ghost" title="History">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+      </button>
+      <button class="btn-kira-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        Preview
+      </button>
+      <button class="btn-kira-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Export
+      </button>
+      <button class="btn-kira-default" onclick="openAssignModal('generic')">Assign</button>
+    </div>
+  </div>
+  <!-- Editor body (sections live in sidebar as collapsible groups, no top tab bar) -->
+  <div class="editor-body">
+    <div class="q-sidebar" id="genericSidebar">
+      <div class="q-sidebar-header">
+        <span class="title" id="genericSidebarTitle">5 Questions · 20 pts</span>
+        <button class="close-btn" title="Close sidebar" onclick="collapseSidebar('genericSidebar','genericOpenBtn')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg>
+        </button>
+      </div>
+      <div class="q-sidebar-scroll" id="genericSidebarContent"></div>
+      <div class="q-sidebar-footer">
+        <button class="add-q-btn" onclick="addSection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Section
+        </button>
+      </div>
+    </div>
+    <div class="q-main-panel" id="genericMainPanel"></div>
+    <button class="open-sidebar-btn" id="genericOpenBtn" style="display:none" onclick="expandSidebar('genericSidebar','genericOpenBtn')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m8 15 3-3-3-3"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Assessment Editor · ACT Template ===================== -->
+<div class="page-view" id="page-act">
+  <div class="editor-header">
+    <div class="left">
+      <button class="btn-kira-ghost" onclick="nav('homepage')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      </button>
+      <button class="title-btn" id="actTitle" title="Double-click to rename" ondblclick="startTitleRename(this)">ACT Practice Exam #3</button>
+    </div>
+    <div class="right">
+      <button class="btn-kira-ghost" title="History">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+      </button>
+      <button class="btn-kira-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        Preview
+      </button>
+      <button class="btn-kira-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Export
+      </button>
+      <button class="btn-kira-default" onclick="openAssignModal('act')">Assign</button>
+    </div>
+  </div>
+  <div class="editor-body" style="position:relative;padding-bottom:48px">
+    <div class="q-sidebar" id="actSidebar">
+      <div class="q-sidebar-header"><span class="title" id="actSidebarTitle">32/50 Questions</span>
+        <button class="close-btn" onclick="collapseSidebar('actSidebar','actOpenBtn')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg></button>
+      </div>
+      <div class="q-sidebar-scroll" id="actSidebarContent"></div>
+    </div>
+    <div class="q-main-panel" id="actMainPanel"></div>
+    <button class="open-sidebar-btn" id="actOpenBtn" style="display:none" onclick="expandSidebar('actSidebar','actOpenBtn')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m8 15 3-3-3-3"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Assessment Editor · SAT Template ===================== -->
+<div class="page-view" id="page-sat">
+  <div class="editor-header">
+    <div class="left">
+      <button class="btn-kira-ghost" onclick="nav('homepage')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      </button>
+      <button class="title-btn" id="satTitle" title="Double-click to rename" ondblclick="startTitleRename(this)">Digital SAT Full Practice #1</button>
+    </div>
+    <div class="right">
+      <button class="btn-kira-ghost" title="History">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+      </button>
+      <button class="btn-kira-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        Preview
+      </button>
+      <button class="btn-kira-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Export
+      </button>
+      <button class="btn-kira-default" onclick="openAssignModal('sat')">Assign</button>
+    </div>
+  </div>
+  <div class="editor-body" style="position:relative;padding-bottom:48px">
+    <div class="q-sidebar" id="satSidebar">
+      <div class="q-sidebar-header"><span class="title" id="satSidebarTitle">15/27 Questions</span>
+        <button class="close-btn" onclick="collapseSidebar('satSidebar','satOpenBtn')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg></button>
+      </div>
+      <div class="q-sidebar-scroll" id="satSidebarContent"></div>
+      <div class="q-sidebar-footer"><button class="add-q-btn" onclick="addQToStd('sat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Question</button></div>
+    </div>
+    <div class="q-main-panel" id="satMainPanel"></div>
+    <button class="open-sidebar-btn" id="satOpenBtn" style="display:none" onclick="expandSidebar('satSidebar','satOpenBtn')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m8 15 3-3-3-3"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===================== PAGE: New Assessment Editor Concept ===================== -->
+<div class="page-view" id="page-new-edit">
+  <div class="ne-shell">
+    <div class="ne-header">
+      <div class="ne-header-left">
+        <button class="btn-kira-ghost" onclick="nav('homepage')" title="Back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <div class="ne-title-block">
+          <div class="ne-title">Teacher Edit Concept · Mid-Term Science Review</div>
+          <div class="ne-subtitle">One shared editor: existing General Assessment first, with optional ACT / TCAP / future SAT blueprint context</div>
+        </div>
+        <span class="ne-badge">Prototype</span>
+      </div>
+      <div class="ne-header-right">
+        <div class="ne-mode-tabs" id="newEditTabs"></div>
+        <button class="btn-kira-outline">Save draft</button>
+        <button class="btn-kira-default" onclick="openAssignModal('generic')">Assign</button>
+      </div>
+    </div>
+    <div class="ne-body">
+      <aside class="ne-outline">
+        <div class="ne-outline-head">
+          <div class="ne-outline-title">Assessment Outline</div>
+          <div class="ne-outline-stats">
+            <div class="ne-stat"><div class="num">12</div><div class="lbl">Items</div></div>
+            <div class="ne-stat"><div class="num">3</div><div class="lbl">Skills to check</div></div>
+          </div>
+        </div>
+        <div class="ne-outline-scroll" id="newEditOutline"></div>
+      </aside>
+      <main class="ne-main">
+        <div class="ne-modebar" id="newEditModebar"></div>
+        <div class="ne-content" id="newEditContent"></div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== GRADER STUDIO ===================== -->
+<div class="page-view" id="page-grader" style="padding:0">
+  <div class="grader-wrap" style="flex-direction:column">
+    <!-- Top bar -->
+    <div class="grader-top">
+      <button class="gt-back" onclick="nav('homepage')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg> Dashboard</button>
+      <span class="gt-title" id="graderTitle">Midterm Assessment</span>
+      <span class="gt-badge">Assessment</span>
+      <div class="gt-progress"><div class="gt-progress-bar"><div class="gt-progress-fill" id="graderProgressBar" style="width:58%"></div></div><span id="graderProgressText">7/12 graded</span></div>
+      <div class="gt-class" id="graderClass">Period 3 — English 10</div>
+      <div class="gt-nav">
+        <button onclick="graderPrevStu()">‹ Prev</button>
+        <button onclick="graderNextStu()">Next ›</button>
+      </div>
+    </div>
+    <!-- 3-column layout below the top bar -->
+    <div style="display:flex;flex:1;overflow:hidden">
+      <!-- Left: student list -->
+      <aside class="grader-left">
+        <div class="grader-left-head"><span>Students</span><span class="count" id="graderStuCount">12</span></div>
+        <div class="grader-left-body" id="graderStuList"></div>
+      </aside>
+      <!-- Center: grading area -->
+      <section class="grader-center">
+        <div class="grader-stu-header" id="graderStuHeader"></div>
+        <div class="grader-sec-tabs" id="graderSecTabs"></div>
+        <div class="grader-questions" id="graderQuestions"></div>
+      </section>
+      <!-- Right: AI summary -->
+      <aside class="grader-right">
+        <div class="grader-ai-card" id="graderAiCard"></div>
+        <div class="grader-filter-tabs" id="graderFilterTabs"></div>
+        <div class="grader-right-pills" id="graderRightPills"></div>
+        <div class="grader-bottom">
+          <button class="grader-save-btn" onclick="graderSave()">Save & Next →</button>
+          <button class="grader-release-btn" onclick="graderRelease()">Send to Pending</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== STUDENT VIEWS ===================== -->
+<!-- Student: Generic Test -->
+<div class="page-view" id="page-stu-generic">
+  <header class="stu-exam-header">
+    <button class="stu-home-btn" onclick="switchRole('teacher');nav('homepage')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+    <div class="stu-exam-center">
+      <span class="stu-sec-label" id="stuGenSecLabel"></span>
+      <span class="stu-sec-info" id="stuGenSecInfo"></span>
+      <div class="stu-countdown"><span class="cd-part"><span class="cd-num">00</span><span class="cd-lbl">hr</span></span><span class="cd-sep">:</span><span class="cd-part"><span class="cd-num" id="stuGenMin">45</span><span class="cd-lbl">min</span></span><span class="cd-sep">:</span><span class="cd-part"><span class="cd-num" id="stuGenSec">00</span><span class="cd-lbl">sec</span></span></div>
+    </div>
+    <div style="width:60px"></div>
+  </header>
+  <div class="stu-section-bar" id="stuGenSectionBar"></div>
+  <main class="stu-exam-main" id="stuGenericBody"></main>
+  <footer class="stu-exam-footer" id="stuGenericFooter"></footer>
+  <div class="stu-nav-panel" id="stuGen-navPanel"></div>
+</div>
+
+<!-- Student: ACT Test -->
+<div class="page-view" id="page-stu-act">
+  <!-- Standardized test shell: Directions, centered timer, tools, question menu -->
+  <header class="stu-exam-header" style="justify-content:space-between;padding:0 12px;gap:8px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="stu-home-btn" onclick="switchRole('teacher');nav('homepage')" title="Exit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+      <button class="sat-header-btn" onclick="stuShowDirections('stuAct')">Directions</button>
+    </div>
+    <div class="stu-exam-center with-directions">
+      <span class="stu-sec-label" id="stuActSecLabel">English</span>
+      <span class="stu-sec-info" id="stuActSecInfo" style="display:none">Question 1 of 6</span>
+      <div class="stu-countdown sat-timer-inline" id="stuActTimerWrap">
+        <span class="sat-timer-digits" id="stuActTimerDigits">35:00</span>
+        <span class="cd-part"><span class="cd-num">00</span><span class="cd-lbl">hr</span></span><span class="cd-sep">:</span><span class="cd-part"><span class="cd-num" id="stuActMin">35</span><span class="cd-lbl">min</span></span><span class="cd-sep">:</span><span class="cd-part"><span class="cd-num" id="stuActSec">00</span><span class="cd-lbl">sec</span></span>
+        <button onclick="stuToggleTimer('stuAct')" style="background:none;border:none;cursor:pointer;padding:2px 4px;margin-left:4px;color:#94a3b8;font-size:10px" title="Hide/Show timer" id="stuActTimerToggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="act-answered-badge" id="stuActAnswered">ANSWERED 0 OF 6</span>
+      <span id="stuActExtChip" style="display:none;align-items:center;gap:4px;padding:4px 9px;border-radius:8px;background:rgba(124,58,237,.18);color:#7c3aed;border:1px solid #c4b5fd;font-size:11px;font-weight:800;letter-spacing:.3px">⏱ Extended +<span id="stuActExtPct">20</span>%<span id="stuActExtReason"></span></span>
+    </div>
+  </header>
+  <!-- No section tabs — ACT sections are sequential, not selectable -->
+  <div class="stu-section-bar" id="stuActSectionBar" style="display:none"></div>
+  <main class="stu-exam-main" id="stuActBody" style="flex:1;min-height:0"></main>
+  <!-- ACT Gateway: Bottom toolbar (TOOLS, FLAG, HIGHLIGHTER, INDEX, CONTRAST, END TEST) -->
+  <footer class="stu-exam-footer" id="stuActFooter" style="justify-content:space-between;gap:6px;padding:0 12px;min-height:48px"></footer>
+  <!-- Overlays -->
+  <div class="stu-notepad" id="stuAct-notepad"><div class="stu-notepad-header">Notepad<button onclick="stuCloseNotepad('stuAct')" style="background:none;border:none;cursor:pointer;font-size:16px;color:#71717a">&times;</button></div><textarea placeholder="Write your notes here..."></textarea></div>
+  <div class="stu-nav-panel" id="stuAct-navPanel"></div>
+  <!-- ACT INDEX panel (left sidebar) -->
+  <div class="act-index-overlay" id="stuAct-indexOverlay" onclick="stuActToggleIndex('stuAct')"></div>
+  <div class="act-index-panel" id="stuAct-indexPanel">
+    <div class="act-index-panel-header"><h3>Question Index</h3><button onclick="stuActToggleIndex('stuAct')" style="background:none;border:none;cursor:pointer;font-size:18px;color:#71717a">&times;</button></div>
+    <div class="act-index-list" id="stuAct-indexList"></div>
+  </div>
+  <div class="stu-line-reader" id="stuAct-lineReader"><div class="lr-top" id="stuAct-lrTop"></div><div class="lr-window" id="stuAct-lrWin"></div><div class="lr-bottom" id="stuAct-lrBot"></div><div class="lr-handle" id="stuAct-lrHandle">⠿</div><button class="lr-close" id="stuAct-lrClose" onclick="stuToggleLineReader('stuAct')">✕</button></div>
+  <div class="stu-calc-panel" id="stuAct-calcPanel"><div class="stu-calc-header">Graphing Calculator<button onclick="stuToggleCalc('stuAct')" style="background:none;border:none;cursor:pointer;font-size:16px;color:#71717a">&times;</button></div><div class="stu-calc-body"><iframe src="https://www.desmos.com/testing/act/graphing" title="Desmos Graphing Calculator"></iframe></div></div>
+  <div class="stu-warning-popup" id="stuAct-warning"><h3>⏰ 5 Minutes Remaining</h3><p>You have 5 minutes left in this section.</p><button onclick="this.parentElement.classList.remove('open')">Continue</button></div>
+</div>
+
+<!-- Student: SAT Test -->
+<div class="page-view" id="page-stu-sat">
+  <header class="stu-exam-header" style="justify-content:space-between;padding:0 16px;gap:8px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="stu-home-btn" onclick="switchRole('teacher');nav('homepage')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+    </div>
+    <div class="stu-exam-center with-directions">
+      <button class="sat-header-btn" onclick="stuShowDirections('stuSat')">Directions</button>
+      <span class="stu-sec-label" id="stuSatSecLabel">Reading & Writing</span>
+      <button class="sat-q-menu-trigger" id="stuSatModuleInfo" onclick="stuOpenNavPanel('stuSat')">Question 1 of 27 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="stu-countdown sat-timer-inline" id="stuSatTimerWrap">
+        <span class="sat-timer-digits" id="stuSatTimerDigits">32:00</span>
+        <button onclick="stuToggleTimer('stuSat')" style="background:none;border:none;cursor:pointer;padding:2px 4px;margin-left:4px;color:#94a3b8;font-size:10px" title="Hide/Show timer" id="stuSatTimerToggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="scratch-toggle-btn" id="stuSat-scratchToggle" onclick="stuOpenScratch('stuSat')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Scratch</button>
+      <div style="position:relative" id="stuSatToolsWrap">
+        <button class="stu-tools-btn" onclick="stuToggleTools('stuSat')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          More
+        </button>
+        <div class="stu-tools-menu" id="stuSatToolsMenu">
+          <button onclick="stuOpenNotepad('stuSat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Notepad</button>
+          <button onclick="stuToggleLineReader('stuSat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg> Line Reader</button>
+          <button id="stuSat-elimBtn" onclick="stuSatToggleElimMode()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg> Option Eliminator</button>
+          <button id="stuSat-calcBtn" onclick="stuToggleCalc('stuSat')" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="16" y2="18"/></svg> Calculator (Desmos)</button>
+          <button id="stuSat-refBtn" onclick="stuToggleRefSheet('stuSat')" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Reference Sheet</button>
+          <div class="stu-tools-sep"></div>
+          <button onclick="stuToggleContrast('stuSat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg> Color Contrast</button>
+          <div class="stu-tools-sep"></div>
+          <button onclick="stuShowDirections('stuSat')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Directions</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="stu-section-bar" id="stuSatSectionBar"></div>
+  <main class="stu-exam-main" id="stuSatBody"></main>
+  <footer class="stu-exam-footer" id="stuSatFooter"></footer>
+  <!-- Overlays -->
+  <div class="stu-notepad" id="stuSat-notepad"><div class="stu-notepad-header">Notepad<button onclick="stuCloseNotepad('stuSat')" style="background:none;border:none;cursor:pointer;font-size:16px;color:#71717a">&times;</button></div><textarea placeholder="Write your notes here..."></textarea></div>
+  <div class="stu-nav-panel" id="stuSat-navPanel"></div>
+  <div class="stu-line-reader" id="stuSat-lineReader"><div class="lr-top" id="stuSat-lrTop"></div><div class="lr-window" id="stuSat-lrWin"></div><div class="lr-bottom" id="stuSat-lrBot"></div><div class="lr-handle" id="stuSat-lrHandle">⠿</div><button class="lr-close" id="stuSat-lrClose" onclick="stuToggleLineReader('stuSat')">✕</button></div>
+  <div class="stu-calc-panel" id="stuSat-calcPanel"><div class="stu-calc-header">Desmos Calculator<button onclick="stuToggleCalc('stuSat')" style="background:none;border:none;cursor:pointer;font-size:16px;color:#71717a">&times;</button></div><div class="stu-calc-body"><iframe src="https://www.desmos.com/testing/cb-digital-sat/graphing" title="Desmos Calculator"></iframe></div></div>
+  <div class="stu-ref-panel" id="stuSat-refPanel"><h3>📐 Math Reference Sheet</h3><div class="formula"><p><b>Area of a circle:</b> A = πr²</p><p><b>Circumference:</b> C = 2πr</p><p><b>Area of a rectangle:</b> A = lw</p><p><b>Area of a triangle:</b> A = ½bh</p><p><b>Pythagorean theorem:</b> a² + b² = c²</p><p><b>Volume of a rectangular prism:</b> V = lwh</p><p><b>Volume of a cylinder:</b> V = πr²h</p><p><b>Volume of a sphere:</b> V = (4/3)πr³</p><p><b>Volume of a cone:</b> V = (1/3)πr²h</p><p><b>Volume of a pyramid:</b> V = (1/3)lwh</p><hr style="margin:10px 0"><p><b>Slope:</b> m = (y₂ − y₁) / (x₂ − x₁)</p><p><b>Slope-intercept:</b> y = mx + b</p><p><b>Point-slope:</b> y − y₁ = m(x − x₁)</p><p><b>Standard form:</b> ax + by = c</p><hr style="margin:10px 0"><p><b>Quadratic formula:</b> x = (−b ± √(b²−4ac)) / 2a</p><p><b>Discriminant:</b> b² − 4ac</p><p><b>Vertex form:</b> y = a(x − h)² + k</p></div><button onclick="this.parentElement.classList.remove('open')" style="margin-top:16px;padding:8px 20px;border:none;border-radius:8px;background:#1e3a5f;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;width:100%;border-radius:6px">Close</button></div>
+  <div class="stu-warning-popup" id="stuSat-warning"><h3>⏰ 5 Minutes Remaining</h3><p>You have 5 minutes left in this module.</p><button onclick="this.parentElement.classList.remove('open')">Continue</button></div>
+  <!-- Scratch Pad -->
+  <div class="scratch-backdrop" id="stuSat-scratchBackdrop" onclick="stuCloseScratch('stuSat')"></div>
+  <div class="scratch-panel" id="stuSat-scratchPanel">
+    <div class="scratch-header" id="stuSat-scratchDrag">
+      <span class="sh-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Scratch Pad <span class="sh-qinfo" id="stuSat-scratchQinfo"></span></span>
+      <button class="sh-close" onclick="stuCloseScratch('stuSat')">&times;</button>
+    </div>
+    <div class="scratch-toolbar" id="stuSat-scratchToolbar"></div>
+    <div class="scratch-canvas-wrap" id="stuSat-scratchWrap"><canvas id="stuSat-scratchCanvas"></canvas></div>
+  </div>
+</div>
+
+<!-- Student: ACT Score Report -->
+<div class="page-view report-page" id="page-stu-act-report">
+  <div class="report-header">
+    <div class="rh-top">
+      <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">ACT</span> Score Report</h1>
+      <div class="actions">
+        <button class="report-dl-btn" onclick="downloadReport('actReportBody','ACT_Score_Report')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF</button>
+      </div>
+    </div>
+    <div class="student-profile-card" id="actStudentInfo"></div>
+  </div>
+  <div class="report-body" id="actReportBody"></div>
+</div>
+
+<!-- Student: ACT Question Details -->
+<div class="page-view act-detail-shell" id="page-stu-act-details">
+  <div class="act-detail-header">
+    <div class="act-detail-header-inner">
+      <div class="act-detail-brand">
+        <span class="act-detail-brand-mark">ACT</span>
+        <span class="act-detail-brand-sep">·</span>
+        <span class="act-detail-brand-text">Question Details</span>
+      </div>
+      <nav class="act-detail-header-tabs" id="actDetailHeaderTabs" aria-label="ACT section"></nav>
+      <button class="act-detail-back" onclick="nav('stu-act-report')">Back to Report</button>
+    </div>
+  </div>
+  <div class="act-detail-body" id="actQuestionDetailBody"></div>
+</div>
+
+<!-- Student: SAT Score Report -->
+<div class="page-view report-page" id="page-stu-sat-report">
+  <div class="report-header">
+    <div class="rh-top">
+      <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">SAT</span> Score Report</h1>
+      <div class="actions">
+        <button class="report-dl-btn" onclick="downloadReport('satReportBody','SAT_Score_Report')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF</button>
+        <button class="stu-home-btn rpt" onclick="switchRole('student');nav('stu-sat')" title="Back to Test"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      </div>
+    </div>
+    <div class="student-profile-card" id="satStudentInfo"></div>
+  </div>
+  <div class="report-body" id="satReportBody"></div>
+</div>
+
+<!-- ===================== TCAP PAGES ===================== -->
+<!-- Teacher: TCAP Class Predictions -->
+<div class="page-view" id="page-tcap-class">
+  <div class="max-w-screen-2xl mx-auto" style="padding:28px 24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">TCAP · Tennessee</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#7c3aed;background:#ede9fe;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Predictive · Pilot</span>
+          <span id="tcapClassCutBadge" style="font-size:11px;color:#52525b;background:#f4f4f5;border:1px solid #e4e4e7;padding:3px 10px;border-radius:999px;cursor:pointer" onclick="nav('tcap-config')" title="View cut-score profile">⚙️ Cut-score profile: District default</span>
+        </div>
+        <h1 style="font-size:24px;font-weight:800;color:#18181b;margin:0">TCAP Class Predictions</h1>
+        <p style="font-size:13px;color:#52525b;margin:4px 0 0" id="tcapClassSubtitle"></p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button onclick="tcapAssignRiskBucket()" style="background:#6040ca;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 1px 2px rgba(0,0,0,.04)">🎯 Assign practice to Risk Bucket</button>
+        <button onclick="nav('tcap-config')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">⚙️ Cut-score profile</button>
+      </div>
+    </div>
+    <div id="tcapClassBody"></div>
+  </div>
+</div>
+
+<!-- Student: TCAP Diagnostic Report -->
+<div class="page-view report-page" id="page-tcap-diag-report">
+  <div class="max-w-screen-2xl mx-auto" style="padding:28px 24px;max-width:1100px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">TCAP Diagnostic</span>
+      <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#7c3aed;background:#ede9fe;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Predicted Level</span>
+      <span style="font-size:12px;color:#71717a">Grade 5 ELA · Taken Aug 14, 2025</span>
+    </div>
+    <div id="tcapStudentBody"></div>
+  </div>
+</div>
+
+<!-- Admin: TCAP Cut Score Config -->
+<div class="page-view" id="page-tcap-config">
+  <div class="max-w-screen-2xl mx-auto" style="padding:28px 24px;max-width:1200px">
+    <button id="tcapConfigBackBtn" onclick="backToTcapAnalytics()" style="display:none;margin-bottom:12px;background:none;border:none;color:#6040ca;font-size:12px;font-weight:800;cursor:pointer;padding:0">← Back to Analytics</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;padding:3px 10px;border-radius:999px;text-transform:uppercase">District Admin</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">TCAP</span>
+        </div>
+        <h1 style="font-size:24px;font-weight:800;color:#18181b;margin:0">Cut-Score Profile</h1>
+        <p style="font-size:13px;color:#52525b;margin:4px 0 0;max-width:720px">Review the district cut-score profile used for TCAP projections. Admin demo controls can preview changes, but this is not part of the teacher's core assessment flow.</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="tcapResetCutScores()" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">↺ Reset to District Default</button>
+        <button onclick="tcapSaveCutScores()" style="background:#16a34a;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">💾 Admin demo: Save</button>
+      </div>
+    </div>
+    <div id="tcapConfigBody"></div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: Student Profiles (IEP/504 + Extended Time) ===================== -->
+<div class="page-view" id="page-student-profiles">
+  <div class="max-w-screen-2xl mx-auto" style="padding:28px 24px;max-width:1200px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Teacher · Admin</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Accommodations</span>
+        </div>
+        <h1 style="font-size:24px;font-weight:800;color:#18181b;margin:0">Student Profiles</h1>
+        <p style="font-size:13px;color:#52525b;margin:4px 0 0;max-width:780px">Per-student record of IEP / 504 / ELL / Gifted accommodations and Extended Time multiplier. Extended Time auto-applies <b>per Subpart</b> to every TCAP assignment for this student (per-Subpart timer = base × multiplier).</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="iteToast('CSV import — demo placeholder','info')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">↑ Import from SIS</button>
+        <button onclick="iteToast('Bulk export — demo placeholder','info')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">↓ Export CSV</button>
+      </div>
+    </div>
+    <div id="studentProfilesBody"></div>
+  </div>
+</div>
+
+<!-- Student Profile edit modal (form-style; independent of stuModal which is confirm-style) -->
+<div id="stuProfileModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.25)">
+    <div style="padding:18px 22px;border-bottom:1px solid #eef0f4;display:flex;align-items:center;justify-content:space-between">
+      <h3 id="stuProfileModalTitle" style="margin:0;font-size:16px;font-weight:800;color:#18181b">Edit accommodations</h3>
+      <button onclick="closeStudentProfileEdit()" style="background:none;border:none;font-size:22px;color:#71717a;cursor:pointer;line-height:1;padding:0">×</button>
+    </div>
+    <div id="stuProfileModalBody" style="padding:22px;overflow-y:auto;flex:1"></div>
+    <div style="padding:14px 22px;border-top:1px solid #eef0f4;display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeStudentProfileEdit()" style="background:#fff;color:#52525b;border:1px solid #e4e4e7;padding:9px 18px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">Cancel</button>
+      <button onclick="saveStudentProfileEdit()" style="background:#5b21b6;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Save accommodations</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PAGE: TCAP Student Test (Lv 2 · 9-phase state machine) =====================
+     Single container. State.phase drives which "view" renders inside.
+     Reuses ITEM_STUDENT_BUILDERS for actual question rendering.
+============================================================================ -->
+<div class="page-view" id="page-tcap-stu">
+  <div class="tcs-shell" id="tcsShell">
+    <header class="tcs-header" id="tcsHeader"></header>
+    <main  class="tcs-body"   id="tcsBody"></main>
+    <footer class="tcs-footer" id="tcsFooter"></footer>
+    <!-- overlays -->
+    <div class="tcs-overlay" id="tcsOverlay"></div>
+    <div class="tcs-modal-wrap" id="tcsModalWrap"></div>
+    <!-- Floating scratchpad notes (toggled from header). Mirrors real TCAP /
+         TestNav: a draggable note-taking window that persists across questions
+         within the subpart. Hidden by default; opened via tcsToggleNotepad(). -->
+    <aside class="tcs-notepad" id="tcsNotepad" aria-hidden="true">
+      <header class="tcs-notepad-head" id="tcsNotepadHead" onmousedown="tcsNotepadDragStart(event)">
+        <span class="tcs-notepad-title">📋 Notes</span>
+        <span class="tcs-notepad-saved" id="tcsNotepadSaved">Auto-saved</span>
+        <button class="tcs-notepad-close" onclick="tcsCloseNotepad()" title="Close (notes are saved)">✕</button>
+      </header>
+      <textarea class="tcs-notepad-body" id="tcsNotepadText" placeholder="Use this space to plan, outline, or jot down ideas. Your notes stay here as you move between questions in this subpart, and are erased when the subpart ends." oninput="tcsNotesInput(this.value)"></textarea>
+      <footer class="tcs-notepad-foot">
+        <button class="tcs-notepad-clear" onclick="tcsClearNotepad()">Clear</button>
+        <span class="tcs-notepad-count"><span id="tcsNotepadCount">0</span> chars</span>
+      </footer>
+    </aside>
+    <!-- Sources viewer (slide-in from left). Used by writing-prompt items
+         that include a source set — mimics TestNav's split source/essay view.
+         Hidden by default; opened via tcsToggleSources(). Contents are
+         rendered into #tcsSourcesBody by tcsRenderSources(). -->
+    <aside class="tcs-sources-panel" id="tcsSourcesPanel" aria-hidden="true">
+      <header class="tcs-sources-head">
+        <span class="tcs-sources-title" id="tcsSourcesTitle">📎 Sources</span>
+        <button class="tcs-sources-close" onclick="tcsCloseSources()" title="Close source viewer">✕</button>
+      </header>
+      <div class="tcs-sources-tabs" id="tcsSourcesTabs"></div>
+      <div class="tcs-sources-body" id="tcsSourcesBody"></div>
+      <footer class="tcs-sources-foot">Sources stay open while you write — read, then cite by number.</footer>
+    </aside>
+  </div>
+</div>
+
+<!-- ===================== FLOWS PAGE ===================== -->
+<div class="page-view" id="page-flows">
+  <div class="flows-page">
+    <div class="flows-header">
+      <div>
+        <h1 id="flowsPageTitle">Product Flows</h1>
+        <p id="flowsPageDesc">Review the current teacher, student, and release logic in one place. Edge-state previews live here instead of the dev panel.</p>
+      </div>
+      <div class="lang-toggle" id="flowsLangToggle">
+        <button class="active" data-lang="en" onclick="setFlowsLang('en')">EN</button>
+        <button data-lang="zh" onclick="setFlowsLang('zh')">CN</button>
+      </div>
+    </div>
+    <div class="flows-tabs" id="flowsTabs"></div>
+    <div class="flows-main">
+      <div class="flows-card">
+        <div class="flows-meta" id="flowsMeta"></div>
+        <h3 id="flowsTitle">Flow</h3>
+        <p id="flowsDesc"></p>
+        <div class="flow-click-hint" id="flowsHint">💡 Click any node to jump to that page.</div>
+        <div class="flow-diagram-wrap" id="flowsDiagram"></div>
+      </div>
+    </div>
+    <div class="flows-body" id="flowsBody" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ===================== ITEM TYPES LIBRARY ===================== -->
+<div class="page-view" id="page-item-types">
+  <div class="itl-shell" id="itlBody"></div>
+</div>
+
+<!-- ===================== ITEM TYPES — TEACHER EDIT WORKBENCH ===================== -->
+<div class="page-view" id="page-item-types-edit">
+  <div class="ite-wrap">
+    <header class="ite-topbar" id="iteTopbar"></header>
+    <div class="ite-body">
+      <aside class="ite-side" id="iteSide"></aside>
+      <main class="ite-main" id="iteMain"></main>
+      <aside class="ite-prop" id="iteProp"></aside>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ITEM TYPES — STUDENT TEST ===================== -->
+<div class="page-view" id="page-item-types-stu">
+  <header class="stu-exam-header">
+    <button class="stu-home-btn" onclick="exitItemTypesStu()" title="Exit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+    <div class="stu-exam-center">
+      <span class="stu-sec-label" id="itsSecLabel">Item Type Showcase</span>
+      <span class="stu-sec-info" id="itsSecInfo">Question 1 of 15</span>
+      <div class="stu-countdown"><span class="cd-part"><span class="cd-num">00</span><span class="cd-lbl">hr</span></span><span class="cd-sep">:</span><span class="cd-part"><span class="cd-num" id="itsMin">30</span><span class="cd-lbl">min</span></span><span class="cd-sep">:</span><span class="cd-part"><span class="cd-num" id="itsSec">00</span><span class="cd-lbl">sec</span></span></div>
+    </div>
+    <div style="width:60px;display:flex;justify-content:flex-end"><button onclick="openItemTypesEdit(itsCurrentType())" style="background:none;border:1px solid #d4d4d8;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;color:#52525b">✎ Editor view</button></div>
+  </header>
+  <div class="its-body">
+    <aside class="its-side" id="itsSide"></aside>
+    <main class="its-main" id="itsMain"></main>
+  </div>
+  <footer class="its-footer" id="itsFooter"></footer>
+</div>
+
+<!-- ===================== TAG INSIGHTS PAGE ===================== -->
+
+<div class="page-view" id="page-tag-insights">
+  <div class="ti-wrap" data-lang="en">
+    <!-- Header -->
+    <div class="ti-header">
+      <div class="ti-header-text">
+        <div class="ti-eyebrow">📊 <span class="lang-en">Analysis Report · Discovery Phase</span><span class="lang-cn">分析报告 · 发现期</span></div>
+        <div class="ti-h1"><span class="lang-en">Question Tag System · Current-State Analysis</span><span class="lang-cn">Question Tag 体系 · 现状分析可视化</span></div>
+        <div class="ti-sub">
+          <span class="lang-en">A data-driven health check on the Staging Core API full snapshot. Required reading before any cross-product question-tagging foundation goes live.</span>
+          <span class="lang-cn">基于 Staging Core API 全量快照的数据驱动体检。跨产品 question tagging 底座上线前的必读。</span>
+        </div>
+        <div class="ti-meta">
+          <span>📂 <span class="lang-en">Source:</span><span class="lang-cn">数据源：</span> <b>crawl_skills_info</b> + <b>crawl_standards_info</b></span>
+          <span>📅 <span class="lang-en">Snapshot:</span><span class="lang-cn">快照：</span> <b>2025</b></span>
+          <span>🔗 <span class="lang-en">Companion doc:</span><span class="lang-cn">配套文档：</span> <b>Question-Tag-Discovery-CN.md</b></span>
+        </div>
+      </div>
+      <div class="ti-lang-toggle" role="tablist" aria-label="Language toggle">
+        <button class="active" data-lang="en" onclick="setTagInsightsLang('en')">EN</button>
+        <button data-lang="cn" onclick="setTagInsightsLang('cn')">CN</button>
+      </div>
+    </div>
+
+    <!-- ═════════ KPI row ═════════ -->
+    <div class="ti-kpi-row">
+      <div class="ti-kpi">
+        <div class="label"><span class="lang-en">Total Standards</span><span class="lang-cn">Standards 总量</span></div>
+        <div class="num">196,753</div>
+        <div class="sub">
+          <span class="lang-en">US <b>192,688</b> · SV <b>4,065</b> · across <b>64</b> organizations</span>
+          <span class="lang-cn">US <b>192,688</b> · SV <b>4,065</b> · 覆盖 <b>64</b> 个 organization</span>
+        </div>
+      </div>
+      <div class="ti-kpi">
+        <div class="label"><span class="lang-en">Total Skills</span><span class="lang-cn">Skills 总量</span></div>
+        <div class="num">411,079</div>
+        <div class="sub">
+          <span class="lang-en"><b>3.5</b> per standard avg · text-level dedupe gain only <b>1.7%</b></span>
+          <span class="lang-cn">平均每 standard 挂 <b>3.5</b> 个 · 文本层可去重率仅 <b>1.7%</b></span>
+        </div>
+      </div>
+      <div class="ti-kpi">
+        <div class="label"><span class="lang-en">Subject strings</span><span class="lang-cn">Subject 字符串</span></div>
+        <div class="num">80</div>
+        <div class="sub">
+          <span class="lang-en">Reduces to <b>9</b> subject groups · ELA alone has <b>24</b> spellings</span>
+          <span class="lang-cn">归约后实际 <b>9</b> 学科群 · ELA <b>24 种</b>写法</span>
+        </div>
+      </div>
+      <div class="ti-kpi">
+        <div class="label"><span class="lang-en">Tree-depth-0 ratio</span><span class="lang-cn">树深度 0 占比</span></div>
+        <div class="num" style="color:#ef4444">99.3%</div>
+        <div class="sub">
+          <span class="lang-en">Tree is essentially flat · only <b>1,392</b> rows have a parent</span>
+          <span class="lang-cn">标准树几乎完全扁平 · 仅 <b>1,392</b> 条有 parent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ 1. 学科群分布 + 2. Subject 碎片化 ═════════ -->
+    <div class="ti-row-2">
+      <!-- Chart 1: Standards by Subject Group -->
+      <div class="ti-card">
+        <div class="ti-card-title">📚 <span class="lang-en">Standards by Subject Group</span><span class="lang-cn">Standards 按学科群分布</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">Four main subjects (ELA / Math / Social Studies / Science) account for 96.5%; the long-tail subjects together are under 5%.</span>
+          <span class="lang-cn">4 大主科（ELA / Math / Social Studies / Science）占 96.5%，长尾学科合计不到 5%。</span>
+        </div>
+        <div>
+          <!-- SUBJECT_GROUPS: 总标准数 -->
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">ELA / Literacy</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:100%;background:linear-gradient(90deg,#6040ca,#8b5cf6)">55,471</div></div>
+            <div class="ti-hbar-value">28.2%</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Math</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:91.2%;background:linear-gradient(90deg,#6040ca,#8b5cf6)">50,582</div></div>
+            <div class="ti-hbar-value">25.7%</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Social Studies</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:79.6%;background:linear-gradient(90deg,#6040ca,#8b5cf6)">44,165</div></div>
+            <div class="ti-hbar-value">22.4%</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Science</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:71.5%;background:linear-gradient(90deg,#6040ca,#8b5cf6)">39,649</div></div>
+            <div class="ti-hbar-value">20.2%</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Foreign Language</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:4%;background:#c4b5fd">2,211</div></div>
+            <div class="ti-hbar-value">1.1%</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">CTE / Vocational</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:4%;background:#c4b5fd">2,191</div></div>
+            <div class="ti-hbar-value">1.1%</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Other</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:3.6%;background:#d4d4d8"></div></div>
+            <div class="ti-hbar-value">1,978</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">AP Courses</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:1%;background:#d4d4d8"></div></div>
+            <div class="ti-hbar-value">471</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Technology</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:0.5%;background:#d4d4d8"></div></div>
+            <div class="ti-hbar-value">35</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart 2: Subject naming fragmentation -->
+      <div class="ti-card">
+        <div class="ti-card-title">🔀 <span class="lang-en">Subject naming fragmentation</span><span class="lang-cn">Subject 命名碎片化</span> <span class="ti-card-tag ti-tag-p0">P0</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">The same subject is spelled multiple ways. Each █ represents one distinct subject string.</span>
+          <span class="lang-cn">同一学科被写成多个字符串。每个 █ 代表 1 个独立 subject 写法。</span>
+        </div>
+        <div>
+          <div class="ti-frag-row">
+            <div class="ti-frag-label">ELA / Literacy</div>
+            <div class="ti-frag-count"><span class="num">24</span>
+              <div class="ti-frag-dots">
+                <i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i><i style="background:#6040ca"></i>
+              </div>
+            </div>
+            <div style="color:#ef4444;font-size:11px;font-weight:600">🔴 <span class="lang-en">Most severe</span><span class="lang-cn">最严重</span></div>
+          </div>
+          <div class="ti-frag-row">
+            <div class="ti-frag-label">Science</div>
+            <div class="ti-frag-count"><span class="num">22</span>
+              <div class="ti-frag-dots">
+                <i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i><i style="background:#8b5cf6"></i>
+              </div>
+            </div>
+            <div style="color:#ef4444;font-size:11px;font-weight:600">🔴 <span class="lang-en">Severe</span><span class="lang-cn">严重</span></div>
+          </div>
+          <div class="ti-frag-row">
+            <div class="ti-frag-label">Math</div>
+            <div class="ti-frag-count"><span class="num">10</span>
+              <div class="ti-frag-dots">
+                <i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i><i style="background:#a78bfa"></i>
+              </div>
+            </div>
+            <div style="color:#f59e0b;font-size:11px;font-weight:600">🟠 <span class="lang-en">Needs cleanup</span><span class="lang-cn">需治理</span></div>
+          </div>
+          <div class="ti-frag-row">
+            <div class="ti-frag-label">Social Studies</div>
+            <div class="ti-frag-count"><span class="num">10</span>
+              <div class="ti-frag-dots">
+                <i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i><i style="background:#c4b5fd"></i>
+              </div>
+            </div>
+            <div style="color:#f59e0b;font-size:11px;font-weight:600">🟠 <span class="lang-en">Needs cleanup</span><span class="lang-cn">需治理</span></div>
+          </div>
+          <div class="ti-frag-row">
+            <div class="ti-frag-label">CTE</div>
+            <div class="ti-frag-count"><span class="num">6</span>
+              <div class="ti-frag-dots">
+                <i style="background:#ddd6fe"></i><i style="background:#ddd6fe"></i><i style="background:#ddd6fe"></i><i style="background:#ddd6fe"></i><i style="background:#ddd6fe"></i><i style="background:#ddd6fe"></i>
+              </div>
+            </div>
+            <div style="color:#71717a;font-size:11px">🟡 <span class="lang-en">Fixable later</span><span class="lang-cn">可迭代</span></div>
+          </div>
+        </div>
+        <div class="ti-callout ti-callout-info">
+          <span class="lang-en"><b>Smoking gun:</b> Two subject strings hide a <em>double space</em> — <code style="background:rgba(59,130,246,.1);padding:1px 4px;border-radius:3px">"Reading&nbsp;&nbsp;& Writing for Science..."</code> will be missed by exact-string matches.</span>
+          <span class="lang-cn"><b>实锤案例：</b>有两处 subject 字符串藏了"双空格"——<code style="background:rgba(59,130,246,.1);padding:1px 4px;border-radius:3px">"Reading&nbsp;&nbsp;& Writing for Science..."</code> 精确字符串匹配会漏。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ 3. Grade 分布 ═════════ -->
+    <div class="ti-row-full">
+      <div class="ti-card">
+        <div class="ti-card-title">🎓 <span class="lang-en">Grade distribution (standards count after grade-expansion)</span><span class="lang-cn">Grade 分布（按年级展开后的 standard 数）</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">Grades 9-12 are inflated because state high-school standards are typically stored as the whole grade band <code style="background:#f4f4f5;padding:1px 4px;border-radius:3px;font-size:11px">[9,12]</code> — cannot be used as a "filter by exact grade" signal.</span>
+          <span class="lang-cn">9-12 的虚高来自"州高中标准普遍用 <code style="background:#f4f4f5;padding:1px 4px;border-radius:3px;font-size:11px">[9,12]</code> 作为整段 grade band 存储"——不可直接用作"按年级精准筛题"。</span>
+        </div>
+        <div class="ti-vbar">
+          <div class="ti-vbar-col"><span class="val">13,557</span><div class="bar" style="height:20%;background:#a78bfa"></div></div>
+          <div class="ti-vbar-col"><span class="val">11,405</span><div class="bar" style="height:17%;background:#a78bfa"></div></div>
+          <div class="ti-vbar-col"><span class="val">11,953</span><div class="bar" style="height:18%;background:#a78bfa"></div></div>
+          <div class="ti-vbar-col"><span class="val">14,366</span><div class="bar" style="height:21%;background:#a78bfa"></div></div>
+          <div class="ti-vbar-col"><span class="val">14,482</span><div class="bar" style="height:21%;background:#a78bfa"></div></div>
+          <div class="ti-vbar-col"><span class="val">14,656</span><div class="bar" style="height:21%;background:#a78bfa"></div></div>
+          <div class="ti-vbar-col"><span class="val">18,781</span><div class="bar" style="height:28%;background:#8b5cf6"></div></div>
+          <div class="ti-vbar-col"><span class="val">19,176</span><div class="bar" style="height:28%;background:#8b5cf6"></div></div>
+          <div class="ti-vbar-col"><span class="val">19,823</span><div class="bar" style="height:29%;background:#8b5cf6"></div></div>
+          <div class="ti-vbar-col"><span class="val">68,221</span><div class="bar" style="height:100%;background:#6040ca"></div></div>
+          <div class="ti-vbar-col"><span class="val">67,170</span><div class="bar" style="height:98%;background:#6040ca"></div></div>
+          <div class="ti-vbar-col"><span class="val">66,570</span><div class="bar" style="height:97%;background:#6040ca"></div></div>
+          <div class="ti-vbar-col"><span class="val">65,709</span><div class="bar" style="height:96%;background:#6040ca"></div></div>
+          <div class="ti-vbar-col"><span class="val">1,746</span><div class="bar" style="height:3%;background:#d4d4d8"></div></div>
+          <div class="ti-vbar-col"><span class="val">1,174</span><div class="bar" style="height:2%;background:#d4d4d8"></div></div>
+          <div class="ti-vbar-col" style="position:relative"><span class="val" style="opacity:1;color:#ef4444;top:-22px"><span class="lang-en">Grade 34 · 1 row<br>⚠️ Bad data</span><span class="lang-cn">Grade 34 · 1 条<br>⚠️ 脏数据</span></span><div class="bar" style="height:1%;background:#ef4444;min-height:2px"></div></div>
+        </div>
+        <div class="ti-vbar-xlabels">
+          <span>K</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span style="color:#6040ca;font-weight:700">9</span><span style="color:#6040ca;font-weight:700">10</span><span style="color:#6040ca;font-weight:700">11</span><span style="color:#6040ca;font-weight:700">12</span><span style="color:#71717a">13</span><span style="color:#71717a">14</span><span style="color:#ef4444">34⚠</span>
+        </div>
+        <div class="ti-callout ti-callout-warn">
+          <span class="lang-en"><b>Bad-data offenders:</b> Grade 34 · 1 row (a grade that doesn't exist); Grades 13/14 total 2,920 rows (college level? or data-entry error? needs confirmation).</span>
+          <span class="lang-cn"><b>脏数据点名：</b>Grade 34 · 1 条（根本不存在的年级）；Grade 13/14 合计 2,920 条（大学级？还是录入错误？需确认）。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ 4. Subconcept 覆盖率 + 5. 树深度 ═════════ -->
+    <div class="ti-row-2">
+      <!-- Chart 4: Subconcept coverage -->
+      <div class="ti-card">
+        <div class="ti-card-title">🧩 <span class="lang-en">Subconcept coverage by subject</span><span class="lang-cn">Subconcept 覆盖率分学科</span> <span class="ti-card-tag ti-tag-p1">P1</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">The more test-critical the subject, the emptier its second-level taxonomy — AP / Technology are <b style="color:#ef4444">100% empty</b>.</span>
+          <span class="lang-cn">越是应试刚需的学科，二级分类越空——AP / Technology <b style="color:#ef4444">全部为 0%</b>。</span>
+        </div>
+        <div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Foreign Language</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:99.5%;background:#10b981">99.5%</div></div>
+            <div class="ti-hbar-value">✓</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">CTE / Vocational</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:96.1%;background:#10b981">96.1%</div></div>
+            <div class="ti-hbar-value">✓</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">ELA / Literacy</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:78.7%;background:#22c55e">78.7%</div></div>
+            <div class="ti-hbar-value">✓</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Math</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:39.1%;background:#f59e0b">39.1%</div></div>
+            <div class="ti-hbar-value">⚠️</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Science</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:34.2%;background:#f59e0b">34.2%</div></div>
+            <div class="ti-hbar-value">⚠️</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Social Studies</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:31.1%;background:#f59e0b">31.1%</div></div>
+            <div class="ti-hbar-value">⚠️</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">AP Courses</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:2%;background:#ef4444;padding:0 6px">0.0%</div></div>
+            <div class="ti-hbar-value" style="color:#ef4444">🔴</div>
+          </div>
+          <div class="ti-hbar-row">
+            <div class="ti-hbar-label">Technology</div>
+            <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:2%;background:#ef4444;padding:0 6px">0.0%</div></div>
+            <div class="ti-hbar-value" style="color:#ef4444">🔴</div>
+          </div>
+        </div>
+        <div class="ti-callout">
+          <span class="lang-en"><b>Takeaway:</b> Fine-grained item assembly / learning analytics on Math / Science / SS / AP <b>cannot be done today</b> — the AP 100% empty figure suggests the ingest pipeline never captured unit structure.</span>
+          <span class="lang-cn"><b>洞察：</b>细粒度组卷 / 学情分析在 Math / Science / SS / AP 上<b>现阶段做不成</b>——推测 AP 课程 100% 空是因入库流水线没抓 unit 结构。</span>
+        </div>
+      </div>
+
+      <!-- Chart 5: Standards tree depth donut -->
+      <div class="ti-card">
+        <div class="ti-card-title">🌳 <span class="lang-en">Standards tree depth</span><span class="lang-cn">Standards 树深度</span> <span class="ti-card-tag ti-tag-p1">P1</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">The schema has a <code style="background:#f4f4f5;padding:1px 4px;border-radius:3px;font-size:11px">parent_id</code> field, but 99.3% of standards don't use it — the "tree" is a fake tree.</span>
+          <span class="lang-cn">虽然 schema 有 <code style="background:#f4f4f5;padding:1px 4px;border-radius:3px;font-size:11px">parent_id</code> 字段，99.3% 的标准未使用——标准树是"伪树"。</span>
+        </div>
+        <div class="ti-donut-wrap">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="62" fill="none" stroke="#f4f4f5" stroke-width="22"/>
+            <circle cx="80" cy="80" r="62" fill="none" stroke="#6040ca" stroke-width="22"
+              stroke-dasharray="386.6 389.5" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="62" fill="none" stroke="#a78bfa" stroke-width="22"
+              stroke-dasharray="0.86 389.5" stroke-dashoffset="-386.6" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="62" fill="none" stroke="#ef4444" stroke-width="22"
+              stroke-dasharray="1.89 389.5" stroke-dashoffset="-387.5" transform="rotate(-90 80 80)"/>
+            <text x="80" y="78" text-anchor="middle" font-size="22" font-weight="800" fill="#18181b">99.3%</text>
+            <text x="80" y="96" text-anchor="middle" font-size="10" fill="#71717a"><tspan class="lang-en">fully flat</tspan><tspan class="lang-cn">完全扁平</tspan></text>
+          </svg>
+          <div class="ti-donut-legend">
+            <div class="ti-donut-leg-item">
+              <span class="ti-donut-dot" style="background:#6040ca"></span>
+              <span class="ti-donut-leg-label"><span class="lang-en">depth 0 (no parent)</span><span class="lang-cn">depth 0（无 parent）</span></span>
+              <span class="ti-donut-leg-val">195,361</span>
+            </div>
+            <div class="ti-donut-leg-item">
+              <span class="ti-donut-dot" style="background:#a78bfa"></span>
+              <span class="ti-donut-leg-label">depth 1</span>
+              <span class="ti-donut-leg-val">435</span>
+            </div>
+            <div class="ti-donut-leg-item">
+              <span class="ti-donut-dot" style="background:#ef4444"></span>
+              <span class="ti-donut-leg-label">depth 2</span>
+              <span class="ti-donut-leg-val">957</span>
+            </div>
+            <div style="padding:10px 0 0;border-top:1px solid #f4f4f5;margin-top:4px;font-size:11px;color:#71717a;line-height:1.5">
+              <span class="lang-en"><b style="color:#18181b">What this means:</b> Any "drill into knowledge area" interaction is impossible. AI Tutor's prerequisite chain has to be built at the skill layer — <b>cannot rely on the standard tree</b>.</span>
+              <span class="lang-cn"><b style="color:#18181b">含义：</b>任何"按知识领域钻取"的交互做不了，AI Tutor 的 prerequisite 链要靠 skill 层级构建，<b>不能依赖现有 standard 树</b>。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ 6. Skills per standard 分布 ═════════ -->
+    <div class="ti-row-full">
+      <div class="ti-card">
+        <div class="ti-card-title">🔬 <span class="lang-en">Skills-per-standard distribution</span><span class="lang-cn">每 Standard 挂 Skill 数量分布</span> <span class="ti-card-tag ti-tag-p1">P1</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">Real-world knowledge decomposition is rarely this regular — <b style="color:#ef4444">52.5% land on exactly 3 + 41.1% land on exactly 4 = 93.6%</b>. This is the human signature of an upstream "force 3-4 skills per standard" pipeline.</span>
+          <span class="lang-cn">真实的知识点分解很难如此规整——<b style="color:#ef4444">52.5% 恰好 3 个 + 41.1% 恰好 4 个 = 93.6%</b>。这是上游"每条 standard 强制产 3-4 个 skill"生产流程的人工痕迹。</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 280px;gap:28px;align-items:center">
+          <div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">0 <span class="ti-hbar-note">(<span class="lang-en">no skill</span><span class="lang-cn">无 skill</span>)</span></div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:5.6%;background:#a1a1aa">5,604</div></div>
+              <div class="ti-hbar-value">2.8%</div>
+            </div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">2</div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:2.4%;background:#c4b5fd">2,387</div></div>
+              <div class="ti-hbar-value">1.3%</div>
+            </div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">🔴 <b style="color:#ef4444">3</b></div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:100%;background:linear-gradient(90deg,#ef4444,#f97316)">99,162 ← <span class="lang-en">heavy human-pipeline signature</span><span class="lang-cn">高度人工痕迹</span></div></div>
+              <div class="ti-hbar-value" style="color:#ef4444">52.5%</div>
+            </div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">🟠 <b style="color:#f59e0b">4</b></div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:78.2%;background:linear-gradient(90deg,#f59e0b,#fbbf24)">77,577</div></div>
+              <div class="ti-hbar-value" style="color:#f59e0b">41.1%</div>
+            </div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">5</div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:5.3%;background:#c4b5fd">5,224</div></div>
+              <div class="ti-hbar-value">2.8%</div>
+            </div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">6-10</div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:4.5%;background:#c4b5fd">4,450</div></div>
+              <div class="ti-hbar-value">2.4%</div>
+            </div>
+            <div class="ti-hbar-row">
+              <div class="ti-hbar-label">11+</div>
+              <div class="ti-hbar-track"><div class="ti-hbar-fill" style="width:1%;background:#d4d4d8">38</div></div>
+              <div class="ti-hbar-value">0.0%</div>
+            </div>
+          </div>
+          <div style="padding:16px;background:#fef2f2;border-radius:10px;border:1px solid #fecaca">
+            <div style="font-size:11px;color:#b91c1c;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Smoking Gun</div>
+            <div style="font-size:12.5px;color:#7f1d1d;line-height:1.6">
+              <span class="lang-en">A natural distribution should be <b>long-tailed</b> — some standards have 1-2 skills, others 5-10.<br><br>The current <b style="color:#991b1b">"93.6% stuck at 3-4"</b> means skill splits are bound by an upstream rule — <b>over-bundled where they should be split, under-merged where they should consolidate</b>.<br><br>→ Skill anchoring will be unstable in AI tagging.</span>
+              <span class="lang-cn">自然的知识点分布应该是<b>长尾</b>（部分 standard 1-2 个 skill，部分 5-10 个）。<br><br>现状下<b style="color:#991b1b">"93.6% 卡在 3-4 个"</b>说明 skill 拆分被上游规则约束，<b>该拆细的没拆细，该并的没并</b>。<br><br>→ AI 打标时 skill 锚定不稳。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ 7. 标签能力矩阵 ═════════ -->
+    <div class="ti-row-full">
+      <div class="ti-card">
+        <div class="ti-card-title">📋 <span class="lang-en">Tag capability coverage matrix · 4-layer model</span><span class="lang-cn">标签能力覆盖矩阵 · 4 层模型</span></div>
+        <div class="ti-card-sub">
+          <span class="lang-en">Benchmarked against industry L1-L4 tag models (1EdTech CASE / QTI, Khan / IXL / NWEA MAP). Existing assets cover only L2.</span>
+          <span class="lang-cn">对标业界（1EdTech CASE / QTI、Khan / IXL / NWEA MAP）的 L1-L4 标签模型。现有资产只覆盖 L2 一层。</span>
+        </div>
+
+        <div class="ti-cap-grid">
+          <!-- L1 Curriculum Context -->
+          <div class="ti-cap-section">
+            <div class="ti-cap-section-head">
+              <span>L1 · Curriculum Context<span class="lang-cn">（课程语境）</span></span>
+              <span class="ti-cap-section-meta"><span class="lang-en">Mostly complete</span><span class="lang-cn">基本齐全</span></span>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Country / Subject / Organization / Grade<small><span class="lang-en">Base curriculum-context fields</span><span class="lang-cn">课程语境基础字段</span></small></div>
+              <span class="ti-cap-status ti-cap-partial">⚠️ <span class="lang-en">Partial</span><span class="lang-cn">部分</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Subject fragmented · Grade band coarse</span><span class="lang-cn">Subject 碎片化、Grade band 粗</span></div>
+            </div>
+          </div>
+          <!-- L2 Content Alignment -->
+          <div class="ti-cap-section">
+            <div class="ti-cap-section-head">
+              <span>L2 · Content Alignment<span class="lang-cn">（内容对齐）</span></span>
+              <span class="ti-cap-section-meta">✓ <span class="lang-en">Where most assets sit</span><span class="lang-cn">主要资产所在层</span></span>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Standard alignment<small><span class="lang-en">Which standard does this item align to</span><span class="lang-cn">question 对齐到哪条课标</span></small></div>
+              <span class="ti-cap-status ti-cap-have">✓ <span class="lang-en">Have</span><span class="lang-cn">有</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Alignment reports</span><span class="lang-cn">对齐报告</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Skill tagging<small><span class="lang-en">Which specific skill</span><span class="lang-cn">具体到哪个 skill</span></small></div>
+              <span class="ti-cap-status ti-cap-have">✓ <span class="lang-en">Have</span><span class="lang-cn">有</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Learning analytics · AI Tutor</span><span class="lang-cn">学情分析、AI Tutor</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Alignment Type (assesses/teaches/requires)<small><span class="lang-en">LRMI three-way classification</span><span class="lang-cn">LRMI 三分类</span></small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">AI Tutor precision feedback</span><span class="lang-cn">AI Tutor 精准反馈</span></div>
+            </div>
+          </div>
+          <!-- L3 Cognitive Profile -->
+          <div class="ti-cap-section">
+            <div class="ti-cap-section-head">
+              <span>L3 · Cognitive Profile<span class="lang-cn">（认知画像）</span></span>
+              <span class="ti-cap-section-meta" style="color:#b91c1c">🔴 <span class="lang-en">Entirely missing</span><span class="lang-cn">全部缺失</span></span>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Difficulty<small>Easy/Medium/Hard · IRT · RIT</small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Auto-assembly · personalization</span><span class="lang-cn">自动组卷、个性化</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim"><span class="lang-en">Bloom cognitive level</span><span class="lang-cn">Bloom 认知层级</span><small>Remember → Create</small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Item-set coverage distribution</span><span class="lang-cn">组卷覆盖分布</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim"><span class="lang-en">DOK depth</span><span class="lang-cn">DOK 深度层级</span><small>Webb's Depth of Knowledge</small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Alignment reports</span><span class="lang-cn">对齐报告</span></div>
+            </div>
+          </div>
+          <!-- L4 Assessment Context -->
+          <div class="ti-cap-section">
+            <div class="ti-cap-section-head">
+              <span>L4 · Assessment Context<span class="lang-cn">（评测语境）</span></span>
+              <span class="ti-cap-section-meta" style="color:#b91c1c">🔴 <span class="lang-en">Mostly missing</span><span class="lang-cn">绝大部分缺失</span></span>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Item Type<small>MC / SA / FIB / ESSAY...</small></div>
+              <span class="ti-cap-status ti-cap-partial">⚠️ <span class="lang-en">Per-product</span><span class="lang-cn">各产品各自</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Search / filter · item assembly</span><span class="lang-cn">搜索/筛选、组卷</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim"><span class="lang-en">ACT / SAT blueprint mapping</span><span class="lang-cn">ACT / SAT 蓝图映射</span><small>College Readiness Standards</small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Test-prep assembly</span><span class="lang-cn">备考组卷</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim"><span class="lang-en">STAAR / TCAP mapping</span><span class="lang-cn">STAAR / TCAP 映射</span><small>TEKS / TN Standards</small></div>
+              <span class="ti-cap-status ti-cap-partial">⚠️ <span class="lang-en">Implicit</span><span class="lang-cn">隐式</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Alignment reports</span><span class="lang-cn">对齐报告</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim"><span class="lang-en">MAP RIT mapping</span><span class="lang-cn">MAP RIT 映射</span><small>NWEA Learning Continuum</small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Personalized item recommendation</span><span class="lang-cn">个性化推题</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim">Skill Prerequisite Graph<small><span class="lang-en">Khan / IXL core mechanism</span><span class="lang-cn">Khan / IXL 核心机制</span></small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">AI Tutor pre-diagnosis</span><span class="lang-cn">AI Tutor 前置诊断</span></div>
+            </div>
+            <div class="ti-cap-row">
+              <div class="ti-cap-dim"><span class="lang-en">AI tagging metadata</span><span class="lang-cn">AI 打标元数据</span><small><span class="lang-en">confidence / review state / model version</span><span class="lang-cn">confidence / 审核状态 / 模型版本</span></small></div>
+              <span class="ti-cap-status ti-cap-missing">❌ <span class="lang-en">Missing</span><span class="lang-cn">无</span></span>
+              <div class="ti-cap-use"><span class="lang-en">Data governance loop</span><span class="lang-cn">数据治理闭环</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ 8. 风险矩阵 ═════════ -->
+    <div class="ti-row-full">
+      <div class="ti-card">
+        <div class="ti-card-title">⚠️ 风险评级 · 按 AI Pipeline 拖累度排序</div>
+        <div class="ti-card-sub">⭐ 数 = 治理难度。P0 问题如果不解决，AI 打标准确率会被上游脏数据直接拉到 70% 以下。</div>
+        <table class="ti-risk-table">
+          <thead>
+            <tr>
+              <th style="width:62px">级别</th>
+              <th>问题</th>
+              <th>对 AI Pipeline 的拖累点</th>
+              <th style="width:110px">治理难度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="ti-risk-sev ti-cap-missing">🔴 P0</span></td>
+              <td><div class="ti-risk-name">Subject 命名碎片化<small>80 种写法，ELA 独占 24 种</small></div></td>
+              <td>Subject 过滤器不可信，AI 候选召回漏题</td>
+              <td><span class="ti-risk-stars">⭐⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev ti-cap-missing">🔴 P0</span></td>
+              <td><div class="ti-risk-name">认知维度（Bloom / DOK / 难度）缺失<small>L3 层 100% 空</small></div></td>
+              <td>完全无法冷启动，需 LLM 从题面推断</td>
+              <td><span class="ti-risk-stars">⭐⭐⭐⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev ti-cap-partial">🟠 P1</span></td>
+              <td><div class="ti-risk-name">Subconcept 在 Math/Science/SS 覆盖率 &lt; 40%<small>AP 课程 0%</small></div></td>
+              <td>细粒度组卷与学情分析做不成</td>
+              <td><span class="ti-risk-stars">⭐⭐⭐⭐⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev ti-cap-partial">🟠 P1</span></td>
+              <td><div class="ti-risk-name">Standard 树 99.3% 扁平<small>parent_id 字段几乎未用</small></div></td>
+              <td>"按领域钻取"做不了，只能平铺</td>
+              <td><span class="ti-risk-stars">⭐⭐⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev ti-cap-partial">🟠 P1</span></td>
+              <td><div class="ti-risk-name">Skill 语义冗余<small>文本去重只能压 1.7%</small></div></td>
+              <td>AI 打标会选多个相似 skill，对齐报告重复计数</td>
+              <td><span class="ti-risk-stars">⭐⭐⭐⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev ti-cap-partial">🟠 P1</span></td>
+              <td><div class="ti-risk-name">99k 条 standard 恰好 3 skill<small>人工流水线约束</small></div></td>
+              <td>Skill 粒度不一致，AI 锚定不稳</td>
+              <td><span class="ti-risk-stars">⭐⭐⭐⭐⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev" style="background:#fefce8;color:#854d0e">🟡 P2</span></td>
+              <td><div class="ti-risk-name">Standard code 撞号<small>"1.1" 在 25 个框架中出现 68 次</small></div></td>
+              <td>仅影响传 code 不传 id 的调用方</td>
+              <td><span class="ti-risk-stars">⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev" style="background:#fefce8;color:#854d0e">🟡 P2</span></td>
+              <td><div class="ti-risk-name">Grade 13/14/34 脏数据<small>2,921 条</small></div></td>
+              <td>仅影响面窄</td>
+              <td><span class="ti-risk-stars">⭐</span></td>
+            </tr>
+            <tr>
+              <td><span class="ti-risk-sev" style="background:#fefce8;color:#854d0e">🟡 P2</span></td>
+              <td><div class="ti-risk-name">双空格 subject 字符串<small>2 条</small></div></td>
+              <td>精确字符串匹配会漏</td>
+              <td><span class="ti-risk-stars">⭐</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═════════ 9. Cheat sheet ═════════ -->
+    <div class="ti-row-full">
+      <div class="ti-cheatsheet">
+        <h3>📇 一分钟速查卡</h3>
+        <div class="ti-cheat-grid">
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Standards</span><span class="ti-cheat-v">196,753</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Skills</span><span class="ti-cheat-v">411,079</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Unique codes</span><span class="ti-cheat-v">128,493 · 重复 18,230</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Organizations</span><span class="ti-cheat-v">64 · Top10 占 32.2%</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Subjects</span><span class="ti-cheat-v">80 → 归约 9 群</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Subject 碎片化</span><span class="ti-cheat-v">ELA 24 / Sci 22 / Math 10</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">树深度</span><span class="ti-cheat-v">99.3% 扁平</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Subconcept 空率</span><span class="ti-cheat-v">50.8% · AP 100%</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">Skill 文本去重率</span><span class="ti-cheat-v">仅 1.7%</span></div>
+          <div class="ti-cheat-item"><span class="ti-cheat-k">缺失维度</span><span class="ti-cheat-v">难度 / Bloom / DOK / 题型 / ACT / SAT / MAP / prerequisite</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer / next steps -->
+    <div style="margin-top:24px;padding:20px 24px;background:#fff;border:1px dashed #d4d4d8;border-radius:12px;font-size:12.5px;color:#52525b;line-height:1.6">
+      <b style="color:#18181b;font-size:13px">📌 下一步建议</b>
+      <ul style="margin:10px 0 0 0;padding-left:20px">
+        <li>用本页内容 + <code style="background:#f4f4f5;padding:1px 5px;border-radius:3px">Question-Tag-Discovery-CN.md</code> 跟 Content / AI / Product 三方对齐。</li>
+        <li>启动最小治理批次：Subject 归约 + 脏数据清洗（1-2 周），让 AI 打标输入质量立即提升。</li>
+        <li>在 Literacy Studio 或 Grader 单一产品上跑 AI 打标 MVP，验证 4 层模型。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOOLBAR ===================== -->
+<div class="proto-toolbar" id="viewSwitcher">
+  <div class="toolbar-collapsed-icon hidden" id="toolbarCollapsedIcon">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+  </div>
+  <button class="toolbar-icon-btn" onclick="toggleToolbarCollapse()" id="toolbarCollapseBtn" title="Collapse toolbar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="toolbarCollapseIcon"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="toolbar-icon-btn toolbar-drag" id="dragHandle" title="Drag toolbar">⠿</div>
+  <div class="toolbar-content" id="toolbarContent" style="max-width:1120px;opacity:1">
+    <div class="toolbar-role-tabs">
+      <button class="toolbar-role-btn active" id="roleTeacher" onclick="switchRole('teacher')">Teacher</button>
+      <button class="toolbar-role-btn" id="roleStudent" onclick="switchRole('student')">Student</button>
+    </div>
+    <div class="toolbar-page-nav" id="viewPages"></div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-labs" aria-label="Prototype labs">
+      <button class="toolbar-lab-btn primary" onclick="openFlowsPage()" title="Product flows"><span class="ico">⌘</span><span>Flows</span></button>
+      <button class="toolbar-lab-btn" onclick="openTagInsightsPage()" title="Tag Insights dashboard"><span class="ico">↗</span><span>Tags</span></button>
+      <button class="toolbar-lab-btn" onclick="openItemTypesLibrary('all')" title="Item Types library"><span class="ico">◫</span><span>Items</span><span class="toolbar-count" id="toolbarItemTypesCount">14</span></button>
+    </div>
+    <button class="toolbar-dev-btn" onclick="document.getElementById('devPanel').classList.toggle('open')" title="Dev quick jump">⚡</button>
+  </div>
+</div>
+<div class="toolbar-subs-pop" id="toolbarSubsPop"></div>
+<div class="dev-sw"><div class="dev-sw-panel" id="devPanel">
+  <div class="sep">Teacher</div>
+  <button onclick="switchRole('teacher',true);nav('homepage')">T-0 🏠 Homepage</button>
+  <button onclick="switchRole('teacher',true);loadSessionDetail('sess-act-1')">T-1 📡 Assignment Monitor</button>
+  <button onclick="switchRole('teacher',true);nav('generic')">T-3 📄 Assessment Editor</button>
+  <button onclick="switchRole('teacher',true);nav('new-edit')">T-3B 🧪 New Edit Concept</button>
+  <button onclick="switchRole('teacher',true);nav('act')">T-4 📝 Open ACT Template</button>
+  <button onclick="switchRole('teacher',true);nav('sat')">T-5 📘 Open SAT Template</button>
+  <div class="sep">TCAP · Tennessee</div>
+  <button onclick="switchRole('teacher',true);openAssessmentDetail('sess-tcap-1')">TN-0 🏛 TCAP Test Hub</button>
+  <button onclick="switchRole('teacher',true);openTcapEdit('sess-tcap-1')">TN-1 ✎ TCAP Editor · ELA G5 (4 SP)</button>
+  <button onclick="switchRole('teacher',true);openTcapEdit('sess-tcap-math-g5')">TN-1a ✎ TCAP Editor · Math G5 (3 SP)</button>
+  <button onclick="switchRole('teacher',true);openTcapEdit('sess-tcap-sci-g3')">TN-1b ✎ TCAP Editor · Science G3 (1 SP)</button>
+  <button onclick="switchRole('teacher',true);openTcapEdit('sess-tcap-sci-g7')">TN-1c ✎ TCAP Editor · Science G7 (2 SP)</button>
+  <button onclick="switchRole('teacher',true);openTcapEdit('sess-tcap-ss-g7')">TN-1d ✎ TCAP Editor · Social Studies G7 (2 SP)</button>
+  <button onclick="switchRole('teacher',true);loadSessionDetail('sess-tcap-1','analytics')">TN-2 🎯 TCAP Analytics</button>
+  <button onclick="switchRole('student',true);nav('tcap-diag-report')">TN-3 📈 Student Diagnostic Report</button>
+  <button onclick="switchRole('teacher',true);nav('tcap-config')">TN-4 ⚙️ Cut Score Config</button>
+  <div class="sep">Student · ACT / SAT</div>
+  <button onclick="switchRole('student',true);openStudentLaunch('sess-generic-1', false)">S-0 🚀 Launch</button>
+  <button onclick="switchRole('student',true);nav('stu-ready')">S-1 ✅ Ready Check</button>
+  <button onclick="switchRole('student',true);nav('stu-generic')">S-2 📄 Generic Test</button>
+  <button onclick="switchRole('student',true);nav('stu-act')">S-3 📝 ACT Test</button>
+  <button onclick="stuActOpenWithExt(1.2,'IEP','Daniela R.')">S-3a ⏱ ACT · Extended +20% (IEP)</button>
+  <button onclick="stuActOpenWithExt(1.5,'504','Jamila B.')">S-3b ⏱ ACT · Extended +50% (504)</button>
+  <button onclick="switchRole('student',true);nav('stu-sat')">S-4 📘 SAT Test</button>
+  <button onclick="switchRole('student',true);openStudentReport('act')">S-5 📊 ACT Report</button>
+  <button onclick="switchRole('student',true);openStudentReport('sat')">S-6 📈 SAT Report</button>
+  <div class="sep">Student · TCAP (Lv 2 · 9 phases)</div>
+  <button onclick="tcsOpen({phase:'launch'})">TS-1 🔐 Launch (Sign in)</button>
+  <button onclick="tcsDemo('ready')">TS-2 ✅ Device Ready Check</button>
+  <button onclick="tcsDemo('direction')">TS-3 📋 Directions + Sample</button>
+  <button onclick="tcsDemo('test')">TS-4 ✏️ Test (Q1)</button>
+  <button onclick="tcsDemo('test',{idx:2})">TS-4a 🖍 Test · Hot Text (Q3)</button>
+  <button onclick="tcsDemo('test',{idx:6})">TS-4b 🧲 Test · Drag-Drop (Q7)</button>
+  <button onclick="tcsDemo('test',{idx:9})">TS-4c 🔢 Test · Grid-In (Q10)</button>
+  <button onclick="tcsOpen({phase:'test',preset:'mid-test',extMultiplier:1.2,extReason:'IEP',studentName:'Daniela R.'})">TS-4d ⏱ Test · Extended +20% (IEP)</button>
+  <button onclick="tcsOpen({phase:'test',preset:'mid-test',extMultiplier:1.5,extReason:'504',studentName:'Jamila B.'})">TS-4e ⏱ Test · Extended +50% (504)</button>
+  <button onclick="tcsDemo('break')">TS-5 ☕ Mid-Test Break</button>
+  <button onclick="tcsDemo('paused')">TS-6 ❚❚ Paused (Proctor)</button>
+  <button onclick="tcsDemo('review')">TS-7 📋 Review Answers</button>
+  <button onclick="tcsDemo('holding')">TS-8 ✓ Submitted · Awaiting Score</button>
+  <div class="sep">Flows & Insights</div>
+  <button onclick="openFlowsPage()">📊 Product Flows</button>
+  <button onclick="openFlowsPage('skillGraph')">🧭 Skill Graph</button>
+  <button onclick="openTagInsightsPage()">📈 Tag Insights Dashboard</button>
+  <button onclick="openItemTypesLibrary()">🧩 Item Types · Catalog</button>
+  <button onclick="openItemTypesEdit()">✎ Item Types · Teacher Edit</button>
+  <button onclick="switchRole('student',true);openItemTypesStu()">👀 Item Types · Student Test</button>
+  <div class="sep">Drawers</div>
+  <button onclick="openDrawer('act')">📝 ACT Drawer</button>
+  <button onclick="openDrawer('sat')">📘 SAT Drawer</button>
+  <button onclick="openTemplateLauncher('sat')">📘 SAT Launcher</button>
+  <button onclick="openDrawer('tcap')">🎯 TCAP Drawer</button>
+</div></div>
+
+
+<!-- Custom modal overlay -->
+<div class="stu-modal-overlay" id="stuModalOverlay">
+  <div class="stu-modal">
+    <div class="stu-modal-header"><div class="modal-icon warn" id="stuModalIcon">⚠️</div><div class="stu-modal-title" id="stuModalTitle">Submit Section?</div></div>
+    <div class="stu-modal-body" id="stuModalBody"></div>
+    <div class="stu-modal-footer">
+      <button class="modal-cancel" id="stuModalCancel">Cancel</button>
+      <button class="modal-confirm" id="stuModalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACT Practice Focus modal — opened from AI Insights "Show practice focus" CTA.
+     Surfaces the practice scope (reporting categories + section gaps) when the
+     Practice module isn't shipped yet. Once Practice ships, this modal becomes
+     the staging ground for one-click Assign-as-practice. -->
+<div class="stu-modal-overlay" id="actPracticeFocusOverlay" onclick="if(event.target===this)closeActPracticeFocus()">
+  <div class="stu-modal actr-pf-modal">
+    <div class="stu-modal-header">
+      <div class="modal-icon info">✦</div>
+      <div class="actr-pf-titlewrap">
+        <div class="stu-modal-title">Recommended practice focus</div>
+        <div class="actr-pf-meta" id="actPracticeFocusMeta"></div>
+      </div>
+    </div>
+    <div class="stu-modal-body" id="actPracticeFocusBody"></div>
+    <div class="stu-modal-footer">
+      <button class="modal-cancel" onclick="actPracticeFocusDownload(this)">Download as image</button>
+      <button class="modal-confirm" onclick="closeActPracticeFocus()">Got it</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ GATE: Sparkles + Password Logic (mirrors survey-prototype) ══ -->
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>
