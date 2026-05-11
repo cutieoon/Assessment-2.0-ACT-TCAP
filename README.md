@@ -35,8 +35,6 @@ pnpm preview
 │   └── styles/
 │       ├── base.css         # Main stylesheet (~7k lines)
 │       └── student-runner.css
-└── docs/
-    └── refactor-split-plan.md  # Split strategy
 ```
 
 This project was split out of a 34k-line single-file HTML prototype:
