@@ -3323,12 +3323,12 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .stu-review-explanation .review-meta-pill.wrong{background:#fee2e2;color:#b91c1c;border-color:#fca5a5}
 .stu-review-explanation .review-meta-pill.correct{background:#dcfce7;color:#166534;border-color:#86efac}
 .stu-review-explanation .review-meta-pill.blank{background:#f4f4f5;color:#52525b;border-color:#d4d4d8}
-.stu-review-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;margin:0 0 14px;font-size:12px;font-weight:700;color:#1e3a8a}
-.stu-review-banner .stu-review-actions{display:flex;gap:8px}
-.stu-review-banner button{font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.3px;padding:6px 12px;border-radius:8px;border:1px solid #c7d2fe;background:#fff;color:#1e3a8a;cursor:pointer;transition:.15s}
-.stu-review-banner button:hover{background:#e0e7ff}
-.stu-review-banner button.primary{background:#4f46e5;color:#fff;border-color:#4f46e5}
-.stu-review-banner button.primary:hover{background:#4338ca}
+/* Review-mode & Pending-preview share the same post-test chrome:
+   `← Back to Report` in the header is the single exit affordance, so
+   the home (🏠) button next to it would just duplicate that. Hide it
+   in both states. */
+#page-stu-act.review-mode .stu-home-btn,
+#page-stu-act.pending-preview .stu-home-btn{display:none}
 /* Hide ACT tools and timer in review mode (only nav + Q-menu stay usable) */
 #page-stu-act.review-mode .act-toolbar-btn{display:none}
 #page-stu-act.review-mode #stuActTimerWrap{display:none!important}
@@ -4335,9 +4335,12 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
  *   filled purple dot. Hairline below detaches it from the page on scroll. */
 .actr-tabs{position:sticky;top:0;z-index:30;background:#fff;
   margin:0 0 24px;padding:14px 0 12px;
-  display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  transition:box-shadow .2s ease,border-color .2s ease}
+.actr-tabs.is-stuck{box-shadow:0 4px 16px rgba(15,23,42,.06)}
 .actr-tabs::after{content:'';position:absolute;left:0;right:0;bottom:0;
-  height:1px;background:#f4f4f5;pointer-events:none}
+  height:1px;background:#f4f4f5;pointer-events:none;transition:background .2s ease}
+.actr-tabs.is-stuck::after{background:#e4e4e7}
 .actr-tabs-prefix{
   font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
   color:#a1a1aa;flex-shrink:0;
@@ -4578,6 +4581,177 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
   .actr-hero-right{padding:22px}
   .actr-hero-bar-row{grid-template-columns:80px 1fr 26px 66px;gap:10px}
   .actr-hero-derived{grid-template-columns:1fr}
+}
+
+/* ── ACT Score Report — Pending Grading (Scoring Loading) state ─────
+   Shown after submission while final scaled scores aren't ready (AI
+   scoring in flight or Manual Grading awaiting teacher release). The
+   score hero is replaced with this loading card; Diagnostics + AI
+   Insights are hidden because they need scaled scores. My Question
+   Record renders inline with every item expanded so the student can
+   verify their answer was captured and read explanations during the
+   wait — but every correctness signal (✓/✗ badges, choice coloring,
+   score pill, wrong-only nav) is suppressed so they can't infer
+   their score from UI cues before scoring releases. */
+.actr-loading-hero{
+  display:grid;grid-template-columns:1.4fr 1fr;gap:32px;
+  background:linear-gradient(135deg,#190d40 0%,#3a1d8a 50%,#6040ca 100%);
+  color:#fff;border-radius:20px;padding:32px 36px;
+  box-shadow:0 10px 30px rgba(15,23,42,.08);
+  position:relative;overflow:hidden
+}
+.actr-loading-hero-left{display:flex;gap:18px;align-items:flex-start}
+.actr-loading-spinner{flex:0 0 auto;animation:actrSpin 1.2s linear infinite;color:#fff;margin-top:2px}
+@keyframes actrSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.actr-loading-kicker{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:6px}
+.actr-loading-hero h2{font-size:26px;font-weight:850;margin:0 0 10px;letter-spacing:-.4px;color:#fff}
+.actr-loading-hero p{font-size:13px;line-height:1.6;margin:0 0 8px;color:rgba(255,255,255,.92);max-width:520px}
+.actr-loading-hero p b{color:#fff;font-weight:700}
+.actr-loading-hero .actr-loading-meta{font-size:11.5px;color:rgba(255,255,255,.7);margin-top:4px}
+.actr-loading-hero-right{display:flex;flex-direction:column;gap:10px;padding:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;justify-content:center}
+.actr-skel{background:linear-gradient(90deg,rgba(255,255,255,.08) 0%,rgba(255,255,255,.22) 50%,rgba(255,255,255,.08) 100%);background-size:200% 100%;animation:actrSkel 1.6s ease-in-out infinite;border-radius:6px}
+@keyframes actrSkel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.actr-skel-line{height:10px}
+.actr-skel-line.w70{width:70%}
+.actr-skel-line.w90{width:90%}
+.actr-skel-line.w50{width:50%}
+.actr-skel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.actr-skel-box{height:46px;border-radius:10px}
+@media (max-width:880px){
+  .actr-loading-hero{grid-template-columns:1fr;padding:24px}
+}
+/* Neutral skeleton placeholder used for non-hero Pending sections
+   (Overview / Diagnostics). Keeps the section anchors alive so the
+   sticky tab bar stays 3-wide while scoring is in flight. */
+.actr-pending-placeholder{
+  display:flex;align-items:flex-start;gap:18px;
+  padding:24px 26px;background:#fafafa;border:1px solid #e4e4e7;
+  border-radius:14px
+}
+.actr-pending-placeholder .icon{
+  flex:0 0 auto;width:36px;height:36px;border-radius:50%;
+  background:#f4f4f5;color:#6040ca;
+  display:flex;align-items:center;justify-content:center
+}
+.actr-pending-placeholder .icon svg{animation:actrSpin 1.2s linear infinite}
+.actr-pending-placeholder .body{flex:1;min-width:0}
+.actr-pending-placeholder .body h3{font-size:14px;font-weight:600;margin:0 0 4px;color:#27272a;letter-spacing:-.01em}
+.actr-pending-placeholder .body p{font-size:12.5px;color:#71717a;margin:0 0 14px;line-height:1.55}
+.actr-skel-neutral{background:linear-gradient(90deg,#f4f4f5 0%,#e4e4e7 50%,#f4f4f5 100%);background-size:200% 100%;animation:actrSkel 1.6s ease-in-out infinite;border-radius:6px;height:10px}
+.actr-skel-neutral.w70{width:70%}
+.actr-skel-neutral.w90{width:90%}
+.actr-skel-neutral.w50{width:50%}
+.actr-skel-neutral + .actr-skel-neutral{margin-top:8px}
+
+/* ── stu-act player · Pending Preview mode ────────────────────────
+   Full-page transition like Released review, but neutralizes every
+   correctness signal. Hide timer/tools/flag/elim like review-mode,
+   but DON'T add the .stu-choices.review correctness highlights —
+   choices keep the plain in-test look with the student's `.selected`
+   pick still visible. */
+#page-stu-act.pending-preview .act-toolbar-btn{display:none}
+#page-stu-act.pending-preview #stuActTimerWrap{display:none!important}
+#page-stu-act.pending-preview #stuActAnswered{display:none!important}
+#page-stu-act.pending-preview .stu-q-bookmark{display:none}
+#page-stu-act.pending-preview .stu-elim{display:none!important}
+#page-stu-act.pending-preview .stu-choices li{cursor:default}
+#page-stu-act.pending-preview .stu-choices li:hover{transform:none;box-shadow:none;border-color:#e4e4e7}
+/* Q-menu navigator (bottom-trigger popover) — mirror the report's
+   `qrec-cell` vocabulary: purple-filled = Answered, dashed grey =
+   Unanswered. Without this override the navigator still uses the
+   in-test green/orange/grey scheme, which conflicts with the report
+   grid above and reads as "two different palettes for the same data".
+   Current Q gets a thin dark ring so it stays distinguishable when
+   layered on either Answered or Unanswered. */
+#page-stu-act.pending-preview .stu-nav-cell{
+  background:#fff;border-color:#e4e4e7;color:#52525b
+}
+#page-stu-act.pending-preview .stu-nav-cell:hover{
+  background:#fafafe;border-color:#6040ca;color:#6040ca
+}
+#page-stu-act.pending-preview .stu-nav-cell.answered{
+  background:#fff;border-color:#6040ca;color:#6040ca
+}
+#page-stu-act.pending-preview .stu-nav-cell.skipped{
+  background:#f8fafc;border-color:#cbd5e1;border-style:dashed;color:#94a3b8
+}
+/* Current = solid purple fill, overrides whatever the underlying
+   answered/unanswered fill was. Mirrors the click semantics from
+   the assessment Manual-grading result page: tap a cell, it locks
+   into the filled state to signal "this is the one you're viewing".
+   Filled purple is the strongest state in the grid; outlined purple
+   (Answered) and dashed grey (Unanswered) sit at progressively
+   quieter levels behind it. */
+#page-stu-act.pending-preview .stu-nav-cell.current{
+  background:#6040ca;border-color:#6040ca;color:#fff;
+  border-style:solid;
+  box-shadow:0 4px 12px rgba(96,64,202,.28);
+  z-index:1;position:relative
+}
+/* "Marked for review" was an in-test affordance; once the test is
+   submitted the flag has no meaning in the Pending state, so hide
+   the orange dot to keep the navigator visually quiet. */
+#page-stu-act.pending-preview .stu-nav-cell.marked::after{display:none}
+/* Pending Question Record — amber banner above the qrec-card */
+.actr-pending-banner{
+  display:flex;align-items:center;gap:10px;
+  background:#fef3c7;border:1px solid #fde68a;border-radius:12px;
+  padding:12px 14px;color:#7c2d12;font-size:13px;line-height:1.5;
+  margin-bottom:14px
+}
+.actr-pending-banner b{color:#451a03;font-weight:700}
+.actr-pending-dot{
+  flex:0 0 auto;width:10px;height:10px;border-radius:50%;
+  background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.2);
+  animation:actrPulse 1.6s ease-in-out infinite
+}
+@keyframes actrPulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Pending grid cell — mirrors the in-test "answered / unanswered"
+   visual vocabulary instead of the scored correct/wrong/blank.
+   Answered = purple Kira fill (same as in-test "filled" state).
+   Unanswered = neutral dashed border (matches in-test skipped). */
+/* Pending "Answered" follows the same outline-only treatment as the
+   released-state cells (correct/wrong/blank/essay) — solid purple
+   fill is reserved for the "currently being viewed" (is-active)
+   cell in the question detail footer. Without this distinction every
+   answered cell screams for attention and the grid reads as a flat
+   slab of purple. */
+.qrec-cell.answered{border-color:#6040ca;color:#6040ca;background:#fff}
+.qrec-cell.answered:hover{background:#f5f3ff}
+.qrec-cell.unanswered{border-color:#cbd5e1;color:#94a3b8;border-style:dashed;background:#f8fafc}
+.qrec-filter-dot.answered{background:#6040ca}
+.qrec-filter-dot.unanswered{background:#cbd5e1}
+
+/* Pending placeholder card for the Writing tab — Writing rubric scores
+   aren't ready, so the per-domain breakdown can't render. We show a
+   simple "Essay submitted" card instead. */
+.actr-pending-writing-card{
+  margin:14px 0 0;padding:24px;
+  background:#faf5ff;border:1px dashed #d8b4fe;border-radius:14px;
+  text-align:center;color:#581c87
+}
+.actr-pending-writing-card h4{margin:0 0 8px;font-size:15px;font-weight:800;color:#581c87}
+.actr-pending-writing-card p{margin:0;font-size:12.5px;line-height:1.55;color:#7e22ce;max-width:520px;margin-left:auto;margin-right:auto}
+
+/* Pending per-question detail (used when student clicks "Open in
+   Review Mode" while still in scoring state) — neutralize all
+   correctness signals. */
+.rpt-qdetail.is-pending .rpt-choices li.is-correct,
+.rpt-qdetail.is-pending .rpt-choices li.is-wrong{background:transparent;border-color:#e5e7eb}
+.rpt-qdetail.is-pending .ch-letter{background:#f4f4f5;color:#71717a}
+.pending-status-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;background:#fef3c7;color:#92400e;
+  border:1px solid #fde68a;border-radius:999px;
+  font-size:11px;font-weight:800
+}
+.pending-your-pick{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;background:#ede9fe;color:#5b21b6;
+  border:1px solid #ddd6fe;border-radius:999px;
+  font-size:10px;font-weight:800;letter-spacing:.3px;
+  margin-left:6px;white-space:nowrap
 }
 
 /* Custom Selection / Free Combination scenario switcher.
@@ -8372,8 +8546,8 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
   <!-- Standardized test shell: Directions, centered timer, tools, question menu -->
   <header class="stu-exam-header" style="justify-content:space-between;padding:0 12px;gap:8px">
     <div style="display:flex;align-items:center;gap:8px">
-      <button class="stu-home-btn" onclick="switchRole('teacher');nav('homepage')" title="Exit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
-      <button class="sat-header-btn" onclick="stuShowDirections('stuAct')">Directions</button>
+      <button class="stu-home-btn" id="stuAct-homeBtn" onclick="switchRole('teacher');nav('homepage')" title="Exit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+      <button class="sat-header-btn" id="stuAct-leftHeaderBtn" onclick="stuShowDirections('stuAct')">Directions</button>
     </div>
     <div class="stu-exam-center with-directions">
       <span class="stu-sec-label" id="stuActSecLabel">English</span>
@@ -29382,6 +29556,8 @@ const studentPages = [
   // navigates to the report page (or re-renders if already there).
   {id:'stu-act-report',label:'ACT Report',icon:'📊',title:'ACT Student Report',
     subs:[
+      {kind:'act-loading',loadingState:true, label:'Scoring · Loading', icon:'⏳',meta:'Pending Grading · pick a scenario to exit'},
+      {kind:'divider'},
       {kind:'act-scenario',scenario:'full',     label:'Full Battery',     icon:'🎯',meta:'E + M + R + S + W'},
       {kind:'divider'},
       {kind:'act-scenario',scenario:'core_s',   label:'Core + Science',   icon:'🧪',meta:'E + M + R + S'},
@@ -29561,6 +29737,8 @@ function toolbarToggleSubs(pageId, anchorBtn) {
       // scenario key then navigates to the report page — same handler whether
       // the user is already on the page or not.
       onClick = `setActReportScenarioFromNav('${s.scenario}')`;
+    } else if (s.kind === 'act-loading' && page.id === 'stu-act-report') {
+      onClick = `setActReportLoadingFromNav(${s.loadingState})`;
     } else {
       onClick = s.action || '';
     }
@@ -30599,13 +30777,22 @@ function stuOpenNavPanel(pk) {
   const skippedCount = total - answeredCount;
 
   const isReview = pk === 'stuAct' && st.reviewMode;
+  const isPending = pk === 'stuAct' && st.pendingPreview;
   let cells = qs.map((q, i) => {
     const gi = useSec ? q.globalIdx : i;
     const cls = ['stu-nav-cell'];
     if (gi === st.current) cls.push('current');
     if (st.answered.has(gi)) cls.push('answered');
-    if (st.marked.has(gi)) cls.push('marked');
+    // Skip the `marked` class in Pending Preview — "Flag for Review"
+    // was a during-test affordance; once submitted, surfacing it in
+    // the post-test navigator would add a visual signal that doesn't
+    // map to anything actionable.
+    if (!isPending && st.marked.has(gi)) cls.push('marked');
     if (!st.answered.has(gi) && gi !== st.current) cls.push('skipped');
+    // Review (Released) overlays correct/wrong/blank/essay colors on the
+    // cell. Pending Preview deliberately skips this so the nav panel
+    // surfaces only the in-test "answered / unanswered" vocabulary —
+    // students mustn't infer correctness before the score releases.
     if (isReview) {
       const fullQ = st.questions[gi];
       const status = actReviewQStatus(fullQ, st.answers?.[gi]);
@@ -30672,6 +30859,19 @@ function stuOpenNavPanel(pk) {
       if (essayCount > 0)   legendItems.push(`<div class="nav-legend-item"><div class="nav-legend-dot" style="background:#fff;border-color:#a78bfa"></div> Essay</div>`);
       legend = `<div class="nav-legend">${legendItems.join('')}</div>`;
     }
+  } else if (isPending) {
+    headTitle = `${secName} — Question Navigator`;
+    subtitleLine = `${secName} · ${answeredCount} answered · ${skippedCount} unanswered · awaiting score`;
+    filterRow = `<div class="filter-row">
+      <span class="filter-pill active" onclick="stuNavFilter('${pk}','all',this)">All (${total})</span>
+      <span class="filter-pill" onclick="stuNavFilter('${pk}','answered',this)">Answered (${answeredCount})</span>
+      <span class="filter-pill" onclick="stuNavFilter('${pk}','skipped',this)">Unanswered (${skippedCount})</span>
+    </div>`;
+    legend = `<div class="nav-legend">
+      <div class="nav-legend-item"><div class="nav-legend-dot" style="background:#fff;border-color:#6040ca"></div> Answered</div>
+      <div class="nav-legend-item"><div class="nav-legend-dot" style="background:#f8fafc;border-color:#cbd5e1;border-style:dashed"></div> Unanswered</div>
+      <div class="nav-legend-item"><div class="nav-legend-dot" style="background:#6040ca;border-color:#6040ca"></div> Current</div>
+    </div>`;
   } else {
     headTitle = isSat ? 'Question Menu' : secName + ' — Question Navigator';
     subtitleLine = `${secName} · ${answeredCount} answered · ${skippedCount} unanswered · ${markedCount} for review`;
@@ -30970,12 +31170,21 @@ function renderStuAct() {
     // are hidden, and the bottom-nav menu uses correct/wrong/blank colors.
     reviewMode: false,
     reviewFilter: 'all',
-    reviewSection: 'all'
+    reviewSection: 'all',
+    // Set via stuActEnterPendingPreview() from the report's pending
+    // (Scoring in Progress) state. Same chrome-hiding as reviewMode
+    // but with NO correctness marks or explanation — just the
+    // student's submitted answer.
+    pendingPreview: false
   };
   stuRefreshActExtChip(pk);
   // A fresh launch always exits any prior review-mode state.
   const _actPage = document.getElementById('page-stu-act');
-  if (_actPage) _actPage.classList.remove('review-mode');
+  if (_actPage) {
+    _actPage.classList.remove('review-mode');
+    _actPage.classList.remove('pending-preview');
+  }
+  if (typeof stuActUpdateHeaderBtn === 'function') stuActUpdateHeaderBtn();
   stuShowOverview(pk, 'act');
 }
 
@@ -31069,6 +31278,7 @@ function stuActEnterReview(filter, sectionKey) {
   nav('stu-act');
   const page = document.getElementById('page-stu-act');
   if (page) page.classList.add('review-mode');
+  if (typeof stuActUpdateHeaderBtn === 'function') stuActUpdateHeaderBtn();
   stuSwitchActSection(pk, targetSecIdx);
   stuStopTimer(pk);
 
@@ -31098,6 +31308,7 @@ function stuActExitReview() {
   if (st) st.reviewMode = false;
   const page = document.getElementById('page-stu-act');
   if (page) page.classList.remove('review-mode');
+  if (typeof stuActUpdateHeaderBtn === 'function') stuActUpdateHeaderBtn();
   nav('stu-act-report');
 }
 
@@ -32059,7 +32270,14 @@ function stuActGoLocal(pk, localIdx) {
       </aside>`;
     }
   } else if (q.choices) {
-    if (st.reviewMode) {
+    if (st.pendingPreview) {
+      // Pending preview: read-only, no correctness marks, no eliminator,
+      // no click handler. Only the student's `.selected` pick is shown
+      // so the view matches what they had during the test.
+      answerHtml = `<ul class="stu-choices">${q.choices.map((c, ci) =>
+        `<li class="${savedAnswer === ci ? 'selected' : ''}"><span class="letter">${String.fromCharCode(65+ci)}</span><span>${c}</span></li>`
+      ).join('')}</ul>`;
+    } else if (st.reviewMode) {
       // Review render: no click handler, no eliminator. Mark the correct
       // option green; if the student picked a wrong option, mark it red.
       // For skipped items, prepend a neutral banner so the page doesn't
@@ -32093,28 +32311,12 @@ function stuActGoLocal(pk, localIdx) {
     answerHtml = `<textarea style="width:100%;min-height:100px;border:1px solid #e4e4e7;border-radius:10px;padding:12px;font-size:14px;font-family:inherit;resize:vertical" placeholder="Type your answer..." oninput="stuActAnswer(${globalIdx},'${pk}')">${savedAnswer || ''}</textarea>`;
   }
 
-  let reviewBanner = '';
+  // Review / Pending exit affordance now lives in the player's top header
+  // (`stuAct-leftHeaderBtn` flips from "Directions" → "← Back to Report"),
+  // so we no longer render a banner above the question card. The
+  // explanation block below is still review-only.
   let reviewExplanation = '';
   if (st.reviewMode) {
-    const status = actReviewQStatus(q, savedAnswer);
-    const sec = st.sections[st.currentSecIdx]?.name || '';
-    const pillCls = status === 'correct' ? 'correct' : status === 'wrong' ? 'wrong' : status === 'blank' ? 'blank' : '';
-    const pillLabel = status === 'correct' ? 'Correct' : status === 'wrong' ? 'Incorrect' : status === 'blank' ? 'Skipped' : 'Essay';
-    // "Showing all questions" is the default state and tells the user nothing
-    // they didn't already see — only surface the filter label when an active,
-    // non-default filter is selected.
-    const filterLbl = st.reviewFilter === 'wrong'   ? 'Showing wrong answers only'
-                    : st.reviewFilter === 'correct' ? 'Showing correct answers only'
-                    : '';
-    reviewBanner = `<div class="stu-review-banner">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:11px;color:#1e40af;font-weight:900;letter-spacing:.4px">REVIEW MODE</span>
-        <span style="font-size:11px;color:#3730a3;font-weight:600">${sec}${filterLbl ? ` · ${filterLbl}` : ''}</span>
-      </div>
-      <div class="stu-review-actions">
-        <button onclick="stuActExitReview()">← Back to report</button>
-      </div>
-    </div>`;
     if (q.type !== 'ACT_WRITING' && q.type !== 'ESSAY' && q.choices) {
       // Status pills removed: the answer list above already encodes the
       // verdict via the green/red border + per-choice CORRECT/YOUR ANSWER
@@ -32161,7 +32363,7 @@ function stuActGoLocal(pk, localIdx) {
     }
   }
 
-  let qInner = `${reviewBanner}<div class="stu-q-card">
+  let qInner = `<div class="stu-q-card">
     <div class="stu-q-head">
       <div style="display:flex;align-items:center;gap:6px">
         <div class="q-order">${localIdx + 1}</div>
@@ -32228,7 +32430,7 @@ function stuActGoLocal(pk, localIdx) {
   if (counter) counter.textContent = `${localIdx + 1} of ${secQ.length}`;
   const nextBtn = document.getElementById(pk + '-nextBtn');
   if (nextBtn) {
-    if (st.reviewMode) {
+    if (st.pendingPreview || st.reviewMode) {
       const atEnd = localIdx === secQ.length - 1;
       nextBtn.textContent = atEnd ? 'End of section' : 'Next';
       nextBtn.disabled = atEnd;
@@ -32372,10 +32574,10 @@ function stuActFooterNextOrSubmit(pk) {
   const secQ = st?._secQuestions;
   if (!secQ) return;
   const localIdx = secQ.findIndex(q => q.globalIdx === st.current);
-  if (st.reviewMode) {
-    // In review mode the Next button never submits; it just walks to the
-    // next question and stops at the last one (use the back-to-report
-    // banner button to exit).
+  if (st.reviewMode || st.pendingPreview) {
+    // In review / pending-preview modes the Next button never submits;
+    // it just walks to the next question and stops at the last one
+    // (the top banner has the Back-to-Report exit).
     if (localIdx < secQ.length - 1) stuActGoLocal(pk, localIdx + 1);
     return;
   }
@@ -34929,6 +35131,14 @@ function isActObjectiveQuestion(q) {
 
 function actReviewQuestionStatus(q) {
   if (!isActObjectiveQuestion(q)) return 'essay';
+  // Demo-only sprinkle: in Pending Grading state, force every ~8th
+  // item to "blank" so the design preview surfaces both the
+  // `.answered` (purple filled) and `.unanswered` (dashed gray)
+  // cell variants. Production reads only the real `q.student`.
+  if (typeof actReportLoading !== 'undefined' && actReportLoading) {
+    const seed = Number(q.n) || 0;
+    if (seed % 8 === 3) return 'blank';
+  }
   const ans = q.student;
   if (ans === undefined || ans === null || ans === '') return 'blank';
   const correct = q.type === 'GRID_IN'
@@ -35203,6 +35413,11 @@ function renderActQuestionReviewV2() {
 
 function renderActQuestionReviewSummary() {
   const rows = getActReviewRows();
+  // Pending Grading variant — same qrec-card chrome, but every
+  // correctness signal is replaced with the in-test "answered /
+  // unanswered" vocabulary so the layout doesn't shift when scoring
+  // releases.
+  const pending = !!(typeof actReportLoading !== 'undefined' && actReportLoading);
   // Custom Selection filter: tabs only render for sections the student
   // actually took. activeSec falls back to the first selected when the
   // previously-active section isn't in this scenario (e.g. swapped from
@@ -35228,6 +35443,10 @@ function renderActQuestionReviewSummary() {
   const accuracy = sectionStats.total
     ? Math.round((sectionStats.correct / Math.max(1, sectionStats.total - sectionStats.essay)) * 100) || 0
     : 0;
+  // "Answered" = anything that isn't blank (covers correct + wrong + essay
+  // submitted). In pending mode we collapse the three correctness buckets
+  // back to a single "answered" bucket so we don't leak the score.
+  const answeredCount = sectionStats.total - sectionStats.blank;
 
   // Stats table — overall row + reporting category rows. Writing is rubric-
   // based and now reuses the rich rubric block from the page-level Writing
@@ -35239,10 +35458,35 @@ function renderActQuestionReviewSummary() {
   // split between a mid-page section and a thinner version inside the tab.
   let statsTableHtml = '';
   if (isWritingTab) {
+    // Writing in pending mode — rubric scores aren't ready, so we drop
+    // the rich rubric block and show a simple "submitted, under review"
+    // card. Released state still uses the full rubric block.
+    if (pending) {
+      return `<div class="qrec-card">
+        <div class="qrec-tabs">${tabHtml}</div>
+        <div class="actr-pending-writing-card">
+          <h4>Essay submitted</h4>
+          <p>Your response was captured. The rubric breakdown (Ideas, Development, Organization, Language Use) will appear here once scoring completes.</p>
+        </div>
+      </div>`;
+    }
     return `<div class="qrec-card">
       <div class="qrec-tabs">${tabHtml}</div>
       ${renderActWritingSectionV2(ACT_REPORT, { embedded: true })}
     </div>`;
+  } else if (pending) {
+    // Pending stats — only Total / Answered / Skipped. No category
+    // breakdown (categories carry implicit difficulty signal once the
+    // student can correlate with scaled scores; we hold those back too).
+    statsTableHtml = `<table class="qrec-stats-table">
+      <thead><tr><th style="text-align:left;padding-left:16px">Section</th><th>Total</th><th>Answered</th><th>Skipped</th></tr></thead>
+      <tbody>
+        <tr class="is-overall">
+          <td style="text-align:left;padding-left:16px">Overall (${ACT_SECTION_LABELS[activeSec]})</td>
+          <td>${sectionStats.total}</td><td>${answeredCount}</td><td>${sectionStats.blank}</td>
+        </tr>
+      </tbody>
+    </table>`;
   } else {
     const cats = ACT_REPORTING_CATEGORIES[activeSec] || [];
     const catRows = cats.map(cat => {
@@ -35269,41 +35513,78 @@ function renderActQuestionReviewSummary() {
   }
 
   // My Answer Record — color coded grid + filter.
-  // Filter values: 'all' | 'wrong' | 'blank' (Skipped) | 'correct'.
+  // Released: 'all' | 'wrong' | 'blank' (Skipped) | 'correct'
+  // Pending:  'all' | 'answered' | 'blank' (Skipped)
   // Order in the head matches review priority — wrong/skipped first because
   // those are what the student needs to revisit; correct comes last because
   // it has the lowest revisit value.
-  const filter = ['all','wrong','blank','correct'].includes(_actReviewFilter) ? _actReviewFilter : 'all';
+  const allowedFilters = pending ? ['all','answered','blank'] : ['all','wrong','blank','correct'];
+  const filter = allowedFilters.includes(_actReviewFilter) ? _actReviewFilter : 'all';
   const filteredCells = filter === 'all'
     ? sectionRows
-    : sectionRows.filter(q => q._status === filter);
+    : pending
+      ? (filter === 'answered'
+          ? sectionRows.filter(q => q._status !== 'blank')
+          : sectionRows.filter(q => q._status === 'blank'))
+      : sectionRows.filter(q => q._status === filter);
   const gridHtml = filteredCells.length
     ? filteredCells.map(q => {
         const status = q._status;
-        const cls = status === 'correct' ? 'correct'
-                  : status === 'wrong'   ? 'wrong'
-                  : status === 'essay'   ? 'essay'
-                  : 'blank';
-        const tip = `${ACT_SECTION_LABELS[q._sectionKey]} · Q${q.n || (q._origIdx + 1)} · ${actReviewStatusLabel(status)}`;
-        return `<button class="qrec-cell ${cls}" title="${tip}" onclick="openActQuestionDetails('all','${q._sectionKey}')">${q.n || (q._origIdx + 1)}</button>`;
+        let cls;
+        if (pending) {
+          cls = status === 'blank' ? 'unanswered' : 'answered';
+        } else {
+          cls = status === 'correct' ? 'correct'
+              : status === 'wrong'   ? 'wrong'
+              : status === 'essay'   ? 'essay'
+              : 'blank';
+        }
+        const statusLabel = pending
+          ? (status === 'blank' ? 'Unanswered' : 'Answered')
+          : actReviewStatusLabel(status);
+        // Pending uses per-section 1-based numbering (1..N within
+        // each subject) — matches how the student saw items during
+        // the test ("Question 5 of 45"). Released keeps the ACT
+        // cross-section number (e.g. Math 51-95) for parity with
+        // official score reports.
+        const cellNum = pending ? (q._origIdx + 1) : (q.n || (q._origIdx + 1));
+        const tip = `${ACT_SECTION_LABELS[q._sectionKey]} · Q${cellNum} · ${statusLabel}`;
+        const cellOnClick = pending
+          ? `stuActEnterPendingPreview('${q._sectionKey}', ${q._origIdx})`
+          : `openActQuestionDetails('all','${q._sectionKey}')`;
+        return `<button class="qrec-cell ${cls}" title="${tip}" onclick="${cellOnClick}">${cellNum}</button>`;
       }).join('')
     : '<div class="qrec-empty">No questions to show with the current filter.</div>';
 
   // Pre-compute counts so each tab shows scope at a glance — saves the
   // student a click + count exercise. "All" is implicit total.
-  const counts = {
-    all:     sectionRows.length,
-    wrong:   sectionRows.filter(q => q._status === 'wrong').length,
-    blank:   sectionRows.filter(q => q._status === 'blank').length,
-    correct: sectionRows.filter(q => q._status === 'correct').length,
-  };
-  const filterTabs = [
-    { id:'all',     label:'All',     dot:'' },
-    { id:'wrong',   label:'Wrong',   dot:'wrong' },
-    { id:'blank',   label:'Skipped', dot:'blank' },
-    { id:'correct', label:'Correct', dot:'correct' },
-  ].filter(f => f.id === 'all' || counts[f.id] > 0)
-   .map(f => `<button class="qrec-filter-tab ${filter === f.id ? 'is-active' : ''}" onclick="setActReviewFilter('${f.id}')">${f.dot ? `<span class="qrec-filter-dot ${f.dot}"></span>` : ''}${f.label}<span class="qrec-filter-count">${counts[f.id]}</span></button>`).join('');
+  const counts = pending
+    ? {
+        all:      sectionRows.length,
+        answered: sectionRows.filter(q => q._status !== 'blank').length,
+        blank:    sectionRows.filter(q => q._status === 'blank').length,
+      }
+    : {
+        all:     sectionRows.length,
+        wrong:   sectionRows.filter(q => q._status === 'wrong').length,
+        blank:   sectionRows.filter(q => q._status === 'blank').length,
+        correct: sectionRows.filter(q => q._status === 'correct').length,
+      };
+  const filterTabsDef = pending
+    ? [
+        { id:'all',      label:'All',     dot:'' },
+        { id:'answered', label:'Answered',dot:'answered' },
+        { id:'blank',    label:'Skipped', dot:'unanswered' },
+      ]
+    : [
+        { id:'all',     label:'All',     dot:'' },
+        { id:'wrong',   label:'Wrong',   dot:'wrong' },
+        { id:'blank',   label:'Skipped', dot:'blank' },
+        { id:'correct', label:'Correct', dot:'correct' },
+      ];
+  const filterTabs = filterTabsDef
+    .filter(f => f.id === 'all' || counts[f.id] > 0)
+    .map(f => `<button class="qrec-filter-tab ${filter === f.id ? 'is-active' : ''}" onclick="setActReviewFilter('${f.id}')">${f.dot ? `<span class="qrec-filter-dot ${f.dot}"></span>` : ''}${f.label}<span class="qrec-filter-count">${counts[f.id]}</span></button>`).join('');
 
   return `<div class="qrec-card">
     <div class="qrec-tabs">${tabHtml}</div>
@@ -35317,7 +35598,9 @@ function renderActQuestionReviewSummary() {
     <div class="qrec-grid">${gridHtml}</div>
 
     <div class="qrec-cta-row">
-      <button class="qrec-cta" onclick="openActQuestionDetails('${filter}','${activeSec}')">Open in Review Mode</button>
+      ${pending
+        ? `<button class="qrec-cta" onclick="stuActEnterPendingPreview('${activeSec}', 0)">Open in Preview Mode</button>`
+        : `<button class="qrec-cta" onclick="openActQuestionDetails('${filter}','${activeSec}')">Open in Review Mode</button>`}
     </div>
   </div>`;
 }
@@ -35325,6 +35608,12 @@ function renderActQuestionReviewSummary() {
 function renderActQuestionDetailPage() {
   const body = document.getElementById('actQuestionDetailBody');
   if (!body) return;
+
+  // Pending Grading state — student clicked "Open in Review Mode"
+  // before the score released. Neutralize per-question correctness
+  // signals and the bottom grid coloring so this deep-link page stays
+  // consistent with the qrec-card summary above.
+  const pendingD = !!(typeof actReportLoading !== 'undefined' && actReportLoading);
 
   // Default to a real section if entering with the legacy 'all' scope.
   // Honor Custom Selection: clamp to a section that was actually taken.
@@ -35357,27 +35646,38 @@ function renderActQuestionDetailPage() {
   }
 
   // Subject tabs — rendered into the page header (not in body) so the user
-  // can switch sections without scrolling. Wrong-count badge appears per tab.
+  // can switch sections without scrolling. Wrong-count badge appears per tab
+  // in released state; suppressed in pending mode (score not ready).
   // Custom Selection: only show tabs for sections that were actually taken.
   const tabsHtml = selectedListD.map(sec => {
     const wrong = allRows.filter(q => q._sectionKey === sec && q._status === 'wrong').length;
     const isActive = sec === activeSec;
+    const badge = (!pendingD && wrong) ? `<span class="count">${wrong}</span>` : '';
     return `<button class="tab ${isActive ? 'is-active' : ''}" onclick="setActReviewSection('${sec}')">
-      ${ACT_SECTION_LABELS[sec]}${wrong ? `<span class="count">${wrong}</span>` : ''}
+      ${ACT_SECTION_LABELS[sec]}${badge}
     </button>`;
   }).join('');
   const headerSlot = document.getElementById('actDetailHeaderTabs');
   if (headerSlot) headerSlot.innerHTML = tabsHtml;
 
   // Bottom grid: every question in this section, color-coded.
+  // Pending uses the in-test "answered / unanswered" vocabulary.
   const gridHtml = sectionRows.length ? sectionRows.map(q => {
     const status = q._status;
-    const cls = status === 'correct' ? 'correct'
-              : status === 'wrong'   ? 'wrong'
-              : status === 'essay'   ? 'essay'
-              : 'blank';
+    let cls;
+    if (pendingD) {
+      cls = status === 'blank' ? 'unanswered' : 'answered';
+    } else {
+      cls = status === 'correct' ? 'correct'
+          : status === 'wrong'   ? 'wrong'
+          : status === 'essay'   ? 'essay'
+          : 'blank';
+    }
     const isActive = selected && selected._sectionKey === q._sectionKey && selected._origIdx === q._origIdx;
-    const tip = `Q${q.n || (q._origIdx + 1)} · ${actReviewStatusLabel(status)}`;
+    const statusLabel = pendingD
+      ? (status === 'blank' ? 'Unanswered' : 'Answered')
+      : actReviewStatusLabel(status);
+    const tip = `Q${q.n || (q._origIdx + 1)} · ${statusLabel}`;
     return `<button class="qrec-cell ${cls} ${isActive ? 'is-active' : ''}" title="${tip}" onclick="setActDetailQuestion('${q._sectionKey}', ${q._origIdx})">${q.n || (q._origIdx + 1)}</button>`;
   }).join('') : '<div class="qrec-empty">No questions in this section.</div>';
 
@@ -35387,7 +35687,7 @@ function renderActQuestionDetailPage() {
   const next = curIdx >= 0 && curIdx < sectionRows.length - 1 ? sectionRows[curIdx + 1] : null;
 
   const detailHtml = selected
-    ? renderQuestionDetail('act', selected._sectionKey, selected._origIdx, { hideBack:true, hideNav:true, hideReviewNav:true })
+    ? renderQuestionDetail('act', selected._sectionKey, selected._origIdx, { hideBack:true, hideNav:true, hideReviewNav:true, pending: pendingD })
     : '<div class="qrec-empty" style="padding:60px">No question to review in this section.</div>';
 
   body.innerHTML = `
@@ -35440,6 +35740,7 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
   const q = questions[idx];
   if (!q) return '';
   if (testType === 'act' && (q.type === 'ESSAY' || q.type === 'ACT_WRITING')) {
+    const _pendingW = options.pending === true;
     const writingScore = ACT_REPORT?.derived?.writing || q.score || '—';
     const domains = q.domainScores || ACT_REPORT?.derived?.writingDomains || {};
     const reviewState = q.reviewState || ACT_REPORT?.derived?.writingReviewState || 'Teacher review pending';
@@ -35456,13 +35757,18 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
         <span>${d.desc}</span>
       </div>`;
     }).join('');
-    return `<div class="rpt-qdetail enriched-yes">
+    // Pending: rubric scores aren't ready, so hide score pill + per-domain
+    // bars + "Next step" callout. Prompt + student's response stay visible
+    // so the student can verify their essay was captured.
+    return `<div class="rpt-qdetail enriched-yes${_pendingW ? ' is-pending' : ''}">
       <div class="qd-header">
-        <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           ${options.hideBack === true ? '' : `<button class="rpt-back-btn" onclick="reportClearQuestion('${testType}','${sectionKey}')" style="margin:0">← Back</button>`}
           <span style="font-size:14px;font-weight:700;color:#190d40">ACT Writing</span>
-          <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:#fce7f3;color:#be185d;border:1px solid #fbcfe8;border-radius:999px;font-size:11px;font-weight:800">Score ${writingScore} / 12</span>
-          <span class="act-writing-review-state">${reviewState}</span>
+          ${_pendingW
+            ? '<span class="pending-status-pill">⏳ Awaiting rubric review</span>'
+            : `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:#fce7f3;color:#be185d;border:1px solid #fbcfe8;border-radius:999px;font-size:11px;font-weight:800">Score ${writingScore} / 12</span>
+               <span class="act-writing-review-state">${reviewState}</span>`}
         </div>
       </div>
       <div class="rpt-passage-box">
@@ -35473,14 +35779,14 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
       </div>
       <div style="font-size:14px;font-weight:700;color:#190d40;margin:16px 0 8px">Your response summary</div>
       <div class="rpt-passage-box">${q.response || 'Essay response submitted for rubric review.'}</div>
-      <div class="rpt-explanation">
+      ${_pendingW ? '' : `<div class="rpt-explanation">
         <h4>Writing rubric feedback</h4>
         <p>${q.explanation || 'Writing is scored with the ACT rubric across four domains.'}</p>
         <div class="act-writing-domain-grid" style="margin-top:14px">${domainHtml}</div>
         <div style="margin-top:14px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px;font-size:12px;color:#475569;line-height:1.55">
           <b style="color:#190d40">Next step:</b> Strengthen the relationship between your own perspective and a competing perspective with one more specific example or implication.
         </div>
-      </div>
+      </div>`}
     </div>`;
   }
   const isCorrect = q.type === 'GRID_IN'
@@ -35491,21 +35797,28 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
   const hideBack = options.hideBack === true;
   const hideNav = options.hideNav === true;
   const hideReviewNav = options.hideReviewNav === true;
+  // Pending Grading — suppress every correctness signal (badges, choice
+  // coloring, score pill, wrong-only analysis, wrong-only review nav)
+  // so students can verify their selected answer and read explanations
+  // without inferring their score from UI cues before release.
+  const pending = options.pending === true;
   let openedReadingSplit = false;
   const typeLabel = TYPE_LABELS[q.type] || q.type || 'Question';
   const pointsPossible = q.pts || 1;
   const earnedPoints = isCorrect ? pointsPossible : 0;
 
-  let h = '<div class="rpt-qdetail enriched-' + (q._enriched ? 'yes' : 'no') + '">';
+  let h = '<div class="rpt-qdetail enriched-' + (q._enriched ? 'yes' : 'no') + (pending ? ' is-pending' : '') + '">';
   h += `<div class="qd-header">
     <div class="rpt-qmeta">
       ${hideBack ? '' : `<button class="rpt-back-btn" onclick="reportClearQuestion('${testType}','${sectionKey}')" style="margin:0">← Back</button>`}
       <span style="font-size:14px;font-weight:700;color:#190d40">Question ${idx + 1} of ${questions.length}</span>
       <span class="rpt-type-pill">${typeLabel}</span>
-      ${isCorrect
-        ? '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;border-radius:999px;font-size:11px;font-weight:800">✓ Correct</span>'
-        : '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;border-radius:999px;font-size:11px;font-weight:800">✗ Wrong</span>'}
-      <span class="rpt-score-pill">${earnedPoints} / ${pointsPossible} ${pointsPossible > 1 ? 'pts' : 'pt'}</span>
+      ${pending
+        ? '<span class="pending-status-pill">⏳ Awaiting score</span>'
+        : (isCorrect
+          ? '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;border-radius:999px;font-size:11px;font-weight:800">✓ Correct</span>'
+          : '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;border-radius:999px;font-size:11px;font-weight:800">✗ Wrong</span>')}
+      ${pending ? '' : `<span class="rpt-score-pill">${earnedPoints} / ${pointsPossible} ${pointsPossible > 1 ? 'pts' : 'pt'}</span>`}
     </div>
     ${hideNav ? '' : `<div class="qd-nav">
       ${idx > 0 ? `<button onclick="reportDrillQuestion('${testType}','${sectionKey}',${idx-1})">◀ Prev</button>` : ''}
@@ -35533,17 +35846,26 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
   h += `<div style="font-size:14px;font-weight:600;color:#190d40;margin-bottom:14px">${q.stem}</div>`;
 
   if (q.type === 'GRID_IN') {
-    h += `<div class="rpt-gridin-answer">
-      <div>
-        <div style="font-size:10px;font-weight:600;color:#71717a;margin-bottom:4px">Your answer</div>
-        <div class="ga-student ${isCorrect ? '' : 'wrong'}">${q.student || '(blank)'}</div>
-      </div>
-      <div style="font-size:20px;color:#d4d4d8">→</div>
-      <div>
-        <div style="font-size:10px;font-weight:600;color:#71717a;margin-bottom:4px">Correct</div>
-        <div class="ga-correct">${(q.correctAnswers || []).join(', ')}</div>
-      </div>
-    </div>`;
+    if (pending) {
+      h += `<div class="rpt-gridin-answer">
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#71717a;margin-bottom:4px">Your answer</div>
+          <div class="ga-student">${q.student || '(blank)'}</div>
+        </div>
+      </div>`;
+    } else {
+      h += `<div class="rpt-gridin-answer">
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#71717a;margin-bottom:4px">Your answer</div>
+          <div class="ga-student ${isCorrect ? '' : 'wrong'}">${q.student || '(blank)'}</div>
+        </div>
+        <div style="font-size:20px;color:#d4d4d8">→</div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#71717a;margin-bottom:4px">Correct</div>
+          <div class="ga-correct">${(q.correctAnswers || []).join(', ')}</div>
+        </div>
+      </div>`;
+    }
   } else {
     h += '<ul class="rpt-choices">';
     (q.choices || []).forEach((c, i) => {
@@ -35551,12 +35873,18 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
       const isThisCorrect = letter === q.correct;
       const isThisStudent = letter === q.student;
       let cls = '', letterCls = 'neutral';
-      if (isThisCorrect) { cls = 'is-correct'; letterCls = ''; }
-      if (isThisStudent && !isThisCorrect) { cls = 'is-wrong'; letterCls = ''; }
       let annotation = '';
-      if (isThisCorrect && isThisStudent) annotation = '<span style="font-size:10px;color:#16a34a;font-weight:700;margin-left:6px;white-space:nowrap">✓ YOUR ANSWER</span>';
-      else if (isThisCorrect) annotation = '<span style="font-size:10px;color:#16a34a;font-weight:700;margin-left:6px;white-space:nowrap">✓ CORRECT</span>';
-      else if (isThisStudent) annotation = '<span style="font-size:10px;color:#ef4444;font-weight:700;margin-left:6px;white-space:nowrap">✗ YOUR ANSWER</span>';
+      if (pending) {
+        // Neutral mode — only surface what the student picked. No
+        // correctness highlight, no green/red letter chip.
+        if (isThisStudent) annotation = '<span class="pending-your-pick">● YOUR ANSWER</span>';
+      } else {
+        if (isThisCorrect) { cls = 'is-correct'; letterCls = ''; }
+        if (isThisStudent && !isThisCorrect) { cls = 'is-wrong'; letterCls = ''; }
+        if (isThisCorrect && isThisStudent) annotation = '<span style="font-size:10px;color:#16a34a;font-weight:700;margin-left:6px;white-space:nowrap">✓ YOUR ANSWER</span>';
+        else if (isThisCorrect) annotation = '<span style="font-size:10px;color:#16a34a;font-weight:700;margin-left:6px;white-space:nowrap">✓ CORRECT</span>';
+        else if (isThisStudent) annotation = '<span style="font-size:10px;color:#ef4444;font-weight:700;margin-left:6px;white-space:nowrap">✗ YOUR ANSWER</span>';
+      }
       h += `<li class="${cls}">
         <div style="display:flex;align-items:center;gap:8px">
           <span class="ch-letter ${letterCls}">${letter}</span>
@@ -35577,7 +35905,7 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
     h += '</ol></div>';
   }
 
-  if (q.type === 'MC' && q.wrongAnalysis && !isCorrect) {
+  if (!pending && q.type === 'MC' && q.wrongAnalysis && !isCorrect) {
     h += '<div class="wrong-analysis"><h5>Why Other Choices Are Wrong</h5>';
     q.wrongAnalysis.forEach(wa => {
       h += `<div class="wa-item"><span class="wa-letter">${wa.label}:</span><span>${wa.reason}</span></div>`;
@@ -35599,7 +35927,7 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
   // Wrong-only navigation footer (existing behavior, kept for drill-in views).
   const wrongQs = questions.map((q2,i2)=>({...q2,origIdx:i2})).filter(q2 => q2.type === 'GRID_IN' ? !(q2.correctAnswers||[]).includes(q2.student) : q2.student !== q2.correct);
   const currentWrongIdx = wrongQs.findIndex(wq => wq.origIdx === idx);
-  if (!hideReviewNav && wrongQs.length > 0) {
+  if (!hideReviewNav && !pending && wrongQs.length > 0) {
     h += '<div class="rpt-review-nav">';
     if (currentWrongIdx > 0) h += `<button onclick="reportDrillQuestion('${testType}','${sectionKey}',${wrongQs[currentWrongIdx-1].origIdx})">◀ Previous Wrong</button>`;
     else h += '<div></div>';
@@ -35956,6 +36284,164 @@ let actReportScenarioKey = 'full';
 function getActSelectedSections() {
   return ACT_REPORT_SCENARIOS[actReportScenarioKey]?.selected || ['english','math','reading','science','writing'];
 }
+
+// Pending Grading state — student already submitted but final scaled
+// scores aren't ready yet (AI scoring in flight, or Manual Grading
+// awaiting teacher release). Demo-only flag; production reads this
+// from session.reportState === 'scoring' (a new state between
+// 'submitted' and 'released'). When true, renderActReport replaces
+// the score hero with a loading card and hides Diagnostics + AI
+// Insights, but inlines My Question Record so students can verify
+// captured answers and read explanations during the wait.
+let actReportLoading = false;
+function _actExitPendingPreviewClass() {
+  // Reset stu-act player chrome when leaving the pending state — so
+  // a student who toggled into Pending preview, then back to Released,
+  // doesn't see a stale "timer hidden / tools hidden" player on the
+  // next test run.
+  const _st = STU_STATE && STU_STATE.stuAct;
+  if (_st) _st.pendingPreview = false;
+  const _p = document.getElementById('page-stu-act');
+  if (_p) _p.classList.remove('pending-preview');
+  if (typeof stuActUpdateHeaderBtn === 'function') stuActUpdateHeaderBtn();
+}
+function setActReportLoading(v) {
+  actReportLoading = !!v;
+  if (!actReportLoading) _actExitPendingPreviewClass();
+  renderActReport();
+  const scroller = (typeof _actrScroller === 'function') ? _actrScroller() : null;
+  if (scroller) scroller.scrollTo({ top: 0, behavior:'smooth' });
+}
+function setActReportLoadingFromNav(v) {
+  actReportLoading = !!v;
+  if (!actReportLoading) _actExitPendingPreviewClass();
+  if (typeof currentRole !== 'undefined' && currentRole !== 'student') {
+    switchRole('student', true);
+  }
+  if (typeof currentPage !== 'undefined' && currentPage !== 'stu-act-report') {
+    nav('stu-act-report');
+  } else {
+    renderActReport();
+  }
+  if (typeof renderToolbarPages === 'function') renderToolbarPages();
+  const scroller = (typeof _actrScroller === 'function') ? _actrScroller() : null;
+  if (scroller) scroller.scrollTo({ top: 0, behavior:'smooth' });
+}
+
+// Pending Question Preview — full-page transition into the stu-act
+// player, mirroring how Released "Open in Review Mode" routes. The
+// player runs in a third mode (`pendingPreview`) that hides timer /
+// tools / flag / elim (same chrome as review-mode) but DOES NOT
+// surface any correctness mark or explanation. Choices keep the
+// plain in-test look with the student's `.selected` pick visible
+// so it feels identical to what they had during the test.
+function stuActEnterPendingPreview(sectionKey, origIdx) {
+  switchRole('student', true);
+  const pk = 'stuAct';
+  if (!STU_STATE[pk]) renderStuAct();
+  const st = STU_STATE[pk];
+  // Exit any prior review state.
+  st.reviewMode      = false;
+  st.pendingPreview  = true;
+  st.reviewSection   = sectionKey || 'all';
+  st.reviewFilter    = 'all';
+  // Reuse the review-mode answer seeding so the player has a saved
+  // student pick to highlight on every item (the report grid was
+  // already showing those statuses).
+  if (typeof stuActSeedReviewAnswers === 'function') stuActSeedReviewAnswers(pk);
+
+  const targetSecIdx = (typeof ACT_REVIEW_SECTION_TO_IDX !== 'undefined' && ACT_REVIEW_SECTION_TO_IDX[sectionKey] != null)
+    ? ACT_REVIEW_SECTION_TO_IDX[sectionKey] : 0;
+
+  nav('stu-act');
+  const page = document.getElementById('page-stu-act');
+  if (page) {
+    page.classList.remove('review-mode');
+    page.classList.add('pending-preview');
+  }
+  stuActUpdateHeaderBtn();
+  stuSwitchActSection(pk, targetSecIdx);
+  stuStopTimer(pk);
+  if ((st._secQuestions || []).length) {
+    stuActGoLocal(pk, Math.max(0, Number(origIdx) || 0));
+  }
+}
+function stuActExitPendingPreview() {
+  const pk = 'stuAct';
+  const st = STU_STATE[pk];
+  if (st) st.pendingPreview = false;
+  const page = document.getElementById('page-stu-act');
+  if (page) page.classList.remove('pending-preview');
+  stuActUpdateHeaderBtn();
+  nav('stu-act-report');
+}
+
+// Player top-left header button: flips between "Directions" (in-test) and
+// "← Back to Report" (review-mode or pending-preview). Single button so
+// the post-test viewing chrome stays minimal and consistent across the
+// two read-only states.
+function stuActUpdateHeaderBtn() {
+  const btn = document.getElementById('stuAct-leftHeaderBtn');
+  if (!btn) return;
+  const st = STU_STATE && STU_STATE.stuAct;
+  if (st && (st.reviewMode || st.pendingPreview)) {
+    btn.textContent = '← Back to Report';
+    btn.onclick = st.pendingPreview ? stuActExitPendingPreview : stuActExitReview;
+  } else {
+    btn.textContent = 'Directions';
+    btn.onclick = function() { stuShowDirections('stuAct'); };
+  }
+}
+
+// Scoring-in-progress hero. Replaces the score hero while
+// session.reportState === 'scoring'. Skeleton lines + spinning ring
+// signal "live work in progress" without hinting at any specific
+// scaled-score value.
+// Neutral skeleton card for non-hero Pending sections. Used so Overview
+// (AI Insights) and Diagnostics still occupy real space + own a valid
+// section anchor while scoring is in flight — without this the sticky
+// tab bar collapses to a single "My Question Record" pill once the
+// student scrolls past the loading hero, which read as broken.
+function renderActReportPendingPlaceholder(title, subtitle) {
+  return `<div class="actr-pending-placeholder">
+    <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke-opacity=".25"/><path d="M12 2 a10 10 0 0 1 10 10"/></svg></div>
+    <div class="body">
+      <h3>${title}</h3>
+      <p>${subtitle}</p>
+      <div class="actr-skel-neutral w90"></div>
+      <div class="actr-skel-neutral w70"></div>
+      <div class="actr-skel-neutral w50"></div>
+    </div>
+  </div>`;
+}
+
+function renderActReportLoadingHero() {
+  return `<div class="actr-loading-hero" role="status" aria-live="polite">
+    <div class="actr-loading-hero-left">
+      <div class="actr-loading-spinner" aria-hidden="true">
+        <svg width="44" height="44" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="4"/><path d="M24 4 a20 20 0 0 1 20 20" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="actr-loading-kicker">ACT · Submitted</div>
+        <h2>Scoring in progress</h2>
+        <p>We're calculating your scaled scores. Your detailed report — <b>Composite</b>, <b>section scores</b>, <b>benchmarks</b>, and <b>AI Insights</b> — will appear here as soon as scoring completes.</p>
+        <p class="actr-loading-meta">Typical wait: <b>1–2 min</b> for AI scoring · longer if a teacher is reviewing your Writing.</p>
+      </div>
+    </div>
+    <div class="actr-loading-hero-right" aria-hidden="true">
+      <div class="actr-skel actr-skel-line w70"></div>
+      <div class="actr-skel actr-skel-line w90"></div>
+      <div class="actr-skel actr-skel-line w50"></div>
+      <div class="actr-skel-grid">
+        <div class="actr-skel actr-skel-box"></div>
+        <div class="actr-skel actr-skel-box"></div>
+        <div class="actr-skel actr-skel-box"></div>
+        <div class="actr-skel actr-skel-box"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function setActReportScenario(key) {
   if (!ACT_REPORT_SCENARIOS[key]) return;
   actReportScenarioKey = key;
@@ -35965,9 +36451,18 @@ function setActReportScenario(key) {
 }
 // Toolbar dropdown entry. Switches scenario AND ensures we land on the
 // ACT Report page (so the user can click any scenario from any view).
+// Picking a scenario also auto-exits the Pending Grading loading state
+// — the scenarios are about "which subjects the student took", which
+// inherently assumes scoring has completed. Without this reset, the
+// loading hero stays sticky across scenario switches and the user
+// can't see the per-scenario Released layouts.
 function setActReportScenarioFromNav(key) {
   if (!ACT_REPORT_SCENARIOS[key]) return;
   actReportScenarioKey = key;
+  if (typeof actReportLoading !== 'undefined' && actReportLoading) {
+    actReportLoading = false;
+    if (typeof _actExitPendingPreviewClass === 'function') _actExitPendingPreviewClass();
+  }
   // Reset Question Record tab to a section that exists in the new
   // scenario (otherwise the previously-active tab — e.g. English —
   // would be hidden, leaving the card blank or showing stale stats).
@@ -36643,15 +37138,32 @@ function initActReportTabsObserver() {
   if (!sections.length) return;
 
   const scroller = _actrScroller();
-  // Activate the LAST section currently above the scroller top (+ tab bar offset).
+  // Activate the LAST section whose top has crossed the "reading line"
+  // (~30% from the top of the scroll viewport). A flat 80px offset
+  // was too conservative — short sections (Pending placeholders are
+  // ~180px) would scroll all the way out before the next one took over,
+  // making the active dot lag visibly behind what the user is actually
+  // reading. A viewport-relative threshold tracks scroll position
+  // naturally regardless of how tall each section happens to be.
+  const tabsEl = document.getElementById('actrReportTabs');
   function refresh() {
-    const offset = 80;
-    const scTop = scroller.getBoundingClientRect().top;
+    const scRect = scroller.getBoundingClientRect();
+    const scTop = scRect.top;
+    const scH = scroller.clientHeight || window.innerHeight || 800;
+    const threshold = Math.max(80, scH * 0.3);
     let activeId = sections[0].id;
     for (const s of sections) {
-      if (s.getBoundingClientRect().top - scTop - offset <= 0) activeId = s.id;
+      if (s.getBoundingClientRect().top - scTop - threshold <= 0) activeId = s.id;
     }
     tabs.forEach(t => t.classList.toggle('is-active', t.dataset.target === activeId));
+    // Visual cue when the bar is actually pinned to the top — a soft
+    // shadow + slightly darker hairline. Without this the bar looks
+    // identical at rest and stuck (white on grey, hairline below),
+    // making it hard to tell the sticky behavior is engaged.
+    if (tabsEl) {
+      const tabTop = tabsEl.getBoundingClientRect().top - scTop;
+      tabsEl.classList.toggle('is-stuck', tabTop <= 0.5);
+    }
   }
   refresh();
   // Use scroll listener instead of IntersectionObserver — simpler and
@@ -36666,6 +37178,46 @@ function renderActReport(){
   const session = getReportState('act');
   if (reportEdgePreview?.type === 'act' && reportEdgePreview.state !== 'released') {
     document.getElementById('actReportBody').innerHTML = renderReportGate('act');
+    return;
+  }
+  // Pending Grading state — student submitted, scores not ready yet.
+  // Hero swaps to a Scoring-in-Progress card; AI Insights + Diagnostics
+  // become neutral skeleton placeholders so layout (and the sticky tab
+  // bar) doesn't shift on release — only the correctness signals are
+  // neutralized. My Question Record keeps the released-state chrome
+  // (tabs + stats table + grid + Open in Preview CTA) but uses the
+  // in-test "answered / unanswered" purple vocabulary, with Total /
+  // Answered / Skipped instead of Correct / Wrong / Accuracy.
+  if (actReportLoading) {
+    const cL = document.getElementById('actReportBody');
+    cL.innerHTML = `<div class="actr-shell">
+      ${renderActReportLoadingHero()}
+      ${renderActReportTabs(false)}
+
+      <section id="overview">
+        ${renderActReportPendingPlaceholder('AI Insights', 'Your personalized practice focus and strengths will appear here once scoring completes.')}
+      </section>
+
+      <section id="diagnostics" class="actr-section">
+        <header class="actr-section-head">
+          <div>
+            <h2>Diagnostics</h2>
+          </div>
+        </header>
+        ${renderActReportPendingPlaceholder('Section-level diagnostics', 'Per-skill mastery, benchmarks, and college-readiness chips will unlock once your scaled scores are ready.')}
+      </section>
+
+      <section id="question-review" class="actr-section">
+        <header class="actr-section-head">
+          <div>
+            <h2>My Question Record</h2>
+          </div>
+        </header>
+        ${renderActQuestionReviewSummary()}
+      </section>
+    </div>`;
+    renderStudentInfoBar('actStudentInfo','ACT', ACT_REPORT.testDate);
+    initActReportTabsObserver();
     return;
   }
   _mergeActScores();
