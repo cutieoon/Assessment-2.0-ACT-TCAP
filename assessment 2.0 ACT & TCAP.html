@@ -6719,15 +6719,11 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .itl-ref-group-head{display:flex;align-items:center;gap:10px;padding:14px 20px;background:linear-gradient(180deg,#fbfaff,#fff);border-bottom:1px solid #f1f1f3}
 .itl-ref-group-head .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .itl-ref-group-head h4{font-size:13px;font-weight:700;color:#190d40;margin:0;display:flex;align-items:baseline;gap:8px}
-.itl-ref-group-head h4 .cn{color:#190d40}
-.itl-ref-group-head h4 .en{font-size:10px;font-weight:600;color:#71717a;letter-spacing:.8px;text-transform:uppercase}
 .itl-ref-group-head .desc{font-size:11px;color:#71717a;margin-left:auto;max-width:520px;text-align:right}
 .itl-ref-row{display:grid;grid-template-columns:minmax(220px,1.4fr) minmax(140px,1fr) 90px minmax(280px,2fr);gap:16px;padding:14px 20px;font-size:12px;border-bottom:1px solid #f4f4f5;align-items:center}
 .itl-ref-row:last-child{border-bottom:none}
 .itl-ref-row:hover{background:#fafafa}
-.itl-ref-name{display:flex;flex-direction:column;gap:2px}
-.itl-ref-name .cn{font-size:12px;font-weight:700;color:#18181b}
-.itl-ref-name .en{font-size:11px;color:#71717a;font-weight:500}
+.itl-ref-name{display:flex;flex-direction:column;gap:2px;font-size:12px;font-weight:700;color:#18181b}
 .itl-ref-subjs{display:flex;flex-wrap:wrap;gap:4px}
 .itl-ref-subj{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.2px;white-space:nowrap}
 .itl-ref-subj.ela {background:#fdf2f8;color:#be185d;border:1px solid #fbcfe8}
@@ -7615,7 +7611,7 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
           <div class="create-item" data-cat="standardized" style="position:relative;overflow:visible" onclick="openDrawer('tcap')">
             <span style="position:absolute;top:-7px;right:-7px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 2px 6px rgba(239,68,68,.35);letter-spacing:.3px;line-height:1.3;z-index:2;pointer-events:none">🔥 Hot</span>
             <div class="ci-icon" style="background:linear-gradient(135deg,#6040ca,#8b5cf6);color:#fff">🏛</div>
-            <div class="ci-body"><div class="ci-title">TCAP Assessment</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and personalized practice on submit</div></div>
+            <div class="ci-body"><div class="ci-title">TCAP Practice</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and personalized practice on submit</div></div>
           </div>
           <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('upload-materials')">
             <div class="ci-icon" style="background:linear-gradient(135deg,#ede9fe,#fef3c7)">📄</div>
@@ -8254,11 +8250,14 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 <!-- Student: ACT Score Report -->
 <div class="page-view report-page" id="page-stu-act-report">
   <div class="report-header">
-    <div class="rh-top">
-      <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">ACT</span> Score Report</h1>
+    <div class="rh-top" style="padding-bottom:6px">
+      <button onclick="switchRole('teacher');nav('homepage')" title="Back to Home" style="display:inline-flex;align-items:center;gap:6px;padding:6px 4px;font-size:13px;font-weight:600;font-family:inherit;letter-spacing:.2px;color:rgba(255,255,255,.75);background:none;border:none;cursor:pointer;line-height:1;white-space:nowrap" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to Home</button>
       <div class="actions">
         <button class="report-dl-btn" onclick="downloadReport('actReportBody','ACT_Score_Report')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF</button>
       </div>
+    </div>
+    <div style="padding:0 32px 18px">
+      <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">ACT</span> Score Report</h1>
     </div>
     <div class="student-profile-card" id="actStudentInfo"></div>
   </div>
@@ -10888,7 +10887,7 @@ const DRAWER_DATA = {
     ]
   },
   tcap: {
-    title:'TCAP Assessment', badge:'TCAP Achievement + EOC',
+    title:'TCAP Practice', badge:'TCAP Achievement + EOC',
     desc:'Tennessee state diagnostic. Subpart structure and timing follow the locked TDOE blueprint.'
   }
 };
@@ -11473,8 +11472,6 @@ function dwTcapUpdateSummary() {
   if (sum) sum.innerHTML = `<strong>${gradeSpan} ${subjSpan}</strong>${eocTail} · ${modeLabel} · <strong>${totalItems} items</strong> · ~${totalTime} min<br><span style="color:#71717a;font-weight:500">One TCAP assessment is created per subject. Create Math separately if needed.</span>`;
   const foot = document.getElementById('drawerFooterBar');
   if (foot) foot.innerHTML = `<span style="color:#3d2c5a">${gradeSpan} ${subjSpan}${eocFootTail} · ${modeLabel} · ${totalItems} items · ~${totalTime} min</span>`;
-  const generateBtn = document.getElementById('dwBtnGenerate');
-  if (generateBtn) generateBtn.textContent = `Create TCAP ${modeLabel}`;
 }
 
 function tcapSetupMetrics() {
@@ -12440,7 +12437,7 @@ function renderAskKiraDraft(draft) {
 }
 function askKiraAnalyze(text) {
   const lower = text.toLowerCase();
-  const type = lower.includes('tcap') ? 'TCAP Assessment' : lower.includes('act') ? 'ACT Practice' : lower.includes('sat') ? 'SAT Practice' : 'General Assessment';
+  const type = lower.includes('tcap') ? 'TCAP Practice' : lower.includes('act') ? 'ACT Practice' : lower.includes('sat') ? 'SAT Practice' : 'General Assessment';
   const route = lower.includes('tcap') ? 'tcap' : lower.includes('act') ? 'act' : lower.includes('sat') ? 'sat' : 'generic';
   const gradeMatch = lower.match(/grade\s*(\d+)|g\s*(\d+)|(\d+)(st|nd|rd|th)\s*grade/);
   const grade = gradeMatch ? `Grade ${gradeMatch[1] || gradeMatch[2] || gradeMatch[3]}` : '';
@@ -12512,7 +12509,7 @@ function askKiraCreateAssessment(route) {
 }
 function askKiraDirectGenerate(route) {
   const labels = {
-    tcap:'TCAP Assessment',
+    tcap:'TCAP Practice',
     act:'ACT Practice',
     sat:'SAT Practice',
     generic:'Assessment'
@@ -12822,13 +12819,7 @@ function openDrawer(type) {
            moved into the Subject section subline above. dwTcapUpdateSummary()
            still updates the footer + CTA label; the missing #dwTcapSummary
            element is handled by an existing null-guard. -->
-      <div class="dw-btn-row">
-        <button class="dw-btn-draft" onclick="drawerSaveDraft()" title="Save your config without generating items. Package status = DRAFT (PRD §5.5.3).">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save as draft
-        </button>
-        <button class="dw-btn-generate" id="dwBtnGenerate" onclick="drawerGenerate()" style="background:linear-gradient(135deg,#6040ca,#8b5cf6)">Create TCAP Diagnostic</button>
-      </div>
+      <button class="dw-btn-generate" id="dwBtnGenerate" onclick="drawerGenerate()">✨ Generate</button>
     `;
     dwTcapUpdateSummary();
   } else if (type === 'act') {
@@ -16888,16 +16879,12 @@ function renderItemTypesReference() {
     <div class="itl-ref-group">
       <div class="itl-ref-group-head">
         <span class="dot" style="background:${g.dot}"></span>
-        <h4>
-          <span class="cn">${bi(['I','II','III','IV'][i] + ' · ' + g.en, ['一','二','三','四'][i] + ' · ' + g.cn)}</span>
-        </h4>
+        <h4>${bi(['I','II','III','IV'][i] + ' · ' + g.en, ['一','二','三','四'][i] + ' · ' + g.cn)}</h4>
         <span class="desc">${bi(g.desc, g.descCn)}</span>
       </div>
       ${g.rows.map(r => `
         <div class="itl-ref-row">
-          <div class="itl-ref-name">
-            <span class="cn">${bi(r.en, r.cn)}</span>
-          </div>
+          <div class="itl-ref-name">${bi(r.en, r.cn)}</div>
           <div class="itl-ref-subjs">
             ${r.subjs.map(s => `<span class="itl-ref-subj ${subjCls[s]}">${subjLabel[s]}</span>`).join('')}
           </div>
