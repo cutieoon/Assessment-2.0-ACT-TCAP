@@ -2120,6 +2120,29 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
   color:#111827;font-weight:700;font-size:14px;letter-spacing:-.005em;
 }
 
+/* Read-only essay variant used in review mode. Reuses .aw-essay-wrap
+   so the outer border + word-count footer stay identical to the live
+   page; only the inner textarea is swapped for a rendered paragraph
+   block (no caret, no focus ring, no edit affordance). */
+.aw-essay-readonly-wrap{cursor:default}
+.aw-essay-readonly-wrap:focus-within{
+  border-color:#d1d5db;box-shadow:none;
+}
+.aw-essay-readonly{
+  width:100%;min-height:340px;
+  padding:20px 24px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:15.5px;line-height:1.9;color:#1f2937;
+  background:transparent;
+}
+.aw-essay-readonly p{margin:0 0 1em}
+.aw-essay-readonly p:last-child{margin:0}
+.aw-essay-readonly-empty{
+  color:#9ca3af;font-style:italic;text-align:center;
+  padding:60px 0;margin:0;
+}
+.aw-resp-head-sub b{color:#111827;font-weight:700}
+
 /* Narrow viewports: stack perspectives 1-up and tighten padding */
 @media (max-width:760px){
   .aw-stim-persp-grid{grid-template-columns:1fr}
@@ -2407,9 +2430,14 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
   font-size:10.5px;color:#a1a1aa;line-height:1.5;margin-top:14px;
   font-weight:400;text-align:right;
 }
-.aw-rv-next{background:linear-gradient(135deg,#fff7ed 0%,#fef3c7 100%);border:1px solid #fde68a;border-radius:14px;padding:16px 20px}
-.aw-rv-next b{display:block;font-size:11px;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.aw-rv-next p{margin:0;font-size:13px;color:#78350f;line-height:1.6}
+/* Teacher feedback callout — uses Kira's purple system so it sits in
+   the same brand family as the ACT report Hero / AI Insights instead
+   of the old amber "highlighter" tone. Stays visually distinct from
+   the indigo .stu-review-explanation block (purple = teacher voice;
+   indigo = system explanation) without clashing. */
+.aw-rv-next{background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%);border:1px solid #e9d5ff;border-radius:14px;padding:16px 20px}
+.aw-rv-next b{display:block;font-size:11px;font-weight:900;color:#6b21a8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.aw-rv-next p{margin:0;font-size:13px;color:#4c1d95;line-height:1.6}
 @media (max-width:760px){.aw-rv-score{grid-template-columns:1fr;text-align:center}.aw-rv-score-num{justify-self:center}.aw-rv-score-state{align-self:center}.aw-rv-score-stats{justify-content:center}.aw-rv-rubric-grid{grid-template-columns:1fr}.aw-rv-essay{padding:18px}}
 
 /* Section management in sidebar */
@@ -4113,7 +4141,10 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
   display:flex;flex-direction:column;
 }
 .report-header .rh-top{
-  display:flex;align-items:center;justify-content:space-between;padding:16px 32px;
+  display:flex;align-items:center;justify-content:space-between;padding:14px 32px 6px;
+}
+.report-header .rh-title{
+  padding:0 32px 18px;
 }
 .report-header h1{font-size:18px;font-weight:700;color:#fff;margin:0;display:flex;align-items:center;gap:10px}
 .report-header .actions{display:flex;align-items:center;gap:8px}
@@ -4129,6 +4160,26 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 }
 .stu-home-btn.rpt{color:rgba(255,255,255,.7);background:none;border:none}
 .stu-home-btn.rpt:hover{color:#fff}
+/* Back chip — breadcrumb-style "Back to Home" sitting one row above the
+   report title. Soft white overlay on the dark purple banner; hover lifts
+   to a stronger white tint without breaking banner contrast. ACT only;
+   SAT report still uses the legacy home-icon button. */
+.rpt-back-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:8px;
+  color:rgba(255,255,255,.85);
+  font-size:12.5px;font-weight:600;line-height:1;
+  cursor:pointer;font-family:inherit;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+.rpt-back-chip:hover{
+  background:rgba(255,255,255,.14);
+  border-color:rgba(255,255,255,.22);
+  color:#fff;
+}
 .student-profile-card{
   margin:0 32px 0;padding:20px 24px;background:#fff;border-radius:14px 14px 0 0;
   display:flex;align-items:center;gap:20px;position:relative;top:12px;
@@ -4380,25 +4431,45 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 }
 .actr-hero-left{
   position:relative;overflow:hidden;
-  background:linear-gradient(135deg,#4c1d95 0%,#6040ca 100%);
-  color:#fff;padding:28px 28px 26px;
-  display:flex;flex-direction:column;gap:18px;
+  background:linear-gradient(135deg,#6040ca 0%,#4a2fa8 100%);
+  color:#fff;padding:24px 28px;
+  display:flex;flex-direction:column;gap:16px;
 }
+/* Two soft circles — plain rgba dots (no gradient) so they stay subtle
+   even on small screens. Top-right is the "spotlight", bottom-left is a
+   smaller counterweight. */
 .actr-hero-left::before{
-  content:'';position:absolute;top:-20px;right:-20px;width:200px;height:200px;
-  background:radial-gradient(circle at top right,rgba(255,255,255,.10),transparent 70%);
-  pointer-events:none;
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(255,255,255,.06);pointer-events:none;
+}
+.actr-hero-left::after{
+  content:'';position:absolute;bottom:-20px;left:10px;
+  width:70px;height:70px;border-radius:50%;
+  background:rgba(255,255,255,.04);pointer-events:none;
 }
 .actr-hero-left .kicker{
-  font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
-  color:rgba(255,255,255,.72);margin-bottom:6px;
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.65);margin-bottom:6px;
 }
 .actr-hero-left .num-row{display:flex;align-items:baseline;gap:4px;line-height:1}
 .actr-hero-left .num{
-  font-size:60px;font-weight:800;letter-spacing:-2px;
+  font-size:52px;font-weight:800;letter-spacing:-2px;
   color:#fff;font-variant-numeric:tabular-nums;
 }
-.actr-hero-left .scale{font-size:18px;font-weight:500;color:rgba(255,255,255,.55)}
+.actr-hero-left .scale{font-size:20px;font-weight:500;color:rgba(255,255,255,.5)}
+/* White progress bar directly under the big number — a quick visual
+   anchor for "score / max" ratio (Writing only renders this; Single
+   section uses the benchmark pill instead so adding a bar would
+   compete). Width is set inline by the renderer. */
+.actr-hero-left .hero-score-bar{
+  width:100%;height:4px;background:rgba(255,255,255,.2);
+  border-radius:4px;overflow:hidden;margin-top:10px;
+}
+.actr-hero-left .hero-score-fill{
+  height:100%;background:rgba(255,255,255,.85);border-radius:4px;
+  transition:width .8s cubic-bezier(.4,0,.2,1);
+}
 
 .actr-hero-pill{
   display:inline-flex;align-items:center;gap:8px;
@@ -4415,9 +4486,35 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .actr-hero-pill.stack .sub-line{
   font-size:11px;font-weight:500;color:rgba(255,255,255,.7);
 }
+.actr-hero-pill.is-kira{
+  flex-direction:row;align-items:center;
+  gap:8px;padding:8px 10px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:8px;
+}
+.actr-hero-pill.is-kira .kira-spark{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:5px;
+  background:rgba(255,255,255,.2);
+  font-size:11px;flex-shrink:0;color:#fff;
+}
+.actr-hero-pill.is-kira .kira-body{display:flex;flex-direction:column;gap:1px;min-width:0}
+.actr-hero-pill.is-kira .kira-title{
+  font-size:12px;font-weight:600;color:rgba(255,255,255,.95);letter-spacing:0;line-height:1.3;
+}
+.actr-hero-pill.is-kira .kira-sub{
+  font-size:10px;font-weight:400;color:rgba(255,255,255,.55);line-height:1.3;
+}
 
 .actr-hero-right{
   padding:24px 28px;display:flex;flex-direction:column;gap:18px;min-width:0;
+}
+/* Solo hero: right column only holds 4 mini cards (one row), which is
+   shorter than the purple left column. Vertically center the cards so
+   they line up with the big number on the left. */
+.actr-hero-card.is-solo .actr-hero-right{
+  justify-content:center;padding:20px 24px;
 }
 .actr-hero-right .h-kicker{
   font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
@@ -4481,6 +4578,122 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
   .actr-hero-right{padding:22px}
   .actr-hero-bar-row{grid-template-columns:80px 1fr 26px 66px;gap:10px}
   .actr-hero-derived{grid-template-columns:1fr}
+}
+
+/* Custom Selection / Free Combination scenario switcher.
+   Demo-only chip bar above the hero so we can step through every
+   combination branch. Production reads selectedSections from the
+   assignment + actual submission instead of this switcher. */
+.actr-scenario-bar{
+  display:flex;flex-direction:column;gap:10px;
+  margin:0 0 22px;padding:14px 18px;
+  background:linear-gradient(180deg,#fafafe,#fff);
+  border:1px dashed #c4b5fd;border-radius:12px;
+}
+.actr-scenario-bar-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#52525b}
+.actr-scenario-icon{font-size:13px}
+.actr-scenario-title{font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#6040ca}
+.actr-scenario-hint{color:#71717a;font-weight:500}
+.actr-scenario-pills{display:flex;flex-wrap:wrap;gap:6px}
+.actr-scenario-pill{
+  display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;
+  padding:7px 12px;background:#fff;border:1px solid #e4e4e7;border-radius:8px;
+  color:#3f3f46;font-family:inherit;cursor:pointer;text-align:left;
+  transition:all .15s ease;
+}
+.actr-scenario-pill:hover{border-color:#a78bfa;background:#fafafe}
+.actr-scenario-pill .pill-label{font-size:12px;font-weight:700;line-height:1.2}
+.actr-scenario-pill .pill-desc{font-size:10px;font-weight:500;color:#71717a;line-height:1.2;margin-top:1px}
+.actr-scenario-pill.is-active{
+  background:linear-gradient(135deg,#6040ca,#8b5cf6);border-color:#6040ca;color:#fff;
+  box-shadow:0 1px 3px rgba(96,64,202,.25);
+}
+.actr-scenario-pill.is-active .pill-desc{color:rgba(255,255,255,.82)}
+
+/* Custom Selection banner above hero when Composite unavailable */
+.actr-custom-banner{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:0 0 16px;padding:11px 14px;
+  background:#fef3c7;border:1px solid #fde68a;border-radius:10px;
+  font-size:12.5px;color:#854d0e;line-height:1.5;
+}
+.actr-custom-banner .acb-icon{font-size:14px;line-height:1.4;flex-shrink:0}
+.actr-custom-banner .acb-text b{font-weight:700}
+
+/* Hero variants for Tier 3 (Custom Selection) */
+.actr-hero-left .num.small{font-size:42px;letter-spacing:-1.2px}
+.actr-hero-left .scale.muted{color:rgba(255,255,255,.55);font-size:14px;font-weight:500}
+.actr-hero-derived-item.is-off .d-num{color:#a1a1aa}
+.actr-hero-derived-item.is-off .chip.muted{
+  background:#f4f4f5;color:#71717a;border-color:#e4e4e7;font-weight:500;
+}
+.actr-hero-derived-item.is-off .d-num .d-na{color:#d4d4d8;font-weight:700}
+
+/* Solo hero (single section / Writing only) right column — shadcn-style
+   KPI cards. Clean white card + 1px zinc border + soft purple progress
+   bar, no gradient or left accent (that pattern reads dated). Typography
+   hierarchy: muted kicker (medium 12px) → black tabular number (28px) →
+   muted scale (14px). Bar under each card shows ratio at a glance. */
+.actr-hero-solo-kpis{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-self:center;
+}
+.actr-hero-solo-kpi{
+  position:relative;
+  display:flex;flex-direction:column;gap:8px;min-width:0;
+  background:#f5f6f9;border:1px solid #eef0f4;border-radius:10px;
+  padding:14px 14px 12px;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+  /* tier colors injected per-card as inline style: --tier-bar */
+}
+.actr-hero-solo-kpi:hover{
+  border-color:#ae95ff;background:#fff;
+  box-shadow:0 0 0 3px rgba(96,64,202,.08);
+}
+.actr-hero-solo-kpi .d-kicker{
+  font-size:11px;font-weight:600;color:#8892a8;
+  text-transform:uppercase;letter-spacing:.03em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.actr-hero-solo-kpi .d-num-row{
+  display:flex;align-items:baseline;gap:2px;min-height:30px;flex-wrap:wrap;
+}
+.actr-hero-solo-kpi .d-num{
+  font-size:26px;font-weight:800;color:#1a1d26;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-1px;
+}
+.actr-hero-solo-kpi .d-num sub{font-size:12px;font-weight:600;color:#8892a8;vertical-align:baseline;margin-left:1px}
+.actr-hero-solo-kpi .d-num .d-scale{font-size:13px;font-weight:500;color:#8892a8;margin-left:2px}
+.actr-hero-solo-kpi .d-num.tight{font-size:16px;line-height:1.25;font-weight:700;letter-spacing:0}
+.actr-hero-solo-kpi .d-progress{
+  height:3px;background:#e8ebf0;border-radius:3px;overflow:hidden;
+}
+.actr-hero-solo-kpi .d-progress-fill{
+  height:100%;background:var(--tier-bar,#6040ca);border-radius:3px;
+  transition:width .8s cubic-bezier(.4,0,.2,1);
+}
+/* Best card highlight — brand-purple ring (not tier-colored, to keep
+   "Best" visually distinct from the tier coloring on the bar itself). */
+.actr-hero-solo-kpi.is-best{
+  border-color:#ae95ff;background:#fff;
+  box-shadow:0 0 0 3px rgba(96,64,202,.08);
+}
+/* Inline compare label (Best / Lowest) — sits on the number row
+   baseline, soft tier-tinted background so the chip reads at a glance. */
+.actr-hero-solo-kpi .compare-label{
+  display:inline-flex;align-items:center;gap:2px;
+  font-size:10px;font-weight:700;line-height:1.4;
+  padding:2px 6px;border-radius:4px;margin-left:4px;
+  border:1px solid;
+}
+.actr-hero-solo-kpi .compare-label.best{
+  background:#ecfdf5;color:#047857;border-color:#a7f3d0;
+}
+.actr-hero-solo-kpi .compare-label.low{
+  background:#fffbeb;color:#92400e;border-color:#fde68a;
+}
+
+@media (max-width:880px){
+  .actr-hero-solo-kpis{grid-template-columns:repeat(2,1fr)}
 }
 
 /* — Section group / heading */
@@ -5594,6 +5807,12 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .toolbar-subs-pop button:hover{background:#f5f3ff;color:#6040ca}
 .toolbar-subs-pop button .sub-ico{font-size:14px;line-height:1;width:18px;text-align:center}
 .toolbar-subs-pop button .sub-meta{margin-left:auto;font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.2px}
+.toolbar-scenario-badge{
+  font-size:9px;font-weight:700;padding:2px 6px;margin-left:4px;
+  background:rgba(96,64,202,.12);color:#6040ca;border-radius:6px;
+  letter-spacing:.2px;line-height:1.3;white-space:nowrap;
+}
+.toolbar-page-btn.active .toolbar-scenario-badge{background:rgba(255,255,255,.22);color:#fff}
 .toolbar-subs-pop .sub-divider{height:1px;background:#f1f5f9;margin:4px 2px}
 .toolbar-dev-btn{width:30px;height:30px;border:none;border-radius:10px;background:#f8fafc;color:#94a3b8;font-size:12px;cursor:pointer;transition:.15s;flex-shrink:0}
 .toolbar-dev-btn:hover{background:#ede9fe;color:#6040ca}
@@ -6719,11 +6938,15 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .itl-ref-group-head{display:flex;align-items:center;gap:10px;padding:14px 20px;background:linear-gradient(180deg,#fbfaff,#fff);border-bottom:1px solid #f1f1f3}
 .itl-ref-group-head .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .itl-ref-group-head h4{font-size:13px;font-weight:700;color:#190d40;margin:0;display:flex;align-items:baseline;gap:8px}
+.itl-ref-group-head h4 .cn{color:#190d40}
+.itl-ref-group-head h4 .en{font-size:10px;font-weight:600;color:#71717a;letter-spacing:.8px;text-transform:uppercase}
 .itl-ref-group-head .desc{font-size:11px;color:#71717a;margin-left:auto;max-width:520px;text-align:right}
 .itl-ref-row{display:grid;grid-template-columns:minmax(220px,1.4fr) minmax(140px,1fr) 90px minmax(280px,2fr);gap:16px;padding:14px 20px;font-size:12px;border-bottom:1px solid #f4f4f5;align-items:center}
 .itl-ref-row:last-child{border-bottom:none}
 .itl-ref-row:hover{background:#fafafa}
-.itl-ref-name{display:flex;flex-direction:column;gap:2px;font-size:12px;font-weight:700;color:#18181b}
+.itl-ref-name{display:flex;flex-direction:column;gap:2px}
+.itl-ref-name .cn{font-size:12px;font-weight:700;color:#18181b}
+.itl-ref-name .en{font-size:11px;color:#71717a;font-weight:500}
 .itl-ref-subjs{display:flex;flex-wrap:wrap;gap:4px}
 .itl-ref-subj{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.2px;white-space:nowrap}
 .itl-ref-subj.ela {background:#fdf2f8;color:#be185d;border:1px solid #fbcfe8}
@@ -7611,7 +7834,7 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
           <div class="create-item" data-cat="standardized" style="position:relative;overflow:visible" onclick="openDrawer('tcap')">
             <span style="position:absolute;top:-7px;right:-7px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 2px 6px rgba(239,68,68,.35);letter-spacing:.3px;line-height:1.3;z-index:2;pointer-events:none">🔥 Hot</span>
             <div class="ci-icon" style="background:linear-gradient(135deg,#6040ca,#8b5cf6);color:#fff">🏛</div>
-            <div class="ci-body"><div class="ci-title">TCAP Practice</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and personalized practice on submit</div></div>
+            <div class="ci-body"><div class="ci-title">TCAP Assessment</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and personalized practice on submit</div></div>
           </div>
           <div class="create-item" data-cat="custom" onclick="openTemplateLauncher('upload-materials')">
             <div class="ci-icon" style="background:linear-gradient(135deg,#ede9fe,#fef3c7)">📄</div>
@@ -8250,13 +8473,13 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 <!-- Student: ACT Score Report -->
 <div class="page-view report-page" id="page-stu-act-report">
   <div class="report-header">
-    <div class="rh-top" style="padding-bottom:6px">
-      <button onclick="switchRole('teacher');nav('homepage')" title="Back to Home" style="display:inline-flex;align-items:center;gap:6px;padding:6px 4px;font-size:13px;font-weight:600;font-family:inherit;letter-spacing:.2px;color:rgba(255,255,255,.75);background:none;border:none;cursor:pointer;line-height:1;white-space:nowrap" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.75)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to Home</button>
+    <div class="rh-top">
+      <button class="rpt-back-chip" onclick="switchRole('teacher');nav('homepage')" title="Back to Home"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to Home</button>
       <div class="actions">
         <button class="report-dl-btn" onclick="downloadReport('actReportBody','ACT_Score_Report')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF</button>
       </div>
     </div>
-    <div style="padding:0 32px 18px">
+    <div class="rh-title">
       <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">ACT</span> Score Report</h1>
     </div>
     <div class="student-profile-card" id="actStudentInfo"></div>
@@ -8644,7 +8867,7 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
           <span class="lang-en">A data-driven health check on the Staging Core API full snapshot. Required reading before any cross-product question-tagging foundation goes live.</span>
           <span class="lang-cn">基于 Staging Core API 全量快照的数据驱动体检。跨产品 question tagging 底座上线前的必读。</span>
         </div>
-      <div class="ti-meta">
+        <div class="ti-meta">
           <span>📂 <span class="lang-en">Source:</span><span class="lang-cn">数据源：</span> <b>crawl_skills_info</b> + <b>crawl_standards_info</b></span>
           <span>📅 <span class="lang-en">Snapshot:</span><span class="lang-cn">快照：</span> <b>2025</b></span>
           <span>🔗 <span class="lang-en">Companion doc:</span><span class="lang-cn">配套文档：</span> <b>Question-Tag-Discovery-CN.md</b></span>
@@ -10887,7 +11110,7 @@ const DRAWER_DATA = {
     ]
   },
   tcap: {
-    title:'TCAP Practice', badge:'TCAP Achievement + EOC',
+    title:'TCAP Assessment', badge:'TCAP Achievement + EOC',
     desc:'Tennessee state diagnostic. Subpart structure and timing follow the locked TDOE blueprint.'
   }
 };
@@ -11472,6 +11695,8 @@ function dwTcapUpdateSummary() {
   if (sum) sum.innerHTML = `<strong>${gradeSpan} ${subjSpan}</strong>${eocTail} · ${modeLabel} · <strong>${totalItems} items</strong> · ~${totalTime} min<br><span style="color:#71717a;font-weight:500">One TCAP assessment is created per subject. Create Math separately if needed.</span>`;
   const foot = document.getElementById('drawerFooterBar');
   if (foot) foot.innerHTML = `<span style="color:#3d2c5a">${gradeSpan} ${subjSpan}${eocFootTail} · ${modeLabel} · ${totalItems} items · ~${totalTime} min</span>`;
+  const generateBtn = document.getElementById('dwBtnGenerate');
+  if (generateBtn) generateBtn.textContent = `Create TCAP ${modeLabel}`;
 }
 
 function tcapSetupMetrics() {
@@ -12437,7 +12662,7 @@ function renderAskKiraDraft(draft) {
 }
 function askKiraAnalyze(text) {
   const lower = text.toLowerCase();
-  const type = lower.includes('tcap') ? 'TCAP Practice' : lower.includes('act') ? 'ACT Practice' : lower.includes('sat') ? 'SAT Practice' : 'General Assessment';
+  const type = lower.includes('tcap') ? 'TCAP Assessment' : lower.includes('act') ? 'ACT Practice' : lower.includes('sat') ? 'SAT Practice' : 'General Assessment';
   const route = lower.includes('tcap') ? 'tcap' : lower.includes('act') ? 'act' : lower.includes('sat') ? 'sat' : 'generic';
   const gradeMatch = lower.match(/grade\s*(\d+)|g\s*(\d+)|(\d+)(st|nd|rd|th)\s*grade/);
   const grade = gradeMatch ? `Grade ${gradeMatch[1] || gradeMatch[2] || gradeMatch[3]}` : '';
@@ -12509,7 +12734,7 @@ function askKiraCreateAssessment(route) {
 }
 function askKiraDirectGenerate(route) {
   const labels = {
-    tcap:'TCAP Practice',
+    tcap:'TCAP Assessment',
     act:'ACT Practice',
     sat:'SAT Practice',
     generic:'Assessment'
@@ -12650,7 +12875,7 @@ function dwCheckSelection() {
     const msgs = [];
     const allComposite = ['eng','math','read'].every(s => checked.includes(s));
     if (!allComposite) {
-      msgs.push('ℹ️ Composite Score will not be available — not all core sections selected');
+      msgs.push('ℹ️ Composite Score will not be available — Composite requires the official ACT Core 3 (English + Math + Reading)');
     }
     if (checked.includes('sci') && checked.includes('math')) {
       msgs.push('✅ STEM Score available');
@@ -12819,7 +13044,13 @@ function openDrawer(type) {
            moved into the Subject section subline above. dwTcapUpdateSummary()
            still updates the footer + CTA label; the missing #dwTcapSummary
            element is handled by an existing null-guard. -->
-      <button class="dw-btn-generate" id="dwBtnGenerate" onclick="drawerGenerate()">✨ Generate</button>
+      <div class="dw-btn-row">
+        <button class="dw-btn-draft" onclick="drawerSaveDraft()" title="Save your config without generating items. Package status = DRAFT (PRD §5.5.3).">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save as draft
+        </button>
+      <button class="dw-btn-generate" id="dwBtnGenerate" onclick="drawerGenerate()" style="background:linear-gradient(135deg,#6040ca,#8b5cf6)">Create TCAP Diagnostic</button>
+      </div>
     `;
     dwTcapUpdateSummary();
   } else if (type === 'act') {
@@ -14969,9 +15200,9 @@ function renderAssessmentDetail() {
   const setupTitle = session.testType === 'tcap'
     ? session.title
     : (session.subtitle && session.testType !== 'generic'
-        ? session.subtitle
-        : (session.testType === 'generic'
-            ? 'Exam Setup: Upload Mode, Medium Difficulty'
+    ? session.subtitle
+    : (session.testType === 'generic'
+        ? 'Exam Setup: Upload Mode, Medium Difficulty'
             : `Exam Setup: ${session.title}`));
   const typeLabel = session.testType === 'generic' ? 'General' : testTypeLabel(session.testType);
   const assigned = !['Draft','Not Assigned'].includes(session.status);
@@ -15018,38 +15249,38 @@ function renderAssessmentDetail() {
             <span class="assignment-state-text" style="margin-top:0;font-weight:600"><span class="assignment-state-dot"></span> ${assigned ? 'Assigned' : 'Not Assigned'}</span>
             <span style="color:#d4d4d8">·</span>
             <span>${metaStrip}</span>
-          </div>
+        </div>
         </div>
         <div style="flex-shrink:0">
           <button class="btn-kira-default" onclick="openAssignModal('${session.testType}')">${assigned ? 'Create New Assignment' : 'Assign to Students'}</button>
         </div>
       </div>
       <div style="margin-top:18px;padding-top:16px;border-top:1px solid #eef0f4">
-        <div class="assessment-actions-title">Actions</div>
-        <div class="assessment-actions-grid">
+      <div class="assessment-actions-title">Actions</div>
+      <div class="assessment-actions-grid">
           <div class="assessment-action-card${assigned ? ' is-disabled' : ''}" onclick="${editClick}" title="${editTitle}">
-            <div class="assessment-action-left">
+          <div class="assessment-action-left">
               <div class="assessment-action-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </div>
-              <div>
-                <div class="assessment-action-title">Edit Assessment</div>
-                <div class="assessment-action-desc">Modify the assessment questions and settings.</div>
-              </div>
+            <div>
+              <div class="assessment-action-title">Edit Assessment</div>
+              <div class="assessment-action-desc">Modify the assessment questions and settings.</div>
             </div>
-            <div class="assessment-action-arrow">›</div>
           </div>
+          <div class="assessment-action-arrow">›</div>
+        </div>
           <div class="assessment-action-card" onclick="openStudentLaunch('${session.id}', true)" title="Simulate the student experience of the assessment">
-            <div class="assessment-action-left">
+          <div class="assessment-action-left">
               <div class="assessment-action-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </div>
-              <div>
-                <div class="assessment-action-title">Preview Assessment</div>
-                <div class="assessment-action-desc">Simulate the student experience of the assessment.</div>
-              </div>
+            <div>
+              <div class="assessment-action-title">Preview Assessment</div>
+              <div class="assessment-action-desc">Simulate the student experience of the assessment.</div>
             </div>
-            <div class="assessment-action-arrow">›</div>
+          </div>
+          <div class="assessment-action-arrow">›</div>
           </div>
         </div>
       </div>
@@ -15101,7 +15332,7 @@ function renderTcapSubpartSchedule(session) {
         <div class="assignment-row-title" style="margin:0 0 2px;font-size:13px">${bp.label}</div>
         <div class="assignment-row-meta" style="margin-bottom:${tags.length ? '6px' : '0'};font-size:11.5px;line-height:1.35">${bp.desc}</div>
         ${tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px">${tags.map(t => `<span title="${t.tip}" style="font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:${t.color};background:${t.bg};border:1px solid ${t.border};padding:1px 6px;border-radius:999px;cursor:help">${t.label}</span>`).join('')}</div>` : ''}
-      </div>
+        </div>
       <div style="text-align:right;white-space:nowrap">
         <div style="font-size:14px;font-weight:800;color:#18181b">${bp.minutes} min</div>
         <div style="font-size:10px;color:#71717a;font-weight:600">+ext ${bp.extMin} min</div>
@@ -16649,11 +16880,11 @@ function renderItemTypesLibrary() {
   const viewBody = _itlView === 'reference'
     ? renderItemTypesReference()
     : `
-      <div class="itl-tabs">
-        <button class="itl-tab ${_itlFilter==='all'?'active':''}"         onclick="setItlFilter('all')">All <span class="ct">${visibleTypes.length}</span></button>
-        <button class="itl-tab ${_itlFilter==='must'?'active':''}"        onclick="setItlFilter('must')">MVP must <span class="ct">${counts.must}</span></button>
-        <button class="itl-tab ${_itlFilter==='unsupported'?'active':''}" onclick="setItlFilter('unsupported')">Not Support <span class="ct">${counts.unsupported}</span></button>
-      </div>
+    <div class="itl-tabs">
+      <button class="itl-tab ${_itlFilter==='all'?'active':''}"         onclick="setItlFilter('all')">All <span class="ct">${visibleTypes.length}</span></button>
+      <button class="itl-tab ${_itlFilter==='must'?'active':''}"        onclick="setItlFilter('must')">MVP must <span class="ct">${counts.must}</span></button>
+      <button class="itl-tab ${_itlFilter==='unsupported'?'active':''}" onclick="setItlFilter('unsupported')">Not Support <span class="ct">${counts.unsupported}</span></button>
+    </div>
       ${sections}`;
 
   // Bilingual mini-helper, mirrors the one in renderItemTypesReference but
@@ -16879,12 +17110,16 @@ function renderItemTypesReference() {
     <div class="itl-ref-group">
       <div class="itl-ref-group-head">
         <span class="dot" style="background:${g.dot}"></span>
-        <h4>${bi(['I','II','III','IV'][i] + ' · ' + g.en, ['一','二','三','四'][i] + ' · ' + g.cn)}</h4>
+        <h4>
+          <span class="cn">${bi(['I','II','III','IV'][i] + ' · ' + g.en, ['一','二','三','四'][i] + ' · ' + g.cn)}</span>
+        </h4>
         <span class="desc">${bi(g.desc, g.descCn)}</span>
       </div>
       ${g.rows.map(r => `
         <div class="itl-ref-row">
-          <div class="itl-ref-name">${bi(r.en, r.cn)}</div>
+          <div class="itl-ref-name">
+            <span class="cn">${bi(r.en, r.cn)}</span>
+          </div>
           <div class="itl-ref-subjs">
             ${r.subjs.map(s => `<span class="itl-ref-subj ${subjCls[s]}">${subjLabel[s]}</span>`).join('')}
           </div>
@@ -21361,9 +21596,9 @@ function tcsViewTest() {
   const isFlagged = TCS_STATE.flags.has(TCS_STATE.currentIdx);
   const builderHtml = builder ? builder(t, q) : `<div style="padding:30px;text-align:center;color:#71717a">Renderer for ${q.type} not registered.</div>`;
   const meta = (isAns || isFlagged) ? `
-    <div class="tcs-q-meta">
-      ${isAns ? '<span class="chip ok">✓ Answered</span>' : ''}
-      ${isFlagged ? '<span class="chip flag">⚐ Flagged for review</span>' : ''}
+        <div class="tcs-q-meta">
+          ${isAns ? '<span class="chip ok">✓ Answered</span>' : ''}
+          ${isFlagged ? '<span class="chip flag">⚐ Flagged for review</span>' : ''}
     </div>` : '';
   const stimulus = q.content && q.content.stimulus;
   if (stimulus) {
@@ -22096,8 +22331,11 @@ const ACT_V2_STUDENTS = [
 // Helpers (pure, no DOM) — used by both Overview KPI and Analytics.
 function actComputeAnalytics() {
   const rows = ACT_V2_STUDENTS;
-  const completed = rows.filter(r => r.eng != null && r.math != null && r.read != null && r.sci != null);
-  const composites = completed.map(r => Math.round((r.eng + r.math + r.read + r.sci) / 4));
+  // Enhanced ACT Composite = round((E + M + R) / 3). Core 3 must all be
+  // present. Science is optional and does NOT enter Composite (Enhanced
+  // 2025+; key change from Legacy 4-section average).
+  const completed = rows.filter(r => r.eng != null && r.math != null && r.read != null);
+  const composites = completed.map(r => Math.round((r.eng + r.math + r.read) / 3));
   const avg = composites.length ? +(composites.reduce((s, n) => s + n, 0) / composites.length).toFixed(1) : 0;
   const sectionAvgs = ['eng','math','read','sci'].map(k => {
     const scores = rows.map(r => r[k]).filter(n => n != null);
@@ -22165,8 +22403,9 @@ function actAnSubjectMeta() {
 
 function actAnStudentSubjectScore(r, subject) {
   if (subject === 'composite') {
-    if (r.eng == null || r.math == null || r.read == null || r.sci == null) return null;
-    return Math.round((r.eng + r.math + r.read + r.sci) / 4);
+    // Enhanced ACT: Composite needs Core 3 (E + M + R) only.
+    if (r.eng == null || r.math == null || r.read == null) return null;
+    return Math.round((r.eng + r.math + r.read) / 3);
   }
   if (subject === 'english') return r.eng;
   if (subject === 'math')    return r.math;
@@ -22346,11 +22585,11 @@ function renderActAnalytics(session, model, total) {
       <div class="col-right">
         ${renderActAnCompletion()}
         ${renderActAnStudents()}
-      </div>
+            </div>
       </div>
     <div class="act-an-bar-tooltip" id="actAnBarTooltip"></div>
     </div>`;
-}
+  }
 
 // ── Row 1: Score Row (Composite hero + 4 section cards) ──
 // Composite is solid Kira purple to anchor the row visually. Section cards
@@ -22379,7 +22618,7 @@ function renderActAnScoreRow() {
       <div class="bm-row">
         <div class="bar-wrap"><div class="bar bar-${tier}" style="width:${m.met}%"></div></div>
         <span class="bm-pct">${m.met}% met BM ${m.bm}</span>
-      </div>
+          </div>
     </div>`);
   });
   return `<div class="act-an-score-row">${cards.join('')}</div>`;
@@ -22404,9 +22643,9 @@ function renderActAnAlertBanner() {
     <div class="text">
       <strong>${a.writingPending} writing ${essayWord} pending grading — students are waiting for feedback</strong>
       <span>${namesHtml}</span>
-                </div>
+        </div>
     <button class="cta" onclick="event.stopPropagation();iteToast('Open Grading Queue — ACT Writing essays','info')">Open Grading Queue →</button>
-    </div>`;
+      </div>`;
   }
 
 // ── Row 3 left: Distribution histogram (subject-tabbed + tooltip) ──
@@ -22421,7 +22660,7 @@ function renderActAnDistribution() {
       ${['composite','english','math','reading','science'].map(k => {
         const lbl = actAnSubjectMeta()[k].label;
         return `<button class="act-an-subj-btn ${_actAnSubject === k ? 'active' : ''}" data-subj="${k}" onclick="setActAnSubject('${k}')">${lbl}</button>`;
-      }).join('')}
+    }).join('')}
     </div>
     <div id="actAnDistBody">${renderActAnDistributionBody(_actAnSubject)}</div>
       </div>`;
@@ -22488,7 +22727,7 @@ function renderActAnSkills() {
       <button class="act-an-see-all" id="actAnSkillsToggleBtn" onclick="toggleActAnSkills()">${initLabel}</button>
       </div>
     <div id="actAnSkillsBody">${renderActAnSkillsBody()}</div>
-              </div>`;
+    </div>`;
 }
 
 function renderActAnSkillsBody() {
@@ -22543,12 +22782,13 @@ function renderActAnCompletion() {
 // status is awaiting-writing → "Essay pending" badge; otherwise "Complete".
 // CTA at the bottom jumps the teacher to the Overview tab to see all rows.
 function renderActAnStudents() {
+  // Enhanced ACT Composite = (E + M + R) / 3 (Core 3 only).
   const sorted = ACT_V2_STUDENTS
-    .filter(r => r.eng != null && r.math != null && r.read != null && r.sci != null)
+    .filter(r => r.eng != null && r.math != null && r.read != null)
     .map(r => ({
       name: r.name,
       i: r.name.split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase(),
-      score: Math.round((r.eng + r.math + r.read + r.sci) / 4),
+      score: Math.round((r.eng + r.math + r.read) / 3),
       pending: r.status === 'awaiting-writing'
     }))
     .sort((a, b) => b.score - a.score)
@@ -28719,8 +28959,8 @@ function renderTcapStudentReport() {
           <div>${catHTML}</div>
         </div>
         ${cohortHTML}
-      </div>
-    </div>
+          </div>
+        </div>
 
     ${renderTcapItemReview()}
   `;
@@ -29136,7 +29376,24 @@ const studentPages = [
       {kind:'phase',phase:'review',   label:'Review summary',         icon:'📑',meta:'Before submit'},
       {kind:'phase',phase:'holding',  label:'Submitted · scoring',    icon:'⏳',meta:'Auto-grade in progress'},
     ]},
-  {id:'stu-act-report',label:'ACT Report',icon:'📊',title:'ACT Student Report'},
+  // ACT Report supports Free Combination mocks — the toolbar dropdown lets
+  // the demo step through every Custom Selection scenario without leaving
+  // the toolbar. Each `act-scenario` sub sets actReportScenarioKey then
+  // navigates to the report page (or re-renders if already there).
+  {id:'stu-act-report',label:'ACT Report',icon:'📊',title:'ACT Student Report',
+    subs:[
+      {kind:'act-scenario',scenario:'full',     label:'Full Battery',     icon:'🎯',meta:'E + M + R + S + W'},
+      {kind:'divider'},
+      {kind:'act-scenario',scenario:'core_s',   label:'Core + Science',   icon:'🧪',meta:'E + M + R + S'},
+      {kind:'act-scenario',scenario:'core_w',   label:'Core + Writing',   icon:'✍️',meta:'E + M + R + W'},
+      {kind:'act-scenario',scenario:'core3',    label:'Core only',        icon:'📚',meta:'E + M + R'},
+      {kind:'divider'},
+      {kind:'act-scenario',scenario:'ms',       label:'STEM pair',        icon:'🔬',meta:'M + S (no Composite)'},
+      {kind:'act-scenario',scenario:'erw',      label:'ELA pack',         icon:'📝',meta:'E + R + W (ELA derived)'},
+      {kind:'divider'},
+      {kind:'act-scenario',scenario:'mathOnly', label:'Single section',   icon:'📐',meta:'Math only'},
+      {kind:'act-scenario',scenario:'writOnly', label:'Writing only',     icon:'✎',    meta:'Single essay'},
+    ]},
   {id:'stu-sat-report',label:'SAT Report',icon:'📈',title:'SAT Student Report'},
   {id:'tcap-diag-report',label:'TCAP Report',icon:'🎯',title:'TCAP Student Report'},
 ];
@@ -29245,7 +29502,16 @@ function renderToolbarPages() {
       ? `toolbarToggleSubs('${p.id}', this)`
       : (p.action || `nav('${p.id}')`);
     const caret = hasSubs ? '<span class="caret">▾</span>' : '';
-    return `<button class="toolbar-page-btn ${isActive?'active':''} ${hasSubs?'has-subs':''}" data-page-id="${p.id}" onclick="${onClick}" title="${p.title || p.label}"><span class="ico">${p.icon}</span><span class="txt">${p.label}</span>${caret}</button>`;
+    // ACT Report shows a small scenario badge next to its label so the
+    // currently-rendered scenario is always visible from the toolbar.
+    let scenarioBadge = '';
+    if (p.id === 'stu-act-report' && typeof ACT_REPORT_SCENARIOS !== 'undefined') {
+      const sc = ACT_REPORT_SCENARIOS[actReportScenarioKey];
+      if (sc && actReportScenarioKey !== 'full') {
+        scenarioBadge = `<span class="toolbar-scenario-badge" title="Active scenario: ${sc.label} (${sc.desc})">${sc.desc}</span>`;
+      }
+    }
+    return `<button class="toolbar-page-btn ${isActive?'active':''} ${hasSubs?'has-subs':''}" data-page-id="${p.id}" onclick="${onClick}" title="${p.title || p.label}"><span class="ico">${p.icon}</span><span class="txt">${p.label}</span>${scenarioBadge}${caret}</button>`;
   }).join('');
 }
 
@@ -29290,6 +29556,11 @@ function toolbarToggleSubs(pageId, anchorBtn) {
       onClick = (s.idx != null)
         ? `quickJumpTcapPhase('${s.phase}', ${s.idx})`
         : `quickJumpTcapPhase('${s.phase}')`;
+    } else if (s.kind === 'act-scenario' && page.id === 'stu-act-report') {
+      // Custom Selection (Free Combination) demo scenarios. Sets the
+      // scenario key then navigates to the report page — same handler whether
+      // the user is already on the page or not.
+      onClick = `setActReportScenarioFromNav('${s.scenario}')`;
     } else {
       onClick = s.action || '';
     }
@@ -29401,7 +29672,7 @@ function demoActCompletion() {
 
   if (!STU_STATE[pk] || !STU_STATE[pk].sections || !STU_STATE[pk].questions) {
     // Mock a completed practice run. Section count + question total
-    // mirror a typical Enhanced ACT (4 core sections + Writing) so
+    // mirror a typical Enhanced ACT (4 MC sections + Writing) so
     // the summary card reads believably. The last item is an essay
     // with non-empty answer → status renders "Submitted".
     const demoSections = [
@@ -30386,14 +30657,14 @@ function stuOpenNavPanel(pk) {
       if (blankCount)   subParts.push(`${blankCount} skipped`);
       if (essayCount)   subParts.push(`${essayCount} essay${essayCount > 1 ? 's' : ''}`);
       subtitleLine = `${secName} · ${subParts.join(' · ')}`;
-    const reviewPills = [
-      `<span class="filter-pill active" onclick="stuNavFilter('${pk}','all',this)">All (${total})</span>`,
-      correctCount > 0 ? `<span class="filter-pill" onclick="stuNavFilter('${pk}','review-correct',this)">Correct (${correctCount})</span>` : '',
-      wrongCount   > 0 ? `<span class="filter-pill" onclick="stuNavFilter('${pk}','review-wrong',this)">Wrong (${wrongCount})</span>`     : '',
+      const reviewPills = [
+        `<span class="filter-pill active" onclick="stuNavFilter('${pk}','all',this)">All (${total})</span>`,
+        correctCount > 0 ? `<span class="filter-pill" onclick="stuNavFilter('${pk}','review-correct',this)">Correct (${correctCount})</span>` : '',
+        wrongCount   > 0 ? `<span class="filter-pill" onclick="stuNavFilter('${pk}','review-wrong',this)">Wrong (${wrongCount})</span>`     : '',
         blankCount   > 0 ? `<span class="filter-pill" onclick="stuNavFilter('${pk}','review-blank',this)">Skipped (${blankCount})</span>`   : '',
         essayCount   > 0 ? `<span class="filter-pill" onclick="stuNavFilter('${pk}','review-essay',this)">Essay (${essayCount})</span>`     : ''
-    ].filter(Boolean).join('');
-    filterRow = `<div class="filter-row">${reviewPills}</div>`;
+      ].filter(Boolean).join('');
+      filterRow = `<div class="filter-row">${reviewPills}</div>`;
       const legendItems = [];
       if (correctCount > 0) legendItems.push(`<div class="nav-legend-item"><div class="nav-legend-dot" style="background:#dcfce7;border-color:#16a34a"></div> Correct</div>`);
       if (wrongCount > 0)   legendItems.push(`<div class="nav-legend-item"><div class="nav-legend-dot" style="background:#fee2e2;border-color:#ef4444"></div> Wrong</div>`);
@@ -30599,7 +30870,7 @@ function stuShowDirections(pk, options = {}) {
       </ul>
     </div>`;
   const actTestDirections = `<div style="text-align:left;font-size:14px;line-height:1.7;color:#374151">
-      <p style="margin:0 0 12px">This test has four core sections plus Writing when assigned. You cannot return to a section after submitting.</p>
+      <p style="margin:0 0 12px">The Enhanced ACT has 3 required sections (English, Math, Reading) plus optional Science and Writing. You cannot return to a section after submitting.</p>
       <table style="width:100%;border-collapse:collapse;margin:0 0 16px;font-size:13px">
         <thead><tr style="border-bottom:2px solid #e5e7eb"><th style="text-align:left;padding:6px 12px;font-weight:600;color:#1e293b">Section</th><th style="text-align:center;padding:6px 12px;font-weight:600;color:#1e293b">Questions</th><th style="text-align:center;padding:6px 12px;font-weight:600;color:#1e293b">Time</th></tr></thead>
         <tbody>
@@ -31627,7 +31898,6 @@ function stuActGoLocal(pk, localIdx) {
       // the same data the score report shows. Falls back to live answer or
       // the prototype's seeded essayPreview when no live submission exists.
       const meta = ACT_REPORT?.derived?.writingMeta || {};
-      const domainScores = ACT_REPORT?.derived?.writingDomains || q.domainScores || {};
       const score = ACT_REPORT?.derived?.writing || q.score || '—';
       const reviewState = ACT_REPORT?.derived?.writingReviewState || q.reviewState || 'Auto-scored';
       const essayText = (savedAnswer && String(savedAnswer).trim()) || meta.essayPreview || q.response || '';
@@ -31638,70 +31908,6 @@ function stuActGoLocal(pk, localIdx) {
       const timeUsed = meta.timeUsedMin ?? 0;
       const timeAllowed = meta.timeAllowedMin ?? 40;
       const wordTarget = meta.wordTarget || [300, 500];
-      const lookupDomain = (label) => {
-        return domainScores[label]
-          || domainScores[label.replace(' and ', ' & ')]
-          || domainScores[label.replace(' & ', ' and ')]
-          || 0;
-      };
-      // ── ACT Writing Test Rubric — 6 levels per rater ──
-      // Domain score (2–12) = sum of two raters, each scoring 1–6 per domain.
-      // Map score → average per-rater level so we can show the official ACT
-      // rubric language for that level. Adapted (paraphrased for length)
-      // from the public ACT Writing Test Rubric.
-      const ACT_RUBRIC = {
-        levelLabel: { 6:'Effective', 5:'Well-developed', 4:'Adequate', 3:'Developing', 2:'Weak', 1:'Inadequate' },
-        domains: {
-          'Ideas and Analysis': {
-            6:'Generates an argument that critically engages with multiple perspectives. Thesis reflects a precise position; engagement with implications and underlying values is nuanced.',
-            5:'Generates a thoughtful argument on the issue. Thesis reflects clarity in thought and purpose; engagement with multiple perspectives recognizes implications and complications.',
-            4:'Generates an argument that responds productively to multiple perspectives. Thesis reflects clarity in thought; engagement is recognizable but limited.',
-            3:'Generates an argument that weakly responds to multiple perspectives. Thesis reflects some clarity, but engagement with other perspectives is unclear or simplistic.',
-            2:'Generates an argument that weakly responds to the issue. Position lacks clarity; engagement with other perspectives is largely missing.',
-            1:'Fails to generate a clear argument on the issue. Position is unclear or absent.',
-          },
-          'Development and Support': {
-            6:'Reasoning and illustration are skillful. Qualifications and complications enrich the argument; ideas are convincingly developed.',
-            5:'Reasoning and illustration are credible and clarifying. Most ideas are developed with thoughtful explanations and well-chosen examples.',
-            4:'Reasoning and illustration adequately develop the argument. Examples and explanations clarify meaning and support the perspective.',
-            3:'Reasoning and illustration are mostly relevant but tend to restate ideas or remain general. Development is inconsistent.',
-            2:'Reasoning and illustration are weak; explanations mostly repeat claims rather than support them.',
-            1:'Reasoning and illustration are absent or fail to support any argument.',
-          },
-          'Organization': {
-            6:'Skillful organization unifies the argument. Logical sequencing, effective grouping, and purposeful transitions strengthen relationships among ideas.',
-            5:'Productive organization unifies the argument. Logical sequencing and clear transitions reinforce relationships among ideas.',
-            4:'Clear organization. Logical grouping and adequate transitions clarify relationships among ideas.',
-            3:'Basic organization. Grouping and transitions are present but inconsistent; the through-line is sometimes hard to follow.',
-            2:'Weak organization. Grouping is unclear and transitions are abrupt or missing.',
-            1:'Little or no organization. Ideas appear in random order; the reader cannot follow the argument.',
-          },
-          'Language Use and Conventions': {
-            6:'Skillful use of language. Word choice is precise and varied, syntax is varied and effective, and conventions rarely impede meaning.',
-            5:'Well-developed use of language. Word choice is precise, sentence structure is varied, and minor convention errors do not impede meaning.',
-            4:'Adequate use of language. Word choice and sentence structure are appropriate; convention errors are present but do not impede meaning.',
-            3:'Developing use of language. Word choice is mostly appropriate but sentence structure becomes simple or repetitive; some errors distract.',
-            2:'Weak use of language. Word choice and sentence structure are limited; convention errors begin to impede meaning.',
-            1:'Inadequate use of language. Word choice and sentence structure are unclear; convention errors impede understanding.',
-          },
-        },
-      };
-      // Domain score 2–12 → per-rater level 1–6 (round half-up so 7 → 4, 9 → 5, etc.)
-      const toLvl = (v) => Math.max(1, Math.min(6, Math.round((v || 0) / 2)));
-      const domainCards = aw.rubricDomains.map(d => {
-        const v = lookupDomain(d.label);
-        const lvl = v ? toLvl(v) : 0;
-        const lvlName = lvl ? ACT_RUBRIC.levelLabel[lvl] : '—';
-        const desc = lvl ? (ACT_RUBRIC.domains[d.label]?.[lvl] || d.desc) : d.desc;
-        return `<div class="aw-rv-rubric-card lvl-${lvl}">
-          <div class="top"><b>${d.label}</b><span class="v">${v || '—'}<span class="u">/12</span></span></div>
-          <div class="actlvl">
-            <span class="lvl-num">Level ${lvl || '—'} of 6</span>
-            <span class="lvl-name">${lvlName}</span>
-          </div>
-          <div class="desc">${desc}</div>
-        </div>`;
-      }).join('');
       // Teacher feedback callout — surfaces the human note a teacher left
       // during grading. No AI / algorithmic fallback: when the field is
       // empty or grading is still pending, the entire callout disappears
@@ -31715,47 +31921,49 @@ function stuActGoLocal(pk, localIdx) {
             <p>${feedbackText}</p>
           </div>
         </div>` : '';
-      answerHtml = `<div class="act-writing-review">
-        <div class="aw-rv-score">
-          <div class="aw-rv-score-num">
-            <div class="v">${score}<span class="u">/12</span></div>
-            <div class="lbl">Writing Score</div>
+      // Review-mode template mirrors the live composition page so the
+      // two read the same way. The container, stim card, and aw-resp
+      // shell are identical to live mode — only the planning notes +
+      // textarea inside aw-resp swap out for a read-only essay block.
+      // Below aw-resp we append the rubric breakdown and (when the
+      // teacher left one) a feedback callout. The total Writing score
+      // rides in the aw-resp-head subtitle as an inline metadata pill
+      // so it's visible without dropping a heavy Hero card on top.
+      answerHtml = `<div class="act-writing-student">
+        <article class="aw-stim">
+          <div class="aw-stim-kicker">ACT Writing</div>
+          <h3 class="aw-stim-title">${aw.title}</h3>
+          <p class="aw-stim-issue">${aw.issue}</p>
+          <p class="aw-stim-persp-intro">Read and carefully consider these perspectives. Each suggests a particular way of thinking about ${aw.topic}.</p>
+          <div class="aw-stim-persp-grid">
+            ${aw.perspectives.map((p, i) => `<div class="aw-persp-col">
+              <div class="aw-persp-num">${p.label || `Perspective ${['One','Two','Three'][i] || (i+1)}`}</div>
+              <p>${p.text || ''}</p>
+            </div>`).join('')}
           </div>
-          <div class="aw-rv-score-meta">
-            <div class="aw-rv-score-title">${aw.title}</div>
-            <div class="aw-rv-score-state">${reviewState}</div>
-            <div class="aw-rv-score-stats">
-              <span><b>${timeUsed}m</b> used <span class="dim">/ ${timeAllowed}m allowed</span></span>
-              <span><b>${wc}</b> words <span class="dim">/ target ${wordTarget[0]}–${wordTarget[1]}</span></span>
-              <span><b>4</b> domains <span class="dim">· 12 pts each</span></span>
+          <div class="aw-stim-task">
+            <h4>Essay Task</h4>
+            <p>Write a unified, coherent essay about <em>${aw.topic}</em>. In your essay, be sure to:</p>
+            <ul>${aw.taskInstructions.map(t => `<li>${t}</li>`).join('')}</ul>
+            ${aw.taskFootnote ? `<p class="aw-stim-task-foot">${aw.taskFootnote}</p>` : ''}
+          </div>
+        </article>
+
+        <section class="aw-resp">
+          <div class="aw-resp-head">
+            <div class="aw-resp-head-ttl">Your Essay</div>
+            <div class="aw-resp-head-sub"><b>${score}</b>/12 · <b>${wc}</b> words · <b>${timeUsed}m</b> used / ${timeAllowed}m allowed</div>
+          </div>
+          <div class="aw-essay-wrap aw-essay-readonly-wrap">
+            <div class="aw-essay-readonly">
+              ${essayParas || '<p class="aw-essay-readonly-empty">No essay submission on record.</p>'}
+            </div>
+            <div class="aw-essay-foot">
+              <span class="aw-essay-foot-wc"><b>${wc}</b> words · target ${wordTarget[0]}–${wordTarget[1]}</span>
             </div>
           </div>
-        </div>
-        <details class="aw-rv-prompt">
-          <summary>
-            <span class="ttl"><span class="chev">▶</span> The prompt you responded to</span>
-            <span class="toggle">Click to expand</span>
-          </summary>
-          <div class="aw-rv-prompt-body">
-            <p>${aw.issue}</p>
-            ${aw.perspectives.map((p, i) => `<div class="perspective"><b>${p.label || `Perspective ${i + 1}`}</b><br>${p.text || ''}</div>`).join('')}
-            <p style="margin-top:14px;color:#475569"><b style="color:#190d40">Essay Task —</b> Write a unified, coherent essay about <em>${aw.topic}</em>. In your essay, be sure to:</p>
-            <ul style="margin:6px 0 0;padding-left:20px;color:#374151;font-size:13px;line-height:1.65">${aw.taskInstructions.map(t => `<li>${t}</li>`).join('')}</ul>
-          </div>
-        </details>
-        <div class="aw-rv-essay">
-          <div class="aw-rv-essay-head">
-            <span class="ttl">Your essay</span>
-            <span class="meta"><b>${wc}</b> words · <b>${timeUsed}m</b> spent · auto-saved</span>
-          </div>
-          <div class="aw-rv-essay-body">${essayParas || '<div class="aw-rv-essay-empty">No essay submission on record.</div>'}</div>
-        </div>
-        <div class="aw-rv-rubric">
-          <div class="aw-rv-rubric-head">Rubric feedback · 4 ACT domains</div>
-          <div class="aw-rv-rubric-sub">Each domain is scored 1–6 per rater (two raters → 2–12 total). The description below shows the ACT rubric language for the level your essay landed at.</div>
-          <div class="aw-rv-rubric-grid">${domainCards}</div>
-          <div class="aw-rv-rubric-foot">Descriptions adapted from the ACT Writing Test Rubric.</div>
-        </div>
+        </section>
+
         ${nextStepHtml}
       </div>`;
     } else {
@@ -31816,19 +32024,19 @@ function stuActGoLocal(pk, localIdx) {
           <div class="aw-resp-head">
             <div class="aw-resp-head-ttl">Your Essay</div>
             <div class="aw-resp-head-sub">Auto-saving as you type</div>
-            </div>
+          </div>
           <div class="aw-plan">
             <div class="aw-plan-head">
               <span class="aw-plan-ttl">Planning notes</span>
               <span class="aw-plan-meta">Not scored &middot; for your own use</span>
-          </div>
-            <textarea placeholder="Brainstorm your perspective, evidence, and how you will respond to a competing view…" oninput="stuActWritingPlan(${globalIdx},'${pk}',this)">${plan}</textarea>
             </div>
+            <textarea placeholder="Brainstorm your perspective, evidence, and how you will respond to a competing view…" oninput="stuActWritingPlan(${globalIdx},'${pk}',this)">${plan}</textarea>
+          </div>
           <div class="aw-essay-wrap">
             <textarea class="aw-essay" placeholder="Begin writing your essay here." oninput="stuActWritingAnswer(${globalIdx},'${pk}',this)">${savedAnswer || ''}</textarea>
             <div class="aw-essay-foot">
               <span class="aw-essay-foot-wc"><b id="${pk}-writing-wc">${wc}</b> words</span>
-          </div>
+            </div>
           </div>
         </section>
       </div>
@@ -33270,12 +33478,23 @@ function stuActShowCompletion(pk) {
 }
 
 // ─── Raw-to-Scale conversion tables (approximated from official published data) ───
+// Enhanced ACT (2025+) raw → scaled conversion (per ACT Official Enhanced
+// Practice Test ©2025; see Scoring Reference · Part C1). Indexed by raw
+// score of SCORED items (max 40 English / 41 Math / 27 Reading / 34 Science).
+// Field-test items (10/4/9/6 per section) do not count toward the raw —
+// `stuCalcScores` caps `correct` at SCORED_MAX before lookup.
 const ACT_SCALE = {
-  english: [1,2,3,4,5,6,6,7,8,9,10,10,11,12,12,13,13,14,14,15,15,15,16,16,17,17,17,18,18,18,19,19,19,20,20,20,21,21,21,22,22,22,23,23,23,24,24,24,25,25,25,26,26,27,27,28,28,29,29,30,30,31,31,32,32,33,33,34,34,35,35,35,36,36,36,36],
-  math:    [1,2,3,4,5,6,7,8,9,10,10,11,12,13,13,14,15,16,16,17,17,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,30,30,31,31,32,32,33,33,34,34,35,35,36,36,36,36,36],
-  reading: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,36,36,36,36],
-  science: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,36,36,36,36]
+  english: [1,2,3,5,6,7,7,8,9,10,10,10,11,11,12,13,13,14,15,15,16,17,18,19,20,20,21,22,22,23,24,25,26,27,28,29,31,33,35,35,36],
+  math:    [1,5,7,9,11,12,13,13,14,14,15,15,15,16,16,17,17,17,18,19,19,20,21,22,23,24,25,26,27,27,28,29,29,30,31,32,33,34,34,35,36,36],
+  reading: [1,3,5,7,9,10,11,12,12,13,14,15,16,17,18,20,21,22,23,24,25,26,28,30,32,34,35,36],
+  science: [1,3,6,7,9,10,11,12,12,14,15,16,17,18,18,19,20,21,22,23,23,24,25,25,26,27,28,29,30,31,32,33,34,35,36]
 };
+
+// Enhanced ACT scored-item caps per section. ACT delivers more total items
+// (50/45/36/40) but only N count toward the scale — the rest are field
+// test items mixed in. Prototype simplification: cap `correct` at this max
+// before lookup. See Scoring Reference · Part A1 + Rule F10.
+const ACT_SCORED_MAX = { english: 40, math: 41, reading: 27, science: 34 };
 const SAT_RW_SCALE = [200,210,220,230,240,250,260,270,280,290,300,310,310,320,330,340,340,350,360,370,370,380,390,400,410,420,420,430,440,450,460,470,480,490,500,510,520,530,540,550,570,580,600,610,620,640,660,680,700,720,740,760,780,800,800];
 const SAT_MATH_SCALE = [200,210,220,230,240,250,260,280,290,300,310,320,340,350,370,390,400,410,430,440,460,470,480,490,510,520,530,540,550,560,570,580,590,600,620,640,660,680,700,730,760,790,800,800];
 
@@ -33312,15 +33531,25 @@ function stuCalcScores(pk, testType) {
     Object.entries(sectionScores).forEach(([id, s]) => {
       const key = secMap[id] || id;
       const table = ACT_SCALE[key];
-      s.scaled = table ? _scaleLookup(table, s.correct) : Math.round((s.correct / Math.max(s.total,1)) * 36);
+      // Cap correct at the Enhanced ACT scored-item max before scale lookup.
+      // Prototype simplification — see Scoring Reference Rule F10 (field-
+      // test items are not scored).
+      const cap = ACT_SCORED_MAX[key];
+      const rawForScale = cap != null ? Math.min(s.correct, cap) : s.correct;
+      s.scaled = table ? _scaleLookup(table, rawForScale) : Math.round((s.correct / Math.max(s.total,1)) * 36);
       scaledSections[key] = s.scaled;
     });
-    // ACT Composite = average of the 4 core sections (English, Math,
-    // Reading, Science) rounded to the nearest whole number, per ACT
-    // scoring policy. Science had been omitted here, which understated
-    // composite by ~1 point whenever Science was below the others.
-    const coreVals = ['english','math','reading','science'].map(k => scaledSections[k]).filter(v => Number.isFinite(v));
-    composite = coreVals.length > 0 ? Math.round(coreVals.reduce((a,b) => a+b, 0) / coreVals.length) : 0;
+    // Enhanced ACT Composite = round((English + Math + Reading) / 3) ∈ [1, 36].
+    // Only the 3 Core sections enter the Composite — Science is optional
+    // and does NOT contribute (key Enhanced 2025+ change from Legacy's
+    // 4-section average). Science still produces an independent 1-36
+    // scale score and powers STEM below. Returns null when Core 3 not
+    // all present (β/γ/δ adaptive-report templates).
+    const coreKeys = ['english','math','reading'];
+    const coreVals = coreKeys.map(k => scaledSections[k]).filter(v => Number.isFinite(v));
+    composite = coreVals.length === 3
+      ? Math.round(coreVals.reduce((a,b) => a+b, 0) / coreVals.length)
+      : null;
 
     const stem = scaledSections.math && scaledSections.science
       ? Math.round((scaledSections.math + scaledSections.science) / 2) : null;
@@ -33456,7 +33685,7 @@ const ACT_REPORT = {
     }
   },
   // Percentiles below come from ACT_PERCENTILE_TABLES (official ACT
-  // National Norms 2022-2024) for composite + 4 core sections. STEM and
+  // National Norms 2022-2024) for composite + 4 MC sections. STEM and
   // ELA fall back to the legacy estimator (no published norms).
   // Re-derive any time scores change by calling actPercentile(key, score).
   usRank:{ composite:72, english:84, math:61, reading:73, science:32, stem:61, ela:72 },
@@ -34205,7 +34434,7 @@ function _mergeActScores() {
     secPct[k] = s.total > 0 ? s.correct / s.total : 0;
   });
 
-  // composite + 4 core sections come from official ACT National Norms
+  // composite + 4 MC sections come from official ACT National Norms
   // tables (see ACT_PERCENTILE_TABLES). STEM and ELA were retired by ACT
   // in Sept 2023 and have no published norms, so they fall back to the
   // legacy estimator and are flagged as such in code.
@@ -34827,12 +35056,21 @@ function actReviewWatchVideo(skillCode, skillName) {
 // Build the ACT Question Review block. Used by renderActReport in place
 // of the old per-section collapsible cards.
 function renderActQuestionReviewV2() {
-  const sections = ['english','math','reading','science','writing'];
+  // Custom Selection: only show sections the student actually took.
+  const _selSetV2 = (typeof getActSelectedSections === 'function')
+    ? new Set(getActSelectedSections())
+    : new Set(['english','math','reading','science','writing']);
+  const sections = ['english','math','reading','science','writing'].filter(s => _selSetV2.has(s));
   const allBySec = {};
   sections.forEach(s => {
     allBySec[s] = getEnrichedActQuestions(s).map(q => ({ ...q, _sectionKey:s }));
   });
   const allQuestions = sections.flatMap(s => allBySec[s]);
+  // Clamp _actReviewSection if the previously-selected one isn't in this
+  // scenario (e.g. user switched to Writing-only but section was 'math').
+  if (_actReviewSection !== 'all' && !_selSetV2.has(_actReviewSection)) {
+    _actReviewSection = sections[0] || 'all';
+  }
   const cur = _actReviewSection === 'all' ? allQuestions : (allBySec[_actReviewSection] || []);
 
   // Stats for current scope (all sections by default). Writing is scored by
@@ -34965,13 +35203,20 @@ function renderActQuestionReviewV2() {
 
 function renderActQuestionReviewSummary() {
   const rows = getActReviewRows();
-  // Force the report card to its own scope so the bottom overview always
-  // reflects the section the user explicitly picked here, regardless of
-  // any lingering filter from the detail page.
-  const activeSec = (_actReviewSection && _actReviewSection !== 'all')
+  // Custom Selection filter: tabs only render for sections the student
+  // actually took. activeSec falls back to the first selected when the
+  // previously-active section isn't in this scenario (e.g. swapped from
+  // Full Battery to Writing only).
+  const selectedSet = (typeof getActSelectedSections === 'function')
+    ? new Set(getActSelectedSections())
+    : new Set(ACT_REVIEW_SECTIONS);
+  const sections = ACT_REVIEW_SECTIONS.filter(s => selectedSet.has(s));
+  let activeSec = (_actReviewSection && _actReviewSection !== 'all')
     ? _actReviewSection
-    : 'english';
-  const sections = ACT_REVIEW_SECTIONS;
+    : null;
+  if (!activeSec || !selectedSet.has(activeSec)) {
+    activeSec = sections[0] || 'english';
+  }
   const tabHtml = sections.map(sec => {
     const isActive = sec === activeSec;
     return `<button class="qrec-tab ${isActive ? 'is-active' : ''}" onclick="setActReviewSection('${sec}')">${ACT_SECTION_LABELS[sec]}</button>`;
@@ -35082,10 +35327,18 @@ function renderActQuestionDetailPage() {
   if (!body) return;
 
   // Default to a real section if entering with the legacy 'all' scope.
-  const activeSec = (_actReviewSection && _actReviewSection !== 'all')
+  // Honor Custom Selection: clamp to a section that was actually taken.
+  const selectedSetD = (typeof getActSelectedSections === 'function')
+    ? new Set(getActSelectedSections())
+    : new Set(ACT_REVIEW_SECTIONS);
+  const selectedListD = ACT_REVIEW_SECTIONS.filter(s => selectedSetD.has(s));
+  let activeSec = (_actReviewSection && _actReviewSection !== 'all')
     ? _actReviewSection
-    : 'english';
-  if (_actReviewSection === 'all') _actReviewSection = activeSec;
+    : null;
+  if (!activeSec || !selectedSetD.has(activeSec)) {
+    activeSec = selectedListD[0] || 'english';
+  }
+  if (_actReviewSection === 'all' || _actReviewSection !== activeSec) _actReviewSection = activeSec;
 
   const allRows = getActReviewRows();
   const sectionRows = allRows.filter(q => q._sectionKey === activeSec);
@@ -35105,7 +35358,8 @@ function renderActQuestionDetailPage() {
 
   // Subject tabs — rendered into the page header (not in body) so the user
   // can switch sections without scrolling. Wrong-count badge appears per tab.
-  const tabsHtml = ACT_REVIEW_SECTIONS.map(sec => {
+  // Custom Selection: only show tabs for sections that were actually taken.
+  const tabsHtml = selectedListD.map(sec => {
     const wrong = allRows.filter(q => q._sectionKey === sec && q._status === 'wrong').length;
     const isActive = sec === activeSec;
     return `<button class="tab ${isActive ? 'is-active' : ''}" onclick="setActReviewSection('${sec}')">
@@ -35581,9 +35835,15 @@ function renderActAiInsights(coreScores, categories, d) {
   const near = below[0];
   const watchGap = near ? near.bm - near.score : 0;
 
-  // ── Lowest reporting category across all sections (skill drill-down)
+  // ── Lowest reporting category across taken sections (skill drill-down).
+  // Custom Selection: skip sections the student didn't take so AI doesn't
+  // suggest practising a topic from a section they never attempted.
+  const _aiSelSet = (typeof getActSelectedSections === 'function')
+    ? new Set(getActSelectedSections())
+    : null;
   const allCats = [];
   Object.entries(categories || {}).forEach(([sec, sd]) => {
+    if (_aiSelSet && !_aiSelSet.has(sec)) return;
     (sd.items || []).forEach(cat => {
       if (typeof cat.pct === 'number') allCats.push({ section:sec, ...cat });
     });
@@ -35677,6 +35937,81 @@ const ACTR_SUBJECTS = [
   { k:'science', label:'Science', dot:'actr-dot-sci', course:'Biology' }
 ];
 
+// Custom Selection (Free Combination) scenario state.
+// Production V1 derives selectedSections from the assignment config + which
+// sections the student actually started/submitted. This switcher is mock UI
+// so the prototype can show every combination branch. All renderers below
+// read getActSelectedSections() and adapt.
+const ACT_REPORT_SCENARIOS = {
+  full:     { label:'Full Battery',     desc:'E + M + R + S + W',  selected:['english','math','reading','science','writing'] },
+  core_s:   { label:'Core + Science',   desc:'E + M + R + S',      selected:['english','math','reading','science'] },
+  core_w:   { label:'Core + Writing',   desc:'E + M + R + W',      selected:['english','math','reading','writing'] },
+  core3:    { label:'Core only',        desc:'E + M + R',          selected:['english','math','reading'] },
+  ms:       { label:'STEM pair',        desc:'M + S',              selected:['math','science'] },
+  erw:      { label:'ELA pack',         desc:'E + R + W',          selected:['english','reading','writing'] },
+  mathOnly: { label:'Single section',   desc:'Math only',          selected:['math'] },
+  writOnly: { label:'Writing only',     desc:'Writing only',       selected:['writing'] }
+};
+let actReportScenarioKey = 'full';
+function getActSelectedSections() {
+  return ACT_REPORT_SCENARIOS[actReportScenarioKey]?.selected || ['english','math','reading','science','writing'];
+}
+function setActReportScenario(key) {
+  if (!ACT_REPORT_SCENARIOS[key]) return;
+  actReportScenarioKey = key;
+  renderActReport();
+  const scroller = (typeof _actrScroller === 'function') ? _actrScroller() : null;
+  if (scroller) scroller.scrollTo({ top: 0, behavior:'smooth' });
+}
+// Toolbar dropdown entry. Switches scenario AND ensures we land on the
+// ACT Report page (so the user can click any scenario from any view).
+function setActReportScenarioFromNav(key) {
+  if (!ACT_REPORT_SCENARIOS[key]) return;
+  actReportScenarioKey = key;
+  // Reset Question Record tab to a section that exists in the new
+  // scenario (otherwise the previously-active tab — e.g. English —
+  // would be hidden, leaving the card blank or showing stale stats).
+  const _sel = ACT_REPORT_SCENARIOS[key].selected;
+  if (typeof _actReviewSection !== 'undefined') {
+    if (_actReviewSection !== 'all' && !_sel.includes(_actReviewSection)) {
+      _actReviewSection = _sel[0] || 'all';
+    }
+  }
+  if (typeof currentRole !== 'undefined' && currentRole !== 'student') {
+    switchRole('student', true);
+  }
+  if (typeof currentPage !== 'undefined' && currentPage !== 'stu-act-report') {
+    nav('stu-act-report');
+  } else {
+    renderActReport();
+  }
+  // Refresh toolbar so the scenario badge updates immediately.
+  if (typeof renderToolbarPages === 'function') renderToolbarPages();
+  const scroller = (typeof _actrScroller === 'function') ? _actrScroller() : null;
+  if (scroller) scroller.scrollTo({ top: 0, behavior:'smooth' });
+}
+function hasActComposite() {
+  const sel = new Set(getActSelectedSections());
+  return ['english','math','reading'].every(k => sel.has(k));
+}
+function renderActScenarioSwitcher() {
+  const pills = Object.entries(ACT_REPORT_SCENARIOS).map(([k, s]) => {
+    const active = k === actReportScenarioKey;
+    return `<button type="button" class="actr-scenario-pill ${active ? 'is-active' : ''}" onclick="setActReportScenario('${k}')" aria-pressed="${active}">
+      <span class="pill-label">${s.label}</span>
+      <span class="pill-desc">${s.desc}</span>
+    </button>`;
+  }).join('');
+  return `<div class="actr-scenario-bar" role="region" aria-label="Demo scenario switcher">
+    <div class="actr-scenario-bar-head">
+      <span class="actr-scenario-icon">🧩</span>
+      <span class="actr-scenario-title">Demo · Free Combination Scenario</span>
+      <span class="actr-scenario-hint">Switch to see how the report adapts when students take different subject combinations.</span>
+    </div>
+    <div class="actr-scenario-pills">${pills}</div>
+  </div>`;
+}
+
 // ── A1 · Score Report Hero — single big card replacing the previous
 //   stack of [Composite header] + [4 subject KPI cards] + [Derived strip].
 //   Left half (purple gradient): COMPOSITE / percentile pill / met-chip.
@@ -35689,6 +36024,14 @@ const ACTR_SUBJECTS = [
 //   renderActReport can roll back to the older layout if this design
 //   doesn't land. They are no longer called.
 function renderActReportHero(d) {
+  return hasActComposite() ? renderActReportHeroFull(d) : renderActReportHeroCustom(d);
+}
+
+// Full hero — used when E+M+R all taken (Composite available).
+// `selectedSet` filters the section bars + derived row so the hero only
+// shows what was actually attempted (e.g. Core+S hides Writing & ELA).
+function renderActReportHeroFull(d) {
+  const selectedSet = new Set(getActSelectedSections());
   const composite = d.composite || 0;
   const usPct = d.usRank?.composite;
   const sc = d.scores || {};
@@ -35704,7 +36047,7 @@ function renderActReportHero(d) {
     reading: '#8b5cf6',
     science: '#f59e0b'
   };
-  const sections = ACTR_SUBJECTS.map(meta => {
+  const sections = ACTR_SUBJECTS.filter(m => selectedSet.has(m.k)).map(meta => {
     const score = sc[meta.k];
     const bench = bm[meta.k];
     const met = (score != null && bench != null) ? score >= bench : false;
@@ -35735,10 +36078,11 @@ function renderActReportHero(d) {
     </div>`;
   }).join('');
 
-  // Derived row (STEM / ELA / Writing) — only render if any value present.
+  // Derived row — only render derived scores whose base sections are all
+  // selected. STEM needs M+S, ELA needs E+R+W, Writing needs W.
   const der = d.derived || {};
   const derivedItems = [];
-  if (typeof der.stem === 'number') {
+  if (selectedSet.has('math') && selectedSet.has('science') && typeof der.stem === 'number') {
     const ok = der.stem >= (bm.stem || 0);
     derivedItems.push({
       kicker:'STEM',
@@ -35746,7 +36090,7 @@ function renderActReportHero(d) {
       chipHtml:`<span class="chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} BM ${bm.stem ?? '—'}</span>`
     });
   }
-  if (typeof der.ela === 'number') {
+  if (selectedSet.has('english') && selectedSet.has('reading') && selectedSet.has('writing') && typeof der.ela === 'number') {
     const ok = der.ela >= (bm.ela || 0);
     derivedItems.push({
       kicker:'ELA',
@@ -35754,7 +36098,7 @@ function renderActReportHero(d) {
       chipHtml:`<span class="chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} BM ${bm.ela ?? '—'}</span>`
     });
   }
-  if (typeof der.writing === 'number') {
+  if (selectedSet.has('writing') && typeof der.writing === 'number') {
     const reviewState = der.writingReviewState || '';
     const isPending = /pending/i.test(reviewState);
     derivedItems.push({
@@ -35798,6 +36142,292 @@ function renderActReportHero(d) {
   </header>`;
 }
 
+// Custom hero — used when E+M+R not all taken (no Composite). Three
+// shapes depending on what was selected:
+//   - Single MC section → the section score becomes the headline
+//   - Writing-only        → the Writing 2–12 score becomes the headline
+//   - Multi (no Composite) → "Custom Selection · N sections" + bars
+// Tier 3 banner is rendered above the card explaining why no Composite.
+function renderActReportHeroCustom(d) {
+  const selectedSet = new Set(getActSelectedSections());
+  const sc = d.scores || {};
+  const bm = d.benchmarks || {};
+  const der = d.derived || {};
+  const subjectColors = {
+    english:'#10b981', math:'#3b82f6', reading:'#8b5cf6', science:'#f59e0b'
+  };
+  const sections = ACTR_SUBJECTS.filter(m => selectedSet.has(m.k)).map(meta => {
+    const score = sc[meta.k];
+    const bench = bm[meta.k];
+    const met = (score != null && bench != null) ? score >= bench : false;
+    const equal = score === bench;
+    const tier = met && !equal ? 'met' : equal ? 'equal' : 'below';
+    const icon = met && !equal ? '✓' : equal ? '=' : '⚠';
+    return { ...meta, score, bench, tier, icon };
+  });
+  const hasWriting = selectedSet.has('writing');
+  const totalSelected = sections.length + (hasWriting ? 1 : 0);
+  const metCount = sections.filter(s => s.score >= s.bench).length;
+
+  const isSoloCore    = sections.length === 1 && !hasWriting;
+  const isSoloWriting = sections.length === 0 && hasWriting;
+  const isSolo        = isSoloCore || isSoloWriting;
+
+  // ---- Left card content depends on shape ----
+  let leftHtml = '';
+  if (isSoloCore) {
+    const s = sections[0];
+    const tierIcon = s.tier === 'met' ? '✓' : s.tier === 'equal' ? '=' : '◐';
+    leftHtml = `<div>
+        <div class="kicker">${s.label} Section Score</div>
+        <div class="num-row"><span class="num">${s.score ?? '—'}</span><span class="scale">/ 36</span></div>
+      </div>
+      <span class="actr-hero-pill stack">
+        <span class="top-line"><span class="icon">${tierIcon}</span><span><b>Benchmark ${s.bench ?? '—'}</b></span></span>
+        <span class="sub-line">${s.tier === 'met' ? 'Above readiness benchmark' : s.tier === 'equal' ? 'At benchmark' : 'Below benchmark — keep building'}</span>
+      </span>`;
+  } else if (isSoloWriting) {
+    const w = der.writing;
+    const reviewState = der.writingReviewState || '';
+    const isPending = /pending/i.test(reviewState);
+    // Kira badge: ditches the bare review-state pill in favour of a
+    // framed "Scored by Kira AI" badge — reads as a signature on the
+    // score rather than free-floating metadata. Pending state still wins
+    // when the rubric hasn't been graded yet.
+    const kiraTitle = isPending ? 'Review pending' : 'Scored by Kira AI';
+    const wPct = (typeof w === 'number') ? Math.max(0, Math.min(100, Math.round((w / 12) * 100))) : 0;
+    leftHtml = `<div>
+        <div class="kicker">Writing Score</div>
+        <div class="num-row"><span class="num">${w ?? '—'}</span><span class="scale">/ 12</span></div>
+        <div class="hero-score-bar"><div class="hero-score-fill" style="width:${wPct}%"></div></div>
+      </div>
+      <span class="actr-hero-pill stack is-kira">
+        <span class="kira-spark" aria-hidden="true">✦</span>
+        <span class="kira-body">
+          <span class="kira-title">${kiraTitle}</span>
+          <span class="kira-sub">Single 40-min · 4-domain rubric</span>
+        </span>
+      </span>`;
+  } else {
+    leftHtml = `<div>
+        <div class="kicker">Custom Selection</div>
+        <div class="num-row"><span class="num small">${totalSelected}</span><span class="scale muted">section${totalSelected===1?'':'s'} taken</span></div>
+      </div>
+      <span class="actr-hero-pill stack">
+        <span class="top-line"><span class="icon">${metCount === sections.length && sections.length > 0 ? '✓' : '◐'}</span><span><b>${metCount} / ${sections.length}</b> Benchmark${sections.length===1?'':'s'} met</span></span>
+        <span class="sub-line">Composite requires English + Math + Reading</span>
+      </span>`;
+  }
+
+  // ---- Right column: section bars + derived strip (only if multi) ----
+  const barsHtml = sections.map(s => {
+    const fillPct = Math.max(0, Math.min(100, Math.round(((s.score || 0) / 36) * 100)));
+    const tickPct = Math.max(0, Math.min(100, Math.round(((s.bench || 0) / 36) * 100)));
+    const color = subjectColors[s.k] || '#6040ca';
+    return `<div class="actr-hero-bar-row">
+      <div class="lbl"><span class="dot" style="background:${color}"></span>${s.label}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${fillPct}%;background:${color}"></div>
+        <div class="bar-tick" style="left:${tickPct}%" title="Benchmark ${s.bench}"></div>
+      </div>
+      <div class="num-cell" style="color:${color}">${s.score ?? '—'}</div>
+      <span class="chip ${s.tier}">${s.icon} BM ${s.bench ?? '—'}</span>
+    </div>`;
+  }).join('');
+
+  // Derived row: show STEM/ELA/Writing as "on" (numeric) or "off" (gray
+  // placeholder telling what's missing). If neither base section is taken,
+  // skip entirely so we don't drown the card in gray cards.
+  const derivedItems = [];
+  const hasM = selectedSet.has('math');
+  const hasS = selectedSet.has('science');
+  const hasE = selectedSet.has('english');
+  const hasR = selectedSet.has('reading');
+  const hasW = selectedSet.has('writing');
+
+  if (hasM && hasS && typeof der.stem === 'number') {
+    const ok = der.stem >= (bm.stem || 0);
+    derivedItems.push({ kicker:'STEM', tone:'on',
+      valHtml:`${der.stem}`,
+      chipHtml:`<span class="chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} BM ${bm.stem ?? '—'}</span>` });
+  } else if (hasM || hasS) {
+    const missing = hasM ? 'Science' : 'Math';
+    derivedItems.push({ kicker:'STEM', tone:'off',
+      valHtml:`<span class="d-na">—</span>`,
+      chipHtml:`<span class="chip muted">Requires ${missing}</span>` });
+  }
+
+  const elaBases = ['english','reading','writing'].filter(k => selectedSet.has(k));
+  if (elaBases.length === 3 && typeof der.ela === 'number') {
+    const ok = der.ela >= (bm.ela || 0);
+    derivedItems.push({ kicker:'ELA', tone:'on',
+      valHtml:`${der.ela}`,
+      chipHtml:`<span class="chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} BM ${bm.ela ?? '—'}</span>` });
+  } else if (elaBases.length > 0 && elaBases.length < 3) {
+    const missing = ['english','reading','writing']
+      .filter(k => !selectedSet.has(k))
+      .map(k => k === 'english' ? 'English' : k === 'reading' ? 'Reading' : 'Writing')
+      .join(' + ');
+    derivedItems.push({ kicker:'ELA', tone:'off',
+      valHtml:`<span class="d-na">—</span>`,
+      chipHtml:`<span class="chip muted">Requires ${missing}</span>` });
+  }
+
+  if (hasW && !isSoloWriting && typeof der.writing === 'number') {
+    const reviewState = der.writingReviewState || '';
+    const isPending = /pending/i.test(reviewState);
+    derivedItems.push({ kicker:'Writing', tone:'on',
+      valHtml:`${der.writing}<span class="d-scale"> / 12</span>`,
+      chipHtml:`<span class="chip ${isPending ? 'below' : 'equal'}">${isPending ? 'Review pending' : 'Scored'}</span>` });
+  }
+
+  const derivedHtml = (!isSolo && derivedItems.length) ? `<div class="actr-hero-derived">
+    ${derivedItems.map(it => `<div class="actr-hero-derived-item ${it.tone === 'off' ? 'is-off' : ''}">
+      <div class="d-kicker">${it.kicker}</div>
+      <div class="d-num-row">
+        <span class="d-num">${it.valHtml}</span>
+        ${it.chipHtml}
+      </div>
+    </div>`).join('')}
+  </div>` : '';
+
+  // Solo right column: 4 KPI mini cards. Picks data appropriate for the
+  // shape — single MC section gets percentile/accuracy/items; Writing
+  // only gets pacing/length/raters/review state.
+  // Tier mapping (single source of truth for bar color + Best ring color).
+  // Percentage-based so it works uniformly for percentile / accuracy / 12pt
+  // rubric domains alike. Thresholds picked to align with ACT readiness
+  // narrative (>=75% strong, 50-74% adequate, 25-49% developing, <25% weak).
+  const actSoloTier = pct => {
+    if (pct == null) return { key:'na',   bar:'#a1a1aa', soft:'#f4f4f5' };
+    if (pct >= 75)   return { key:'high', bar:'#10b981', soft:'#d1fae5' };
+    if (pct >= 50)   return { key:'mid',  bar:'#f59e0b', soft:'#fde68a' };
+    if (pct >= 25)   return { key:'low',  bar:'#f97316', soft:'#fed7aa' };
+    return                  { key:'crit', bar:'#ef4444', soft:'#fecaca' };
+  };
+  const ordinalSuffix = n => {
+    const v = (n || 0) % 100;
+    if (v >= 11 && v <= 13) return 'th';
+    switch ((n || 0) % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th'; }
+  };
+  let soloKpis = [];
+  if (isSoloCore) {
+    const s = sections[0];
+    const usPct = d.usRank ? d.usRank[s.k] : null;
+    const stPct = d.stateRank ? d.stateRank[s.k] : null;
+    const cat = (d.categories && d.categories[s.k]) || {};
+    let totalQ = 0, correctQ = 0;
+    (cat.items || []).forEach(it => { totalQ += it.total || 0; correctQ += it.correct || 0; });
+    const accPct = totalQ ? Math.round((correctQ / totalQ) * 100) : null;
+    soloKpis = [
+      { kicker:'US Percentile',
+        valHtml: usPct != null ? `${usPct}<sub>${ordinalSuffix(usPct)}</sub>` : '—',
+        progressPct: usPct ?? null },
+      { kicker:'State Percentile',
+        valHtml: stPct != null ? `${stPct}<sub>${ordinalSuffix(stPct)}</sub>` : '—',
+        progressPct: stPct ?? null },
+      { kicker:'Accuracy',
+        valHtml: accPct != null ? `${accPct}<span class="d-scale">%</span>` : '—',
+        progressPct: accPct ?? null },
+      { kicker:'Items Correct',
+        valHtml: totalQ ? `${correctQ}<span class="d-scale">of ${totalQ}</span>` : '—',
+        progressPct: totalQ ? Math.round((correctQ / totalQ) * 100) : null }
+    ];
+  } else if (isSoloWriting) {
+    // Writing-only hero right column: 4 rubric domain micro scores.
+    // Chosen over pacing/raters metadata because the domain breakdown is
+    // the headline information in a Writing-only attempt (4 domains, each
+    // 2–12, sum to overall). Same shape as Single section's 4 KPIs
+    // (numeric + /scale) so the layout reads consistently. Pacing /
+    // word count / rater agreement live in the Writing detail section
+    // below, so this isn't a net info loss.
+    const dom = der.writingDomains || {};
+    const domainOrder = [
+      { label:'Ideas',        full:'Ideas and Analysis' },
+      { label:'Development',  full:'Development and Support' },
+      { label:'Organization', full:'Organization' },
+      { label:'Language',     full:'Language Use and Conventions' }
+    ];
+    soloKpis = domainOrder.map(item => {
+      const v = dom[item.full];
+      return {
+        kicker: item.label,
+        valHtml: (typeof v === 'number')
+          ? `${v}<span class="d-scale">/ 12</span>`
+          : '—',
+        progressPct: (typeof v === 'number') ? Math.round((v / 12) * 100) : null,
+        rawScore: (typeof v === 'number') ? v : null
+      };
+    });
+    // Tag the single highest- and lowest-scoring domains for inline chips.
+    // Rules:
+    //   • Best: must be the strict maximum (no ties), no score cutoff
+    //     since "best of these four" reads true even at 7s.
+    //   • Lowest: must be the strict minimum (no ties).
+    //   • Skip both if all four are equal (no signal to surface).
+    const scored = soloKpis.filter(k => typeof k.rawScore === 'number');
+    if (scored.length > 1) {
+      const maxScore = Math.max(...scored.map(k => k.rawScore));
+      const minScore = Math.min(...scored.map(k => k.rawScore));
+      const maxTies = scored.filter(k => k.rawScore === maxScore).length;
+      const minTies = scored.filter(k => k.rawScore === minScore).length;
+      if (maxScore !== minScore) {
+        if (maxTies === 1) soloKpis.forEach(k => { if (k.rawScore === maxScore) k.isBest = true; });
+        if (minTies === 1) soloKpis.forEach(k => { if (k.rawScore === minScore) k.isLowest = true; });
+      }
+    }
+  }
+
+  const soloKpisHtml = isSolo && soloKpis.length ? `<div class="actr-hero-right">
+    <div class="actr-hero-solo-kpis">
+      ${soloKpis.map(k => {
+        const pct = (typeof k.progressPct === 'number')
+          ? Math.max(0, Math.min(100, Math.round(k.progressPct)))
+          : null;
+        const tier = actSoloTier(pct);
+        const styleAttr = `--tier-bar:${tier.bar}`;
+        const cls = k.isBest ? 'is-best' : '';
+        // Inline compare label inside the number row — keeps the chip on
+        // the score baseline instead of floating at the card corner, so
+        // the eye reads "9 / 12 ↑ Best" as a single unit.
+        const compareChip = k.isBest
+          ? `<span class="compare-label best"><span aria-hidden="true">↑</span> Best</span>`
+          : k.isLowest
+            ? `<span class="compare-label low"><span aria-hidden="true">↓</span> Lowest</span>`
+            : '';
+        return `<div class="actr-hero-solo-kpi ${cls}" style="${styleAttr}">
+          <div class="d-kicker" title="${k.kicker}">${k.kicker}</div>
+          <div class="d-num-row">
+            <span class="d-num ${k.tight ? 'tight' : ''}">${k.valHtml}</span>
+            ${compareChip}
+          </div>
+          ${pct != null ? `<div class="d-progress"><div class="d-progress-fill" style="width:${pct}%"></div></div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>` : '';
+
+  const rightHtml = isSolo
+    ? soloKpisHtml
+    : ((sections.length || derivedItems.length) ? `<div class="actr-hero-right">
+    ${sections.length ? `<div>
+      <div class="h-kicker">Section Scores</div>
+      <div class="actr-hero-bars">${barsHtml}</div>
+    </div>` : ''}
+    ${derivedHtml}
+  </div>` : '');
+
+  const banner = `<div class="actr-custom-banner">
+    <span class="acb-icon">ℹ︎</span>
+    <span class="acb-text">This was a <b>Custom Selection</b> mock — Composite (1–36) requires all 3 Core sections (English + Math + Reading). Section, STEM, ELA, and Writing scores below reflect only what was taken.</span>
+  </div>`;
+
+  return `${banner}<header class="actr-hero-card${isSolo ? ' is-solo' : ''}">
+    <div class="actr-hero-left">${leftHtml}</div>
+    ${rightHtml}
+  </header>`;
+}
+
 // Header: kicker + title + meta + actions cluster.
 // DEPRECATED — superseded by renderActReportHero (A1). Kept for one-line
 // rollback. Not currently called by renderActReport.
@@ -35830,13 +36460,13 @@ function renderActReportHeader(d) {
     switch (n % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th'; }
   };
   return `<header class="actr-header">
-    <div class="actr-hero-num">
-      <span class="nlbl">Composite</span>
-      <div class="num-row">
-      <span class="num">${composite}</span>
-      <span class="scale">/ 36</span>
+      <div class="actr-hero-num">
+        <span class="nlbl">Composite</span>
+        <div class="num-row">
+          <span class="num">${composite}</span>
+          <span class="scale">/ 36</span>
+        </div>
       </div>
-    </div>
     <div class="actr-hero-meta">
       ${usPct != null ? `<span class="actr-hero-percentile"><span class="pct-num">${usPct}</span><sup>${ordinalSuffix(usPct)}</sup>US percentile</span>` : ''}
       ${usPct != null ? '<span class="actr-meta-sep">·</span>' : ''}
@@ -35937,7 +36567,8 @@ function renderActDerivedStrip(d) {
 // and "predicts: <Course>" preserves the College Readiness mapping that the
 // old strip exposed via its "Course it predicts" column.
 function renderActDiagnosticsCapsules(categories, coreScores, bm) {
-  const rows = ACTR_SUBJECTS.map((meta, i) => {
+  const selectedSet = new Set(getActSelectedSections());
+  const rows = ACTR_SUBJECTS.filter(m => selectedSet.has(m.k)).map((meta, i) => {
     const sc = coreScores.find(s => s.k === meta.k);
     const items = (categories?.[meta.k]?.items) || [];
     if (!items.length) return '';
@@ -36040,35 +36671,41 @@ function renderActReport(){
   _mergeActScores();
   const d = ACT_REPORT, c = document.getElementById('actReportBody');
   const sc = d.scores, bm = d.benchmarks;
-  const coreScores = [
+  // Custom Selection filtering: only render core scores for sections the
+  // student actually took. Writing is a separate scalar handled below.
+  const selectedSet = new Set(getActSelectedSections());
+  const allCoreScores = [
     { k:'english', label:'English', score:sc.english, bm:bm.english },
     { k:'math',    label:'Math',    score:sc.math,    bm:bm.math    },
     { k:'reading', label:'Reading', score:sc.reading, bm:bm.reading },
     { k:'science', label:'Science', score:sc.science, bm:bm.science }
   ];
+  const coreScores = allCoreScores.filter(s => selectedSet.has(s.k));
   const metCount = coreScores.filter(s => s.score >= s.bm).length;
-  const hasWriting = !!d.derived.writing;
+  const hasWriting = selectedSet.has('writing') && !!d.derived.writing;
 
   // A1 redesign: the previous 3-module stack (Composite header + 4 KPI
   // cards + Derived strip) is now a single integrated hero card with
   // purple-left / white-right split. Sticky tabs follow, then Overview
-  // shows only AI Insights; Diagnostics + Question Record below.
+  // shows only AI Insights; Diagnostics + Question Record below. The
+  // scenario switcher above the hero is demo-only (mock UI for Free
+  // Combination mocks); production reads selectedSections from session.
   c.innerHTML = `<div class="actr-shell">
     ${renderActReportHero(d)}
     ${renderActReportTabs(hasWriting)}
 
     <section id="overview">
-      ${renderActAiInsights(coreScores, d.categories, d)}
+      ${coreScores.length ? renderActAiInsights(coreScores, d.categories, d) : renderActWritingAiInsights(d)}
     </section>
 
-    <section id="diagnostics" class="actr-section">
+    ${coreScores.length ? `<section id="diagnostics" class="actr-section">
       <header class="actr-section-head">
         <div>
           <h2>Diagnostics</h2>
         </div>
       </header>
       ${renderActDiagnosticsCapsules(d.categories, coreScores, bm)}
-    </section>
+    </section>` : ''}
 
     <section id="question-review" class="actr-section">
       <header class="actr-section-head">
@@ -36082,6 +36719,102 @@ function renderActReport(){
 
   renderStudentInfoBar('actStudentInfo','ACT',d.testDate);
   initActReportTabsObserver();
+}
+
+// Writing-only AI Insights. Core-section AI Insights (renderActAiInsights)
+// needs reporting categories that don't exist in a Writing-only attempt,
+// so we drive recommendations off the 4 ACT Writing rubric domains
+// (Ideas / Development / Organization / Language) instead. Same visual
+// shell as the core panel (Top Practice Focus + Protect Strength) so the
+// student doesn't see a "lesser" AI report when they only took Writing.
+function renderActWritingAiInsights(d) {
+  const der = d.derived || {};
+  const dom = der.writingDomains || {};
+  const domainSpecs = [
+    { label:'Ideas and Analysis' },
+    { label:'Development and Support' },
+    { label:'Organization' },
+    { label:'Language Use and Conventions' }
+  ];
+  const scored = domainSpecs
+    .map(s => ({ label: s.label, score: dom[s.label] }))
+    .filter(s => typeof s.score === 'number');
+
+  // Edge case: rubric not graded yet → fall back to the static disclaimer
+  // so we don't show an empty "AI Insights" header.
+  if (!scored.length) return renderActWritingOnlyOverview(d);
+
+  const sorted = [...scored].sort((a,b) => a.score - b.score);
+  const lowest = sorted[0];
+  const highest = sorted[sorted.length - 1];
+
+  // ── Top Practice Focus — lowest rubric domain
+  // Reuses tier-aware copy from _actWritingDomainTakeaway so the
+  // recommendation reads like a real rubric coach, not generic filler.
+  const lowTakeaway = (typeof _actWritingDomainTakeaway === 'function')
+    ? _actWritingDomainTakeaway(lowest.label, lowest.score)
+    : 'Target this rubric domain with focused weekly drills.';
+  const focusBody = `Focus on <a class="aii-hl">${lowest.label}</a> at <b>${lowest.score}/12</b> — ${lowTakeaway} A weekly rubric-domain drill lifts your essay score more than rewriting whole essays.`;
+  const topFocusHtml = `<li class="ai-insights-item top-focus">
+    <span class="kicker"><span class="ki" aria-hidden="true">🎯</span> Top Practice Focus</span>
+    <span class="body">${focusBody}</span>
+    <div class="cta-row">
+      <button class="primary" onclick="openActPracticeFocus()">Show practice focus →</button>
+    </div>
+  </li>`;
+
+  // ── Protect Strength — only when there is a clearly dominant domain.
+  // Mirrors the core-section rule (top must exceed by a real margin) so
+  // the panel stays additive, not restating obvious info.
+  let protectHtml = '';
+  if (highest.score >= 9 && (highest.score - lowest.score) >= 2) {
+    const protectBody = `<b>${highest.label} at ${highest.score}/12</b> is your strongest rubric domain. A short maintenance drill keeps it locked while you focus on weaker domains.`;
+    protectHtml = `<li class="ai-insights-item secondary strength">
+      <span class="bullet" aria-hidden="true">🛡</span>
+      <div class="content">
+        <span class="kicker">Protect Your Strength</span>
+        <span class="body">${protectBody}</span>
+      </div>
+    </li>`;
+  }
+
+  return `<section class="ai-insights-panel report narrative" id="ai-insights" role="region" aria-label="AI insights">
+    <div class="ai-insights-head">
+      <div class="ai-insights-head-left">
+        <span class="ai-insights-spark" aria-hidden="true">✦</span>
+        <div class="ai-insights-titles">
+          <div class="ai-insights-title">AI Insights</div>
+          <div class="ai-insights-sub">Personalized recommendations from your Writing rubric</div>
+        </div>
+      </div>
+    </div>
+    <ul class="ai-insights-list">${topFocusHtml}${protectHtml}</ul>
+  </section>`;
+}
+
+// Lightweight Overview shown when the only thing taken is Writing —
+// AI Insights need core categories which don't exist in a Writing-only run.
+function renderActWritingOnlyOverview(d) {
+  const der = d.derived || {};
+  const prompt = der.writingMeta?.promptTitle || 'ACT Writing Prompt';
+  const score = der.writing;
+  return `<section class="ai-insights-panel report narrative" id="ai-insights" role="region" aria-label="Writing overview">
+    <div class="ai-insights-head">
+      <div class="ai-insights-head-left">
+        <span class="ai-insights-spark" aria-hidden="true">✦</span>
+        <div class="ai-insights-titles">
+          <div class="ai-insights-title">Writing Overview</div>
+          <div class="ai-insights-sub">${prompt}</div>
+        </div>
+      </div>
+    </div>
+    <ul class="ai-insights-list">
+      <li class="ai-insights-item top-focus">
+        <span class="kicker"><span class="ki" aria-hidden="true">✎</span> Writing-only Mock</span>
+        <span class="body">You took Writing alone for this mock. Section, STEM, ELA, and Composite scores are not available for this attempt. Your essay scored <b>${score ?? '—'}/12</b> across the 4-domain rubric below.</span>
+      </li>
+    </ul>
+  </section>`;
 }
 
 /* ─── ACT Writing report section (v2) ─────────────────────────────────────
@@ -36188,17 +36921,17 @@ function renderActWritingSectionV2(d, opts = {}) {
   const stripHtml = `<div class="actw-strip">
     <div class="actw-stat">
       <div class="actw-stat-label">Time used</div>
-        <div class="actw-stat-value">${timeUsed} <span class="muted">/ ${timeAllowed} min</span></div>
+      <div class="actw-stat-value">${timeUsed} <span class="muted">/ ${timeAllowed} min</span></div>
       <div class="actw-stat-note"><span class="actw-stat-dot ${timeDot}"></span>${timeNote}</div>
     </div>
     <div class="actw-stat">
       <div class="actw-stat-label">Word count</div>
-        <div class="actw-stat-value">${wordCount} <span class="muted">/ ${wTarget[0]}–${wTarget[1]}</span></div>
+      <div class="actw-stat-value">${wordCount} <span class="muted">/ ${wTarget[0]}–${wTarget[1]}</span></div>
       <div class="actw-stat-note"><span class="actw-stat-dot ${wordDot}"></span>${wordNote}</div>
     </div>
     <div class="actw-stat">
       <div class="actw-stat-label">Raters (sum)</div>
-        <div class="actw-stat-value">${raterLine} <span class="muted">/ 12</span></div>
+      <div class="actw-stat-value">${raterLine} <span class="muted">/ 12</span></div>
       <div class="actw-stat-note"><span class="actw-stat-dot ${raterDot}"></span>${raterNote}</div>
     </div>
   </div>`;
