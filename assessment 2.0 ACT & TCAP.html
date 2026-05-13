@@ -22546,9 +22546,9 @@ const ACT_V2_STUDENTS = [
 // Helpers (pure, no DOM) — used by both Overview KPI and Analytics.
 function actComputeAnalytics() {
   const rows = ACT_V2_STUDENTS;
-  // Enhanced ACT Composite = round((E + M + R) / 3). Core 3 must all be
-  // present. Science is optional and does NOT enter Composite (Enhanced
-  // 2025+; key change from Legacy 4-section average).
+  // ACT Composite = round((E + M + R) / 3). Core 3 must all be present.
+  // Science is optional and does NOT enter Composite (per ACT R2519
+  // §1.3.9). See PRD 5.4.6.1.
   const completed = rows.filter(r => r.eng != null && r.math != null && r.read != null);
   const composites = completed.map(r => Math.round((r.eng + r.math + r.read) / 3));
   const avg = composites.length ? +(composites.reduce((s, n) => s + n, 0) / composites.length).toFixed(1) : 0;
@@ -33749,7 +33749,25 @@ const ACT_SCALE = {
   english: [1,2,3,5,6,7,7,8,9,10,10,10,11,11,12,13,13,14,15,15,16,17,18,19,20,20,21,22,22,23,24,25,26,27,28,29,31,33,35,35,36],
   math:    [1,5,7,9,11,12,13,13,14,14,15,15,15,16,16,17,17,17,18,19,19,20,21,22,23,24,25,26,27,27,28,29,29,30,31,32,33,34,34,35,36,36],
   reading: [1,3,5,7,9,10,11,12,12,13,14,15,16,17,18,20,21,22,23,24,25,26,28,30,32,34,35,36],
-  science: [1,3,6,7,9,10,11,12,12,14,15,16,17,18,18,19,20,21,22,23,23,24,25,25,26,27,28,29,30,31,32,33,34,35,36]
+  science: [1,3,6,7,9,10,11,12,12,14,15,16,17,18,18,19,20,21,22,23,23,24,25,25,26,27,28,29,30,31,32,33,34,35,36],
+  // Writing raw sum (8-48) → 1-36 scale. Internal use only — drives ELA;
+  // never shown to students (the student-facing Writing score is the 2-12
+  // domain average, see ACT_REPORT.derived.writing). Indexed by rawSum so
+  // _scaleLookup can be called uniformly; idx 0-7 are unreachable nulls.
+  //
+  // ⚠️ HEURISTIC. Anchor points (sum=8→1, sum=40→31, sum=48→36) come from
+  // ACT R2400 (Understanding ACT ELA Scores) endpoints + Compass Prep 2016
+  // calibration of the 2-12 → ELA-internal mapping. ACT does not publish
+  // per-form Writing equating tables. Replace this array in place when
+  // official data is available; ACT_SCALE remains the single source of
+  // truth (no separate config flag).
+  writing: [
+    null,null,null,null,null,null,null,null,        // idx 0-7: rawSum < 8 unreachable
+    /* sum  8 */  1,  2,  3,  4,  5,  6,  7,  8,  9, 10,
+    /* sum 18 */ 11, 12, 14, 15, 17, 18, 19, 20, 21, 22,
+    /* sum 28 */ 23, 24, 25, 26, 27, 28, 28, 29, 29, 30,
+    /* sum 38 */ 30, 31, 31, 32, 33, 34, 34, 35, 35, 36, 36
+  ]
 };
 
 // Enhanced ACT scored-item caps per section. ACT delivers more total items
@@ -33766,6 +33784,18 @@ function _scaleLookup(table, raw) {
   return table[raw];
 }
 
+// Writing rubric → raw sum (8-48) for ELA scaling. Input is the per-domain
+// final score map (label-keyed, each value 2-12, matching the canonical
+// ACT_REPORT.derived.writingDomains shape). Returns null if any domain is
+// missing — ELA cannot be reported in that case (ACT R2400 rule).
+function _writingRawSumFromDomains(domains) {
+  if (!domains || typeof domains !== 'object') return null;
+  const labels = ACT_WRITING_DOMAINS.map(d => d.label);
+  const finals = labels.map(l => domains[l]);
+  if (finals.some(f => !Number.isFinite(f))) return null;
+  return finals.reduce((a, b) => a + b, 0);   // 8-48
+}
+
 function stuCalcScores(pk, testType) {
   const st = STU_STATE[pk];
   const qs = st.questions;
@@ -33774,11 +33804,16 @@ function stuCalcScores(pk, testType) {
 
   qs.forEach((q, gi) => {
     const secId = q.section;
-    if (!sectionScores[secId]) sectionScores[secId] = { correct: 0, total: 0, name: secId };
+    if (!sectionScores[secId]) sectionScores[secId] = { correct: 0, total: 0, attempted: 0, name: secId };
     sectionScores[secId].total++;
 
     const ans = st.answers?.[gi];
     if (ans !== undefined && ans !== null) {
+      // `attempted` counts answered items (right or wrong). 0 means the
+      // student left the entire section blank — treated as "not taken" for
+      // scoring (scaled = null), distinct from "answered all wrong"
+      // (scaled = 1 from the conversion table). See PRD 5.4.6.1.1.
+      sectionScores[secId].attempted++;
       const isCorrect = (q.correctIdx !== undefined && ans === q.correctIdx)
         || (q.correct !== undefined && ans === q.correct);
       if (isCorrect) { totalCorrect++; sectionScores[secId].correct++; }
@@ -33789,7 +33824,18 @@ function stuCalcScores(pk, testType) {
   let composite = 0, scaledSections = {};
 
   if (testType === 'act') {
-    const secMap = { 'act-eng':'english', 'act-math':'math', 'act-reading':'reading', 'act-science':'science' };
+    const secMap = { 'act-eng':'english', 'act-math':'math', 'act-reading':'reading', 'act-science':'science', 'act-writing':'writing' };
+    // PRD 5.4.6.1.3 — Excluded sections (teacher opted out at launch
+    // drawer) must produce scaled = null so derived metrics (STEM / ELA)
+    // suppress correctly. The signal lives on ACT_SECTIONS[i]._excluded
+    // (only set for optional sections: Science, Writing). This is distinct
+    // from "section in test but student left blank" (5.4.6.1.1).
+    const excludedKeys = new Set(
+      (typeof ACT_SECTIONS !== 'undefined' ? ACT_SECTIONS : [])
+        .filter(s => s._excluded)
+        .map(s => secMap[s.id])
+        .filter(Boolean)
+    );
     Object.entries(sectionScores).forEach(([id, s]) => {
       const key = secMap[id] || id;
       const table = ACT_SCALE[key];
@@ -33799,25 +33845,60 @@ function stuCalcScores(pk, testType) {
       const cap = ACT_SCORED_MAX[key];
       const rawForScale = cap != null ? Math.min(s.correct, cap) : s.correct;
       s.scaled = table ? _scaleLookup(table, rawForScale) : Math.round((s.correct / Math.max(s.total,1)) * 36);
+      // PRD 5.4.6.1.1 — blank section override. A section with zero
+      // attempted items is "not taken" (scaled = null), not "all wrong"
+      // (which would be a legitimate scaled = 1). Without this, the
+      // conversion table's raw=0 entry leaks a 1 into Composite.
+      if (s.attempted === 0) s.scaled = null;
+      // PRD 5.4.6.1.3 — opt-out trumps any computed value.
+      if (excludedKeys.has(key)) s.scaled = null;
       scaledSections[key] = s.scaled;
     });
-    // Enhanced ACT Composite = round((English + Math + Reading) / 3) ∈ [1, 36].
-    // Only the 3 Core sections enter the Composite — Science is optional
-    // and does NOT contribute (key Enhanced 2025+ change from Legacy's
-    // 4-section average). Science still produces an independent 1-36
-    // scale score and powers STEM below. Returns null when Core 3 not
-    // all present (β/γ/δ adaptive-report templates).
+    // ACT Composite = round((English + Math + Reading) / 3) ∈ [1, 36].
+    // Only the 3 Core sections enter the Composite. Science is optional
+    // and does NOT contribute (per ACT R2519 §1.3.9); it still produces
+    // an independent 1-36 scale score and powers STEM below. Returns
+    // null when Core 3 not all present (β/γ/δ adaptive-report templates).
     const coreKeys = ['english','math','reading'];
     const coreVals = coreKeys.map(k => scaledSections[k]).filter(v => Number.isFinite(v));
     composite = coreVals.length === 3
       ? Math.round(coreVals.reduce((a,b) => a+b, 0) / coreVals.length)
       : null;
 
-    const stem = scaledSections.math && scaledSections.science
+    // Writing is special-cased: rubric domain scores aren't captured in
+    // st.answers (essay, not MC), so the per-section conversion path
+    // above does not apply. Pull domain finals from the writing question
+    // or ACT_REPORT, sum to rawSum (8-48), then look up the 1-36 scale
+    // via ACT_SCALE.writing. Output is internal — drives ELA only, never
+    // shown to students (see PRD 5.4.6.1.2).
+    //
+    // Excluded (5.4.6.1.3): when the teacher opted out of Writing at
+    // launch, the override above already set scaledSections.writing =
+    // null; skip the rubric pull so the report mock cannot reintroduce
+    // a value.
+    let writingScaled = null;
+    if (!excludedKeys.has('writing')) {
+      const writingQ = qs.find(q => q.section === 'act-writing');
+      const writingDomains = writingQ?.domainScores
+        || (typeof ACT_REPORT !== 'undefined' ? ACT_REPORT?.derived?.writingDomains : null);
+      const writingRawSum = _writingRawSumFromDomains(writingDomains);
+      writingScaled = (writingRawSum != null && ACT_SCALE.writing)
+        ? _scaleLookup(ACT_SCALE.writing, writingRawSum)
+        : null;
+      scaledSections.writing = writingScaled;
+    }
+
+    const stem = (Number.isFinite(scaledSections.math) && Number.isFinite(scaledSections.science))
       ? Math.round((scaledSections.math + scaledSections.science) / 2) : null;
-    const writingScaled = scaledSections.writing;
-    const ela = scaledSections.english && scaledSections.reading && writingScaled
-      ? Math.round((scaledSections.english + scaledSections.reading + writingScaled) / 3) : null;
+    // ELA = round((English + Reading + Writing_scaled_to_1to36) / 3).
+    // ACT R2400 (Understanding ACT ELA Scores): English / Reading on 1-36,
+    // Writing internally scaled from 4-domain sum (8-48) to 1-36 before
+    // averaging. Reported only when Writing taken. See PRD 5.4.6.1.2.
+    const ela = (Number.isFinite(scaledSections.english)
+                 && Number.isFinite(scaledSections.reading)
+                 && Number.isFinite(writingScaled))
+      ? Math.round((scaledSections.english + scaledSections.reading + writingScaled) / 3)
+      : null;
     scaledSections.stem = stem;
     scaledSections.ela = ela;
   } else if (testType === 'sat') {
@@ -33948,8 +34029,9 @@ const ACT_REPORT = {
   },
   // Percentiles below come from ACT_PERCENTILE_TABLES (official ACT
   // National Norms 2022-2024) for composite + 4 MC sections. STEM and
-  // ELA fall back to the legacy estimator (no published norms).
-  // Re-derive any time scores change by calling actPercentile(key, score).
+  // ELA use _estimatePercentile (ACT does not publish per-form norms
+  // for either). Re-derive any time scores change by calling
+  // actPercentile(key, score).
   usRank:{ composite:72, english:84, math:61, reading:73, science:32, stem:61, ela:72 },
   stateRank:{ composite:60, english:72, math:49, reading:60, science:22, stem:50, ela:60 },
   benchmarks:{ english:18, math:22, reading:22, science:23, stem:26, ela:20 },
@@ -34595,9 +34677,10 @@ function actFillColor(pct){ return pct>=75?'green':pct>=55?'yellow':'red'; }
 // Source for ACT: ACT National Norms, graduating classes 2022-2024 (the
 // most recently published National Profile Report cohort). Each table
 // maps the 1-36 scale score to its cumulative national percentile rank.
-// Direct lookup, no estimation. STEM and ELA were retired by ACT in
-// September 2023 and have no current published norms — they fall back to
-// the legacy estimator and should be treated as illustrative.
+// Direct lookup, no estimation. STEM and ELA are official Enhanced ACT
+// derived scores but ACT does not publish per-form percentile norms for
+// them — those two fall back to _estimatePercentile and must be flagged
+// as approximate in any student-facing surface.
 //
 // Source for SAT: College Board SAT User Percentiles 2024 ("nationally
 // representative sample"). Sparse tables (every 50 / 25 points) with
@@ -34668,10 +34751,10 @@ function satPercentile(scoreType, score) {
   return _percentileFromTable(tbl, score || 0);
 }
 
-// Legacy approximation. Kept ONLY for ACT STEM / ELA (retired by ACT in
-// 2023, no published norms exist) and as a defensive fallback. New code
-// should call actPercentile / satPercentile so percentiles trace back to
-// official norms.
+// Polynomial approximation, used ONLY for STEM / ELA (official Enhanced
+// ACT derived scores but no per-form percentile norms published) and as
+// a defensive fallback. New code should call actPercentile /
+// satPercentile so percentiles trace back to official norms.
 function _estimatePercentile(score, max) {
   const p = score / max;
   if (p >= 0.97) return 99;
@@ -34697,9 +34780,10 @@ function _mergeActScores() {
   });
 
   // composite + 4 MC sections come from official ACT National Norms
-  // tables (see ACT_PERCENTILE_TABLES). STEM and ELA were retired by ACT
-  // in Sept 2023 and have no published norms, so they fall back to the
-  // legacy estimator and are flagged as such in code.
+  // tables (see ACT_PERCENTILE_TABLES). STEM and ELA are official Enhanced
+  // ACT derived scores (R2519 §1.3.9) but ACT does not publish per-form
+  // percentile tables for them — those two use _estimatePercentile and
+  // must be flagged as approximate in any student-facing surface.
   ['composite','english','math','reading','science','stem','ela'].forEach(k => {
     const v = k === 'composite' ? fs.composite : (k === 'stem' ? ss.stem : k === 'ela' ? ss.ela : ACT_REPORT.scores[k]);
     const official = actPercentile(k, v);
@@ -35810,7 +35894,10 @@ function renderQuestionDetail(testType, sectionKey, idx, options = {}) {
         <b>${p.label || `Perspective ${i + 1}`}</b><br>${p.text || ''}
       </div>`).join('');
     const domainHtml = aw.rubricDomains.map(d => {
-      const val = domains[d.label] || domains[d.label.replace(' and ', ' & ')] || 0;
+      // domains is label-keyed by ACT_WRITING_DOMAINS[].label (canonical
+      // shape). The historical ' and ' → ' & ' fallback was removed once
+      // mock data unified on the official labels — see PRD 5.4.6.1.2.
+      const val = domains[d.label] || 0;
       return `<div class="act-writing-domain-card">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px"><b>${d.label}</b><span style="font-size:12px;font-weight:900;color:#6b21a8">${val || '—'} / 12</span></div>
         <div class="d-bar"><div class="d-fill purple" style="width:${Math.round((val || 0) / 12 * 100)}%"></div></div>
