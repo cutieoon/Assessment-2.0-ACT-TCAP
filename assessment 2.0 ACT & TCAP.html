@@ -3475,10 +3475,14 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
   padding-bottom:10px;border-bottom:2px solid #e5e7eb;
 }
 #page-stu-sat .stu-passage-panel .passage-title{border-bottom:none;padding-bottom:4px;font-size:15px;font-weight:600;color:#374151}
-.stu-passage-panel .hl-y{background:rgba(250,204,21,.35)}
-.stu-passage-panel .hl-g{background:rgba(74,222,128,.3)}
-.stu-passage-panel .hl-b{background:rgba(96,165,250,.3)}
-.stu-passage-panel .hl-p{background:rgba(244,114,182,.3)}
+/* Student highlighter is single-color (Kira lavender) per PRD 4.3.2.1.
+   Aligned with ACT Enhanced Online / SAT Bluebook / AP Digital — all
+   single-color. We pick `rgba(192,132,252,.32)` (Tailwind purple-400
+   @ 32%) so the highlight color is brand-adjacent without competing
+   with the saturated brand purple used on CTAs / AI Insights banner /
+   Score Report Hero. The class is still named `.hl-y` for backward
+   compatibility with existing annotation data (stored color === 'hl-y'). */
+.stu-passage-panel .hl-y{background:rgba(192,132,252,.32)}
 .stu-passage-panel .hl-u{text-decoration:underline;text-decoration-color:#64748b;text-underline-offset:3px}
 .stu-passage-panel .stu-ann{cursor:pointer;border-radius:2px}
 .stu-notes-toggle-rail{
@@ -3538,10 +3542,10 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
   width:26px;height:26px;border-radius:6px;border:1.5px solid transparent;cursor:pointer;transition:.12s;
 }
 .stu-hl-popup button:hover{transform:scale(1.15)}
-.stu-hl-popup .hl-y{background:rgba(250,204,21,.5)}
-.stu-hl-popup .hl-g{background:rgba(74,222,128,.45)}
-.stu-hl-popup .hl-b{background:rgba(96,165,250,.45)}
-.stu-hl-popup .hl-p{background:rgba(244,114,182,.45)}
+/* Popup highlight swatch: slightly more saturated than the inline state
+   (50% vs 32%) so the button reads clearly as a tactile target.
+   Kira lavender — single color per PRD 4.3.2.1. */
+.stu-hl-popup .hl-y{background:rgba(192,132,252,.5)}
 .stu-hl-popup .hl-u{background:#f4f4f5;color:#475569;font-size:12px;font-weight:700;text-decoration:underline;display:flex;align-items:center;justify-content:center}
 .stu-hl-popup .hl-sep{width:1px;height:20px;background:#e5e7eb;margin:0 2px;flex-shrink:0}
 .stu-hl-popup .hl-note-btn{background:#f4f4f5;color:#475569;display:flex;align-items:center;justify-content:center}
@@ -32967,14 +32971,18 @@ function stuInitPassageHL(pk) {
       popup.onmousedown = function(e) { e.preventDefault(); };
       document.body.appendChild(popup);
     }
-    const isSatCtx = pk.includes('Sat');
     const pencilSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>`;
-    popup.innerHTML = isSatCtx
-      ? `<button class="hl-y" onclick="stuApplyHL('hl-y')" title="Yellow"></button><button class="hl-b" onclick="stuApplyHL('hl-b')" title="Blue"></button><button class="hl-p" onclick="stuApplyHL('hl-p')" title="Pink"></button><div class="hl-sep"></div><button class="hl-u" onclick="stuApplyHL('hl-u')" title="Underline">U</button><div class="hl-sep"></div><button class="hl-note-btn" onclick="stuApplyHL('note')" title="Add note">${pencilSvg}</button><button class="hl-clear" onclick="stuApplyHL(null)" title="Remove">✕</button>`
-      : `<button class="hl-y" onclick="stuApplyHL('hl-y')" title="Yellow"></button><button class="hl-g" onclick="stuApplyHL('hl-g')" title="Green"></button><button class="hl-b" onclick="stuApplyHL('hl-b')" title="Blue"></button><button class="hl-p" onclick="stuApplyHL('hl-p')" title="Pink"></button><div class="hl-sep"></div><button class="hl-u" onclick="stuApplyHL('hl-u')" title="Underline">U</button><div class="hl-sep"></div><button class="hl-note-btn" onclick="stuApplyHL('note')" title="Add note">${pencilSvg}</button><button class="hl-clear" onclick="stuApplyHL(null)" title="Remove">✕</button>`;
+    /* Single-color highlighter per PRD 4.3.2.1. Both SAT and ACT contexts
+       collapsed to one branch — the class is still `hl-y` for backward
+       compatibility with stored annotation `color` fields, but the rendered
+       swatch is Kira lavender (not yellow). The button title says
+       "Highlight" instead of a color name. */
+    popup.innerHTML = `<button class="hl-y" onclick="stuApplyHL('hl-y')" title="Highlight"></button><div class="hl-sep"></div><button class="hl-u" onclick="stuApplyHL('hl-u')" title="Underline">U</button><div class="hl-sep"></div><button class="hl-note-btn" onclick="stuApplyHL('note')" title="Add note">${pencilSvg}</button><button class="hl-clear" onclick="stuApplyHL(null)" title="Remove">✕</button>`;
     const rect = range.getBoundingClientRect();
     popup.style.display = 'flex';
-    popup.style.left = Math.max(8, Math.min(window.innerWidth - 230, rect.left + rect.width / 2 - 95)) + 'px';
+    /* Popup width shrunk from ~230px (4 colors + 3 utilities) to ~150px
+       (1 color + 3 utilities). Re-center: half-width ≈ 75px. */
+    popup.style.left = Math.max(8, Math.min(window.innerWidth - 160, rect.left + rect.width / 2 - 75)) + 'px';
     popup.style.top = Math.max(8, rect.top - 42) + 'px';
   });
 
