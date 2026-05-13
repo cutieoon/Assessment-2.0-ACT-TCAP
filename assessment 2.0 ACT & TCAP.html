@@ -2639,6 +2639,23 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .passage-text-panel .q-ref.inactive-ref{
   background:transparent !important;border-bottom:none !important;
 }
+/* Asterisk-in-brackets anchor (ACT English §3.2.4.1) — always visible inline
+   label such as [A], [B], [10]. Used for insertion / placement / paragraph-
+   reorder questions where the question does NOT refer to a highlighted
+   portion. Permanent visibility distinguishes it from the q-ref pattern,
+   matching official ACT tutorial format. */
+.passage-text-panel .q-asterisk{
+  display:inline-block;padding:0 5px;margin:0 1px;
+  background:#f4f4f5;color:#52525b;
+  border-radius:3px;font-weight:700;font-size:.88em;
+  cursor:pointer;transition:.15s;border:1px solid #e4e4e7;
+  vertical-align:1px;
+}
+.passage-text-panel .q-asterisk:hover{background:#ede9fe;color:#6d28d9;border-color:#c4b5fd}
+.passage-text-panel .q-asterisk.active-ref{
+  background:rgba(124,58,237,.18);color:#6d28d9;border-color:#7c3aed;
+}
+.passage-text-panel .q-asterisk.inactive-ref{opacity:.85}
 /* User highlights applied via floating popup */
 .passage-text-panel .hl-y{background:rgba(250,204,21,.35)}
 .passage-text-panel .hl-g{background:rgba(74,222,128,.3)}
@@ -3532,6 +3549,20 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
   display:flex;flex-direction:column;border-left:1px solid #e5e7eb;background:#fff;
 }
 .stu-hl-active{background:rgba(59,130,246,.08);border-bottom:2px solid #3b82f6}
+/* Asterisk-in-brackets anchor — student-side counterpart to .q-asterisk
+   (teacher editor). Permanent inline label so students can find e.g. [10] /
+   [B] in the passage even before they open the corresponding question. */
+.stu-passage-panel .stu-hl-asterisk{
+  display:inline-block;padding:0 5px;margin:0 1px;
+  background:#f4f4f5;color:#52525b;
+  border-radius:3px;font-weight:700;font-size:.88em;
+  cursor:pointer;transition:.15s;border:1px solid #e4e4e7;
+  vertical-align:1px;
+}
+.stu-passage-panel .stu-hl-asterisk:hover{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.stu-passage-panel .stu-hl-asterisk.stu-hl-active{
+  background:rgba(59,130,246,.16);color:#1d4ed8;border-color:#3b82f6;
+}
 /* Student highlight popup */
 .stu-hl-popup{
   position:fixed;display:none;align-items:center;gap:4px;padding:5px 8px;
@@ -9829,7 +9860,7 @@ const SAMPLE_Q = {
         <p>The reality proved far more complicated. Her first month was a series of <span class="q-ref" data-q="2">rejections, club owners would listen politely</span> before shaking their heads. <span class="q-ref" data-q="3">"We need experience, not just potential,"</span> one told her, gesturing at a bulletin board crowded with résumés.</p>
         <p><span class="q-ref" data-q="4">Maria began to realize, that she had been thinking about her career backward.</span> Instead of waiting for the perfect gig, she started showing up at jam sessions <span class="q-ref" data-q="5">— small, smoky, and frequently terrible</span>. She played for free. She watched. <span class="q-ref" data-q="6">She listened to the other musicians.</span></p>
         <p>By her sixth month in the city, the calls had begun to <span class="q-ref" data-q="7">trickle in</span>. Not headlining gigs — backup, fill-in, weeknight sets when the regular pianist was sick — but they added up. <span class="q-ref" data-q="8">Maria had finally understood that talent was the entry fee, not the prize.</span></p>
-        <p><span class="q-ref" data-q="9">If anything, the rejections had been the most useful part of her first year.</span> They had pushed her into the rooms where music actually got made. <span class="q-ref" data-q="10">[A writer might consider whether to add a final sentence here that returns to the essay's opening idea.]</span></p>`,
+        <p><span class="q-ref" data-q="9">If anything, the rejections had been the most useful part of her first year.</span> They had pushed her into the rooms where music actually got made. <span class="q-asterisk" data-q="10">[*]</span></p>`,
       questions:[
         { n:1, type:'MC', ref:'imagined the city\'s jazz clubs would of welcomed', text:'Which choice best maintains standard English usage?',
           choices:['NO CHANGE','imagined the city\'s jazz clubs would have welcomed','imagined the city\'s jazz clubs would welcome','imagined the city\'s jazz clubs would of welcome'], correct:1, pts:1,
@@ -9858,7 +9889,7 @@ const SAMPLE_Q = {
         { n:9, type:'MC', ref:'If anything, the rejections had been the most useful part of her first year.', text:'Which choice best opens the final paragraph?',
           choices:['NO CHANGE','In any case, the rejections had been the worst part of her first year.','Surprisingly, the rejections had been the best part of her first year.','To her credit, the rejections had been the most useful part of her first year.'], correct:0, pts:1,
           explanation:'<b>A.</b> "If anything" invites the reader to revise an expectation — that rejection should be discouraging — and matches the paragraph\'s argument. The other choices either contradict the essay (B), overstate (C), or misattribute (D).' },
-        { n:10, type:'MC', ref:'[A writer might consider whether to add a final sentence here…]', text:'Suppose the writer\'s primary purpose is to leave the reader with the essay\'s central insight about effort and recognition. Should the writer add the following sentence here? "She still believed in talent — only now she understood what surrounded it."',
+        { n:10, type:'MC', ref:'[*]', text:'At the point marked [*] in the passage, the writer is considering adding the following sentence: "She still believed in talent — only now she understood what surrounded it." Should the writer make this addition here?',
           choices:['Yes, because it echoes the opening line and restates the new understanding.','Yes, because it introduces a new idea about her career.','No, because it weakens the closing image.','No, because it shifts focus to other musicians.'], correct:0, pts:1,
           explanation:'<b>A.</b> A strong closing sentence loops back to the essay\'s opening claim ("talent alone would carry her through") and reframes it. B is wrong because the idea is not new; C and D misread the sentence.' }
       ]
@@ -9867,9 +9898,9 @@ const SAMPLE_Q = {
       type:'RR_PASSAGE',
       title:'Passage II — The Bloom of Urban Gardens',
       fullText:`<p>Community gardens have <span class="q-ref" data-q="11">transformed</span> vacant lots across American cities. In Detroit <span class="q-ref" data-q="12">alone over 1,400 urban farms and gardens</span> now produce fresh food for residents who once had little access to it. These spaces <span class="q-ref" data-q="13">serve multiple purposes — beyond agriculture, they create gathering places, teach children where food comes from, and revive neighborhoods that had been written off.</span></p>
-        <p>Skeptics <span class="q-ref" data-q="14">argues</span> that the gardens cannot scale — a few raised beds, however charming, will not feed a city. <span class="q-ref" data-q="15">[A]</span> But the case for gardens has never been only about calories. <span class="q-ref" data-q="16">When residents come together to manage shared land, they build the kind of trust that civic life depends on, and they redefine what a vacant lot can be.</span></p>
-        <p>The economic argument <span class="q-ref" data-q="17">is also stronger then critics allow.</span> A 2022 study estimated that the average urban garden saves participating households $400 per year on produce. <span class="q-ref" data-q="18">[B]</span> Multiplied across thousands of gardens nationwide, the savings approach the operating budget of a midsize federal program.</p>
-        <p>Cities that <span class="q-ref" data-q="19">have invested most heavily — Cleveland, Philadelphia, and Atlanta among them —</span> have seen measurable drops in nearby grocery prices. <span class="q-ref" data-q="20">[C] Whether community gardens can replace industrial agriculture is the wrong question; whether they can change the texture of a neighborhood is the right one.</span></p>`,
+        <p>Skeptics <span class="q-ref" data-q="14">argues</span> that the gardens cannot scale — a few raised beds, however charming, will not feed a city. <span class="q-asterisk" data-q="15">[A]</span> But the case for gardens has never been only about calories. <span class="q-ref" data-q="16">When residents come together to manage shared land, they build the kind of trust that civic life depends on, and they redefine what a vacant lot can be.</span></p>
+        <p>The economic argument <span class="q-ref" data-q="17">is also stronger then critics allow.</span> A 2022 study estimated that the average urban garden saves participating households $400 per year on produce. <span class="q-asterisk" data-q="15">[B]</span> Multiplied across thousands of gardens nationwide, the savings approach the operating budget of a midsize federal program.</p>
+        <p>Cities that <span class="q-ref" data-q="19">have invested most heavily — Cleveland, Philadelphia, and Atlanta among them —</span> have seen measurable drops in nearby grocery prices. <span class="q-asterisk" data-q="15">[C]</span> <span class="q-ref" data-q="20">Whether community gardens can replace industrial agriculture is the wrong question; whether they can change the texture of a neighborhood is the right one.</span></p>`,
       questions:[
         { n:11, type:'MC', ref:'transformed', text:'Which choice most precisely fits the sentence?',
           choices:['NO CHANGE','metamorphosed','reimagined','reconfigured'], correct:0, pts:1,
@@ -9883,7 +9914,7 @@ const SAMPLE_Q = {
         { n:14, type:'MC', ref:'argues', text:'Which choice provides the correct subject-verb agreement?',
           choices:['NO CHANGE','argue','is arguing','was arguing'], correct:1, pts:1,
           explanation:'<b>B.</b> "Skeptics" is plural; the verb must be "argue."' },
-        { n:15, type:'MC', ref:'[A]', text:'For the purpose of the essay, the writer wants to add the following sentence at one of the marked points: "It is true that no community garden, on its own, can feed a city of millions." Where should the sentence be placed?',
+        { n:15, type:'MC', ref:'[A] / [B] / [C]', text:'For the purpose of the essay, the writer wants to add the following sentence at one of the marked points: "It is true that no community garden, on its own, can feed a city of millions." Where should the sentence be placed?',
           choices:['Point [A]','Point [B]','Point [C]','It should NOT be added.'], correct:0, pts:1,
           explanation:'<b>A.</b> The new sentence concedes the skeptics\' point and naturally precedes the rebuttal that follows ("But the case for gardens has never been only about calories"). [B] and [C] sit deep in the rebuttal.' },
         { n:16, type:'MC', ref:'When residents come together to manage shared land, they build the kind of trust that civic life depends on, and they redefine what a vacant lot can be.', text:'Which choice best maintains the writer\'s focus on the social, rather than agricultural, value of urban gardens?',
@@ -9898,7 +9929,7 @@ const SAMPLE_Q = {
         { n:19, type:'MC', ref:'have invested most heavily — Cleveland, Philadelphia, and Atlanta among them —', text:'Which choice most clearly preserves the parenthetical list of cities?',
           choices:['NO CHANGE','have invested most heavily, Cleveland, Philadelphia and Atlanta among them,','have invested most heavily; Cleveland, Philadelphia, and Atlanta among them;','have invested most heavily, Cleveland; Philadelphia; and Atlanta among them,'], correct:0, pts:1,
           explanation:'<b>A.</b> Em dashes mark a parenthetical list cleanly. B uses commas around an internally-comma\'d list (confusing); C and D misuse semicolons.' },
-        { n:20, type:'MC', ref:'[C] Whether community gardens can replace industrial agriculture is the wrong question; whether they can change the texture of a neighborhood is the right one.', text:'Which choice provides the most effective conclusion to the essay?',
+        { n:20, type:'MC', ref:'Whether community gardens can replace industrial agriculture is the wrong question; whether they can change the texture of a neighborhood is the right one.', text:'Which choice provides the most effective conclusion to the essay?',
           choices:['NO CHANGE','Industrial agriculture remains the dominant source of food in the country.','Community gardens are growing in popularity nationwide.','Cities should consider funding more community gardens in the years ahead.'], correct:0, pts:1,
           explanation:'<b>A.</b> The original reframes the debate ("wrong question / right question"), echoing the essay\'s thesis. The others restate facts or recommendations without insight.' }
       ]
@@ -14136,45 +14167,49 @@ const FLOW_DIAGRAMS = [
     label:'ACT Flow',
     labelZh:'ACT 流程',
     icon:'🎯',
-    description:'ACT-specific path. 4 fixed sections + optional Writing, run as a single sitting (1 Assignment). Section breaks live inside the Runner. Writing routes to Grading Studio for human scoring.',
-    descriptionZh:'ACT 专属路径：4 个固定 section + 可选 Writing，一次坐下来跑完 = 1 个 Assignment。Section 之间的 break 在 Runner 内处理。Writing 走 Grading Studio 人工评分。',
-    chips:['1 sitting = 1 Assignment','Optional Writing','Section breaks','Human-graded Essay'],
-    chipsZh:['1 次坐下 = 1 Assignment','可选 Writing','Section 间 break','Writing 人工批改'],
+    description:'Enhanced ACT path. 3 Core sections (English / Math / Reading) + 2 Optional (Science / Writing), run as a single sitting (1 Assignment). Drawer toggles per-section selection. Math is followed by a mandatory 10 min break. Writing routes to Grading Studio for human scoring.',
+    descriptionZh:'Enhanced ACT 路径：3 个必考 Core（English / Math / Reading）+ 2 个 Optional（Science / Writing），一次坐下来跑完 = 1 个 Assignment。Drawer 控制 Science / Writing 是否参考。Math 后强制 10 min Break。Writing 走 Grading Studio 人工评分。',
+    chips:['Enhanced ACT','1 sitting = 1 Assignment','3 Core + 2 Optional','Mandatory break after Math','Human-graded Essay','Adaptive Report · α/β/γ/δ'],
+    chipsZh:['Enhanced ACT','1 次坐下 = 1 Assignment','3 Core + 2 Optional','Math 后强制 break','Writing 人工批改','自适应报告 · α/β/γ/δ'],
     roleViews:{ combined:'act', teacher:'act_teacher', student:'act_student' },
     mermaid:`flowchart LR
-      H["Homepage"] --> D["ACT Drawer<br/>4 sections + optional Writing"]
+      H["Homepage"] --> D["ACT Drawer<br/>3 Core + 2 Optional"]
       D --> GEN["AI Generate<br/>per-section blueprint"]
       GEN --> E["Editor<br/>section tabs"]
       E --> A["Assign<br/>1 sitting = 1 Assignment"]
       A --> L["Student Launch"]
-      L --> S1["Section 1 · English<br/>45 min · 75 items"]
-      S1 --> S2["Section 2 · Math<br/>60 min · 60 items"]
+      L --> S1["English (Core)<br/>35 min · 50 items"]
+      S1 --> S2["Math (Core)<br/>50 min · 45 items"]
       S2 --> BR["Break · 10 min"]
-      BR --> S3["Section 3 · Reading<br/>35 min · 40 items"]
-      S3 --> S4["Section 4 · Science<br/>35 min · 40 items"]
-      S4 --> W["Writing (optional)<br/>40 min · 1 essay"]
+      BR --> S3["Reading (Core)<br/>40 min · 36 items"]
+      S3 --> S4["Science (Optional)<br/>40 min · 40 items"]
+      S4 --> W["Writing (Optional)<br/>40 min · 1 essay"]
       W --> SUB["Submit"]
+      S3 -. skip Sci + Writing .-> SUB
       S4 -. skip Writing .-> SUB
       SUB --> G["Grader<br/>auto MCQ + manual Essay"]
-      G --> PR["Pending Release"]
-      PR --> RP["Released Report"]`,
+      G --> PG["Pending Grading<br/>student preview only<br/>(loading hero + locked stats)"]
+      PG --> PR["Pending Release<br/>teacher review"]
+      PR --> RP["Released Report<br/>α/β/γ/δ by takenSections"]`,
     mermaidZh:`flowchart LR
-      H["首页"] --> D["ACT Drawer<br/>4 section + 可选 Writing"]
+      H["首页"] --> D["ACT Drawer<br/>3 Core + 2 Optional"]
       D --> GEN["AI 生成<br/>分 section 蓝图"]
       GEN --> E["Editor 审阅<br/>section tab"]
       E --> A["布置<br/>1 次坐下 = 1 Assignment"]
       A --> L["学生进入"]
-      L --> S1["Section 1 · English<br/>45 min · 75 题"]
-      S1 --> S2["Section 2 · Math<br/>60 min · 60 题"]
+      L --> S1["English（Core）<br/>35 min · 50 题"]
+      S1 --> S2["Math（Core）<br/>50 min · 45 题"]
       S2 --> BR["Break · 10 min"]
-      BR --> S3["Section 3 · Reading<br/>35 min · 40 题"]
-      S3 --> S4["Section 4 · Science<br/>35 min · 40 题"]
+      BR --> S3["Reading（Core）<br/>40 min · 36 题"]
+      S3 --> S4["Science（可选）<br/>40 min · 40 题"]
       S4 --> W["Writing（可选）<br/>40 min · 1 篇 essay"]
       W --> SUB["交卷"]
-      S4 -. 无 Writing 直接交卷 .-> SUB
+      S3 -. 不考 Sci + Writing .-> SUB
+      S4 -. 不考 Writing .-> SUB
       SUB --> G["批改<br/>选择题自动 + Writing 人工"]
-      G --> PR["待发布"]
-      PR --> RP["学生报告"]`,
+      G --> PG["评分中<br/>学生可预览<br/>（Loading Hero + 锁定 stats）"]
+      PG --> PR["待发布<br/>教师复核"]
+      PR --> RP["学生报告<br/>按 takenSections 路由 α/β/γ/δ"]`,
     nodeActions:{
       H:  "switchRole('teacher',true);nav('homepage')",
       D:  "switchRole('teacher',true);nav('homepage');setTimeout(()=>openDrawer('act'),250)",
@@ -14190,8 +14225,9 @@ const FLOW_DIAGRAMS = [
       W:  "switchRole('student',true);nav('stu-act')",
       SUB:"switchRole('student',true);nav('stu-act')",
       G:  "switchRole('teacher',true);loadSessionDetail('sess-act-1')",
+      PG: "setActReportLoadingFromNav(true)",
       PR: "switchRole('teacher',true);loadSessionDetail('sess-act-1')",
-      RP: "switchRole('student',true);openStudentReport('act')"
+      RP: "setActReportLoadingFromNav(false)"
     }
   },
   {
@@ -14727,7 +14763,7 @@ const FLOW_PHASES = {
     },
     { label:'Authoring', labelZh:'出题', accent:'🎯',
       nodes:[
-        { id:'D',   icon:'🧩', title:'ACT Drawer',   titleZh:'ACT Drawer',  desc:'Pick 4 sections + optional Writing toggle.',   descZh:'4 个固定 section + 是否带 Writing' },
+        { id:'D',   icon:'🧩', title:'ACT Drawer',   titleZh:'ACT Drawer',  desc:'Enhanced ACT: 3 Core (E/M/R) + 2 Optional (Science / Writing). takenSections drives the Adaptive Report router (α/β/γ/δ).',   descZh:'Enhanced ACT：3 个 Core（English / Math / Reading）+ 2 个 Optional（Science / Writing）。takenSections 决定 Adaptive Report 路由（α/β/γ/δ）' },
         { id:'GEN', icon:'🤖', title:'AI Generate',  titleZh:'AI 生成',      desc:'Per-section blueprint.',                       descZh:'分 section 蓝图生题' },
         { id:'E',   icon:'📝', title:'Editor',       titleZh:'Editor 审阅',  desc:'Section-tab review; Writing rubric attached.', descZh:'Section tab 审阅；Writing 自动挂 rubric' }
       ]
@@ -14763,22 +14799,22 @@ const FLOW_PHASES = {
     },
     { label:'ACT Sitting', labelZh:'ACT 答题', accent:'📘', cluster:true,
       nodes:[
-        { id:'S1', icon:'📖', title:'Section 1 · English', titleZh:'Section 1 · English', desc:'45 min · 75 items',                                  descZh:'45 min · 75 题' },
-        { id:'S2', icon:'🧮', title:'Section 2 · Math',    titleZh:'Section 2 · Math',    desc:'60 min · 60 items',                                  descZh:'60 min · 60 题' },
-        { id:'BR', icon:'☕', title:'Break',                titleZh:'休息',                 desc:'10 min after Math.',                                 descZh:'数学结束后 10 分钟休息' },
-        { id:'S3', icon:'📚', title:'Section 3 · Reading', titleZh:'Section 3 · Reading', desc:'35 min · 40 items',                                  descZh:'35 min · 40 题' },
-        { id:'S4', icon:'🔬', title:'Section 4 · Science', titleZh:'Section 4 · Science', desc:'35 min · 40 items',                                  descZh:'35 min · 40 题' },
-        { id:'W',  icon:'✍️', title:'Writing · optional',  titleZh:'Writing · 可选',       desc:'40 min · 1 essay · skipped if Drawer toggled off.',  descZh:'40 min · 1 篇 essay · Drawer 关闭则跳过' }
+        { id:'S1', icon:'📖', title:'English · Core',     titleZh:'English · Core',     desc:'35 min · 50 items',                                                                  descZh:'35 min · 50 题' },
+        { id:'S2', icon:'🧮', title:'Math · Core',        titleZh:'Math · Core',        desc:'50 min · 45 items',                                                                  descZh:'50 min · 45 题' },
+        { id:'BR', icon:'☕', title:'Break',               titleZh:'休息',                 desc:'10 min after Math (mandatory).',                                                     descZh:'数学结束后强制 10 分钟休息' },
+        { id:'S3', icon:'📚', title:'Reading · Core',     titleZh:'Reading · Core',     desc:'40 min · 36 items',                                                                  descZh:'40 min · 36 题' },
+        { id:'S4', icon:'🔬', title:'Science · Optional', titleZh:'Science · 可选',      desc:'40 min · 40 items · skipped if Drawer toggled off.',                                  descZh:'40 min · 40 题 · Drawer 关闭则跳过' },
+        { id:'W',  icon:'✍️', title:'Writing · Optional', titleZh:'Writing · 可选',      desc:'40 min · 1 essay · skipped if Drawer toggled off.',                                   descZh:'40 min · 1 篇 essay · Drawer 关闭则跳过' }
       ]
     },
     { label:'Submit', labelZh:'交卷', accent:'📤',
       nodes:[{ id:'SUB', icon:'📤', title:'Auto Submit / Finish', titleZh:'自动提交 / 交卷', desc:'System collects responses.', descZh:'系统自动收卷' }]
     },
     { label:'Wait', labelZh:'等待', accent:'⏳',
-      nodes:[{ id:'WAIT', icon:'⏳', title:'Await Teacher Release', titleZh:'等待教师发布', desc:'Report locked until teacher releases.', descZh:'报告锁定 · 等教师发布' }]
+      nodes:[{ id:'WAIT', icon:'⏳', title:'Pending Grading view', titleZh:'评分中视图', desc:'Student can preview while reportState === scoring — Loading Hero + neutral stats + locked AI Insights (PRD 4.5.4).', descZh:'reportState === scoring 时学生可预览 —— Loading Hero + 中性化 stats + AI Insights 锁定（PRD 4.5.4）' }]
     },
     { label:'Report', labelZh:'报告', accent:'📈',
-      nodes:[{ id:'REP', icon:'📈', title:'Score Report', titleZh:'成绩报告', desc:'Composite + per-section + Writing 2-12.', descZh:'综合分 + 各 section 分 + Writing 2-12 分' }]
+      nodes:[{ id:'REP', icon:'📈', title:'Released Report', titleZh:'已发布报告', desc:'Adaptive — routes to α/β/γ/δ template by takenSections (4.5.1.1).', descZh:'自适应 —— 按 takenSections 路由到 α/β/γ/δ 模板（4.5.1.1）' }]
     }
   ],
   tcap_teacher: [
@@ -14889,9 +14925,9 @@ const FLOW_PHASES = {
     },
     { label:'ACT Authoring', labelZh:'ACT 出题', accent:'🎯',
       nodes:[
-        { id:'D',   icon:'🧩', title:'ACT Drawer',   titleZh:'ACT Drawer',   desc:'4 fixed sections + optional Writing toggle.',     descZh:'4 个固定 section + 可选 Writing 开关' },
-        { id:'GEN', icon:'🤖', title:'AI Generate',  titleZh:'AI 生成',       desc:'Per-section blueprint (English / Math / Reading / Science).', descZh:'分 section 蓝图（英语 / 数学 / 阅读 / 科学）' },
-        { id:'E',   icon:'📝', title:'Editor',       titleZh:'Editor',       desc:'Section-tab review; Writing tab if enabled.',     descZh:'Section tab 审阅；开了 Writing 才出 Writing tab' }
+        { id:'D',   icon:'🧩', title:'ACT Drawer',   titleZh:'ACT Drawer',   desc:'Enhanced ACT: 3 Core (English / Math / Reading) + 2 Optional (Science / Writing) toggles. takenSections feeds the Adaptive Report router (α/β/γ/δ).',     descZh:'Enhanced ACT：3 个 Core（English / Math / Reading）+ 2 个 Optional（Science / Writing）开关。takenSections 喂给 Adaptive Report 路由器（α/β/γ/δ）。' },
+        { id:'GEN', icon:'🤖', title:'AI Generate',  titleZh:'AI 生成',       desc:'Per-section blueprint (English / Math / Reading / Science / Writing).', descZh:'分 section 蓝图（English / Math / Reading / Science / Writing）' },
+        { id:'E',   icon:'📝', title:'Editor',       titleZh:'Editor',       desc:'Section-tab review; Optional sections only appear if Drawer toggled them on.',     descZh:'Section tab 审阅；Drawer 关掉的 Optional section 不出 tab' }
       ]
     },
     { label:'Deliver', labelZh:'派发', accent:'📬',
@@ -14901,21 +14937,22 @@ const FLOW_PHASES = {
     },
     { label:'Student · ACT Sitting', labelZh:'学生 · ACT 答题', accent:'🎓', cluster:true,
       nodes:[
-        { id:'L',  icon:'🚪', title:'Student Launch', titleZh:'学生进入', desc:'Pre-launch shell.', descZh:'学生预进入壳页', lane:'student' },
-        { id:'S1', icon:'📖', title:'Section 1 · English', titleZh:'Section 1 · English', desc:'45 min · 75 items',         descZh:'45 min · 75 题',         lane:'student' },
-        { id:'S2', icon:'🧮', title:'Section 2 · Math',    titleZh:'Section 2 · Math',    desc:'60 min · 60 items',         descZh:'60 min · 60 题',         lane:'student' },
-        { id:'BR', icon:'☕', title:'Break',                titleZh:'休息',                 desc:'10 min after Math.',        descZh:'数学结束后 10 分钟休息', lane:'student' },
-        { id:'S3', icon:'📚', title:'Section 3 · Reading', titleZh:'Section 3 · Reading', desc:'35 min · 40 items',         descZh:'35 min · 40 题',         lane:'student' },
-        { id:'S4', icon:'🔬', title:'Section 4 · Science', titleZh:'Section 4 · Science', desc:'35 min · 40 items',         descZh:'35 min · 40 题',         lane:'student' },
-        { id:'W',  icon:'✍️', title:'Writing · optional',  titleZh:'Writing · 可选',       desc:'40 min · 1 essay · skipped if Drawer toggled off.', descZh:'40 min · 1 篇 essay · Drawer 关闭则跳过', lane:'student' },
+        { id:'L',  icon:'🚪', title:'Student Launch',     titleZh:'学生进入',           desc:'Pre-launch shell.',         descZh:'学生预进入壳页',         lane:'student' },
+        { id:'S1', icon:'📖', title:'English · Core',     titleZh:'English · Core',     desc:'35 min · 50 items',         descZh:'35 min · 50 题',         lane:'student' },
+        { id:'S2', icon:'🧮', title:'Math · Core',        titleZh:'Math · Core',        desc:'50 min · 45 items',         descZh:'50 min · 45 题',         lane:'student' },
+        { id:'BR', icon:'☕', title:'Break',               titleZh:'休息',                 desc:'10 min after Math (mandatory).', descZh:'数学结束后强制 10 分钟休息', lane:'student' },
+        { id:'S3', icon:'📚', title:'Reading · Core',     titleZh:'Reading · Core',     desc:'40 min · 36 items',         descZh:'40 min · 36 题',         lane:'student' },
+        { id:'S4', icon:'🔬', title:'Science · Optional', titleZh:'Science · 可选',      desc:'40 min · 40 items · skipped if Drawer toggled off.', descZh:'40 min · 40 题 · Drawer 关闭则跳过', lane:'student' },
+        { id:'W',  icon:'✍️', title:'Writing · Optional', titleZh:'Writing · 可选',      desc:'40 min · 1 essay · skipped if Drawer toggled off.', descZh:'40 min · 1 篇 essay · Drawer 关闭则跳过', lane:'student' },
         { id:'SUB',icon:'📤', title:'Submit',              titleZh:'交卷',                 desc:'Auto-collect responses.',   descZh:'系统自动收卷',           lane:'student' }
       ]
     },
     { label:'Grade & Release', labelZh:'批改 & 发布', accent:'🚀',
       nodes:[
-        { id:'G',  icon:'🎯', title:'Grader',             titleZh:'批改',     desc:'Auto-score MCQ; Writing → manual rubric grading (Ideas / Development / Organization / Language).', descZh:'选择题自动评分；Writing 走人工 rubric 批改（Ideas / Development / Organization / Language）', lane:'teacher' },
-        { id:'PR', icon:'⏳', title:'Pending Release',    titleZh:'待发布',   desc:'Awaiting teacher release.',                  descZh:'等教师放行', lane:'teacher' },
-        { id:'RP', icon:'📈', title:'Released Report',    titleZh:'学生报告', desc:'Composite + per-section + Writing 2-12.',     descZh:'综合分 + 各 section 分 + Writing 2-12 分', lane:'student' }
+        { id:'G',  icon:'🎯', title:'Grader',             titleZh:'批改',         desc:'Auto-score MCQ; Writing → manual rubric grading (Ideas / Development / Organization / Language).', descZh:'选择题自动评分；Writing 走人工 rubric 批改（Ideas / Development / Organization / Language）', lane:'teacher' },
+        { id:'PG', icon:'⏳', title:'Pending Grading',    titleZh:'评分中（学生侧）', desc:'reportState === scoring. Student-side preview: Loading Hero + neutral stats + locked AI Insights (PRD 4.5.4).', descZh:'reportState === scoring。学生侧预览：Loading Hero + 中性化 stats + AI Insights 锁定（PRD 4.5.4）', lane:'student' },
+        { id:'PR', icon:'⏳', title:'Pending Release',    titleZh:'待发布',        desc:'Teacher review before release.',                  descZh:'教师发布前复核', lane:'teacher' },
+        { id:'RP', icon:'📈', title:'Released Report',    titleZh:'学生报告',      desc:'Adaptive report — routes to α/β/γ/δ template by takenSections (4.5.1.1).', descZh:'自适应报告——按 takenSections 路由到 α/β/γ/δ 模板（4.5.1.1）', lane:'student' }
       ]
     }
   ],
@@ -27002,7 +27039,7 @@ function passageGoTo(bid, idx) {
   _activePassage = { bid: bid, qNum: qNum || null };
 
   // Show only current question's highlight, dim all others
-  block.querySelectorAll('.q-ref').forEach(el => {
+  block.querySelectorAll('.q-ref, .q-asterisk').forEach(el => {
     if (el.dataset.q == qNum) {
       el.classList.add('active-ref');
       el.classList.remove('inactive-ref');
@@ -27012,7 +27049,7 @@ function passageGoTo(bid, idx) {
     }
   });
   if (qNum) {
-    const ref = block.querySelector(`.q-ref[data-q="${qNum}"]`);
+    const ref = block.querySelector(`.q-ref[data-q="${qNum}"], .q-asterisk[data-q="${qNum}"]`);
     if (ref) ref.scrollIntoView({ behavior:'smooth', block:'center' });
   }
 }
@@ -30127,7 +30164,7 @@ function stuGenGoLocal(pk, localIdx) {
   </div>`;
 
   if (hasPassage) {
-    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"');
+    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"').replace(/class="q-asterisk"/g, 'class="stu-hl-asterisk"');
     area.innerHTML = `<div class="stu-passage-split ${stuNotesHidden(pk) ? 'notes-hidden' : ''}">
       <div class="stu-passage-panel" id="${pk}-pass">
         <div class="passage-title">${q.passage.title}</div>
@@ -30279,7 +30316,7 @@ function stuGoToQ(pageKey, idx, bodyId, footerId) {
   </div>`;
 
   if (hasPassage) {
-    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"');
+    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"').replace(/class="q-asterisk"/g, 'class="stu-hl-asterisk"');
     area.innerHTML = `<div class="stu-passage-split ${stuNotesHidden(pageKey) ? 'notes-hidden' : ''}">
       <div class="stu-passage-panel" id="${pageKey}-pass">
         <div class="passage-title">${q.passage.title}</div>
@@ -30293,10 +30330,10 @@ function stuGoToQ(pageKey, idx, bodyId, footerId) {
     // Highlight active q-ref
     const panel = document.getElementById(pageKey + '-pass');
     if (panel) {
-      panel.querySelectorAll('.stu-hl-src').forEach(el => {
+      panel.querySelectorAll('.stu-hl-src, .stu-hl-asterisk').forEach(el => {
         el.classList.toggle('stu-hl-active', el.dataset.q == String(q.n));
       });
-      const ref = panel.querySelector(`.stu-hl-src[data-q="${q.n}"]`);
+      const ref = panel.querySelector(`.stu-hl-src[data-q="${q.n}"], .stu-hl-asterisk[data-q="${q.n}"]`);
       if (ref) setTimeout(() => ref.scrollIntoView({ behavior:'smooth', block:'center' }), 100);
     }
   } else {
@@ -32401,7 +32438,7 @@ function stuActGoLocal(pk, localIdx) {
   </div>`;
 
   if (hasPassage) {
-    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"');
+    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"').replace(/class="q-asterisk"/g, 'class="stu-hl-asterisk"');
     area.innerHTML = `<div class="stu-passage-split ${stuNotesHidden(pk) ? 'notes-hidden' : ''}">
       <div class="stu-passage-panel" id="${pk}-pass">
         <div class="passage-title">${q.passage.title}</div>
@@ -32414,10 +32451,10 @@ function stuActGoLocal(pk, localIdx) {
     stuRestorePassageState(pk, globalIdx);
     const panel = document.getElementById(pk + '-pass');
     if (panel) {
-      panel.querySelectorAll('.stu-hl-src').forEach(el => {
+      panel.querySelectorAll('.stu-hl-src, .stu-hl-asterisk').forEach(el => {
         el.classList.toggle('stu-hl-active', el.dataset.q == String(q.n));
       });
-      const ref = panel.querySelector(`.stu-hl-src[data-q="${q.n}"]`);
+      const ref = panel.querySelector(`.stu-hl-src[data-q="${q.n}"], .stu-hl-asterisk[data-q="${q.n}"]`);
       if (ref) setTimeout(() => ref.scrollIntoView({ behavior:'smooth', block:'center' }), 100);
     }
     stuInitPassageHL(pk);
@@ -33309,7 +33346,7 @@ function stuSatGoLocal(pk, localIdx) {
   </div>`;
 
   if (hasPassage) {
-    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"');
+    const passageText = (q.passage.fullText || '').replace(/class="q-ref"/g, 'class="stu-hl-src"').replace(/class="q-asterisk"/g, 'class="stu-hl-asterisk"');
     area.innerHTML = `<div class="stu-passage-split ${stuNotesHidden(pk) ? 'notes-hidden' : ''}">
       <div class="stu-passage-panel" id="${pk}-pass">
         <div class="passage-title">${q.passage.title}</div>
@@ -33322,10 +33359,10 @@ function stuSatGoLocal(pk, localIdx) {
     stuRestorePassageState(pk, globalIdx);
     const panel = document.getElementById(pk + '-pass');
     if (panel) {
-      panel.querySelectorAll('.stu-hl-src').forEach(el => {
+      panel.querySelectorAll('.stu-hl-src, .stu-hl-asterisk').forEach(el => {
         el.classList.toggle('stu-hl-active', el.dataset.q == String(q.n));
       });
-      const ref = panel.querySelector(`.stu-hl-src[data-q="${q.n}"]`);
+      const ref = panel.querySelector(`.stu-hl-src[data-q="${q.n}"], .stu-hl-asterisk[data-q="${q.n}"]`);
       if (ref) setTimeout(() => ref.scrollIntoView({ behavior:'smooth', block:'center' }), 100);
     }
     stuInitPassageHL(pk);
