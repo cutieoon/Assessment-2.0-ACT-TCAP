@@ -3628,7 +3628,7 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .stu-choices.review li.review-correct .letter{background:#16a34a;color:#fff;border-color:#16a34a}
 .stu-choices.review li.review-wrong{border-color:#ef4444;background:#fef2f2;box-shadow:0 0 0 1px #ef4444}
 .stu-choices.review li.review-wrong .letter{background:#ef4444;color:#fff;border-color:#ef4444}
-.stu-choices.review li .review-mark{margin-left:auto;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:3px 8px;border-radius:999px}
+.stu-choices.review li .review-mark{margin-left:auto;flex:0 0 auto;white-space:nowrap;align-self:center;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;padding:3px 8px;border-radius:999px}
 .stu-choices.review li.review-correct .review-mark{background:#16a34a;color:#fff}
 .stu-choices.review li.review-wrong .review-mark{background:#ef4444;color:#fff}
 /* Skipped-question banner: surfaces the "no answer recorded" state so the
@@ -5313,8 +5313,25 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .actw-stat-dot.warn{background:#f59e0b}
 .actw-stat-dot.crit{background:#ef4444}
 
+/* Embedded-mode micro-stat strip — single-row pacing/length/raters condensed
+   for the My Question Record → Writing tab. The full 3-card .actw-strip lives
+   on the Review Mode page; this row gives QR readers the "did I write enough,
+   in time, with rater agreement" answer at a glance without duplicating the
+   richer card layout. */
+.actw-microstat{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  font-size:12px;color:#52525b;line-height:1.5;
+  padding:10px 14px;
+  background:#fafafa;border:1px solid #f1f5f9;border-radius:10px;
+}
+.actw-microstat .ms-cell{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.actw-microstat .ms-k{font-weight:700;color:#64748b;text-transform:uppercase;font-size:10px;letter-spacing:.5px}
+.actw-microstat .ms-v{font-weight:700;color:#18181b;font-variant-numeric:tabular-nums}
+.actw-microstat .ms-v .muted{color:#a1a1aa;font-weight:500}
+.actw-microstat .ms-sep{color:#cbd5e1;font-weight:400}
+
 .actw-domain-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0 0}
-@media (max-width:760px){.actw-domain-grid{grid-template-columns:1fr}.actw-strip{grid-template-columns:1fr}}
+@media (max-width:760px){.actw-domain-grid{grid-template-columns:1fr}.actw-strip{grid-template-columns:1fr}.actw-microstat{gap:8px;padding:9px 12px}.actw-microstat .ms-sep{display:none}}
 .actw-domain{
   position:relative;border:1px solid #e4e4e7;border-radius:12px;
   padding:14px 16px 14px 18px;background:#fff;
@@ -25804,10 +25821,23 @@ function renderSessionAnalytics(session) {
 // ─── ACT-specific mock data set for Monitor Overview KPIs + Analytics ───
 // 18 students with full 5-section scores. Distribution is intentionally
 // realistic for a college-prep cohort: ~50 % at/above the 22 composite
-// benchmark, ~28 % near (18-21), ~22 % below. Each row also lists the
-// reporting categories the student lost the most points in — used by the
-// Standard Heatmap and Action Center suggestions.
-const ACT_BENCHMARKS = { english:18, math:22, reading:22, science:23, composite:22 };
+// target (see ACT_COMPOSITE_TARGET below — NOT an official ACT benchmark),
+// ~28 % near (18-21), ~22 % below. Each row also lists the reporting
+// categories the student lost the most points in — used by the Standard
+// Heatmap and Action Center suggestions.
+// Official ACT College Readiness Benchmarks. Single source of truth for the
+// 5 cut-points ACT publishes. See PRD § 5.4.6.2 + § 5.4.6.2.1.
+// IMPORTANT: composite and stem are intentionally absent — ACT does not
+// publish official benchmarks for either. Do not add them here.
+const ACT_BENCHMARKS = { english:18, math:22, reading:22, science:23, ela:20 };
+
+// Kira-internal display target used by Analytics surfaces that need a
+// horizontal reference line for the Composite score (e.g. "Avg composite"
+// KPI, "% met" rollup, student-row coloring). NOT an ACT-published
+// benchmark — must NOT be returned by APIs as `benchmark.composite`.
+// Surfaces that display this value should label it as a target / goal,
+// not as a benchmark.
+const ACT_COMPOSITE_TARGET = 22;
 const ACT_REPORTING_CATEGORIES = {
   english: [
     { code:'POW', name:'Production of Writing' },
@@ -25874,7 +25904,7 @@ function actComputeAnalytics() {
     const metN = scores.filter(n => n >= bm).length;
     return scores.length ? Math.round(metN / scores.length * 100) : 0;
   });
-  const compositeMet = composites.filter(c => c >= ACT_BENCHMARKS.composite).length;
+  const compositeMet = composites.filter(c => c >= ACT_COMPOSITE_TARGET).length;
   const compositeMetPct = composites.length ? Math.round(compositeMet / composites.length * 100) : 0;
   const writingPending = rows.filter(r => r.status === 'awaiting-writing').length;
   return {
@@ -25919,7 +25949,7 @@ let _actAnShowAllSkills = false;
 function actAnSubjectMeta() {
   const a = actComputeAnalytics();
   return {
-    composite: { avg:a.avg.toFixed(1), bm:ACT_BENCHMARKS.composite, label:'Composite', met:a.compositeMetPct },
+    composite: { avg:a.avg.toFixed(1), bm:ACT_COMPOSITE_TARGET, label:'Composite', met:a.compositeMetPct },
     english:   { avg:a.sectionAvgs[0], bm:ACT_BENCHMARKS.english,   label:'English',   met:a.sectionMet[0] },
     math:      { avg:a.sectionAvgs[1], bm:ACT_BENCHMARKS.math,      label:'Math',      met:a.sectionMet[1] },
     reading:   { avg:a.sectionAvgs[2], bm:ACT_BENCHMARKS.reading,   label:'Reading',   met:a.sectionMet[2] },
@@ -26031,7 +26061,7 @@ function renderActOverviewKpi(session) {
   const a = actComputeAnalytics();
   const completionPct = Math.round(a.completed / a.total * 100);
   const tiles = [
-    { label:'Avg composite', val:a.avg.toFixed(1), sub:`/ 36 · BM ${ACT_BENCHMARKS.composite}`, color:a.avg >= ACT_BENCHMARKS.composite ? '#15803d' : '#b45309' },
+    { label:'Avg composite', val:a.avg.toFixed(1), sub:`/ 36 · BM ${ACT_COMPOSITE_TARGET}`, color:a.avg >= ACT_COMPOSITE_TARGET ? '#15803d' : '#b45309' },
     { label:'Composite ≥ benchmark', val:a.compositeMetPct + '%', sub:`${a.compositeMet} of ${a.completed} completed`, color:'#1d4ed8' },
     { label:'Completion', val:completionPct + '%', sub:`${a.completed}/${a.total} students done`, color:'#6b21a8' },
     { label:'Writing essays pending', val:String(a.writingPending), sub:a.writingPending ? 'Open Grading Queue ›' : 'All graded', color:a.writingPending ? '#b91c1c' : '#71717a' }
@@ -26329,7 +26359,7 @@ function renderActAnStudents() {
       ${sorted.map(s => `<div class="act-an-student-row">
         <div class="avatar">${s.i}</div>
         <span class="name">${s.name}</span>
-        <span class="score" style="color:${s.score >= ACT_BENCHMARKS.composite ? '#10b981' : '#8892a8'}">${s.score}</span>
+        <span class="score" style="color:${s.score >= ACT_COMPOSITE_TARGET ? '#10b981' : '#8892a8'}">${s.score}</span>
         <span class="badge ${s.pending ? 'pending' : 'done'}">${s.pending ? 'Essay pending' : 'Complete'}</span>
         </div>`).join('')}
       </div>
@@ -39515,7 +39545,9 @@ const ACT_REPORT = {
   // actPercentile(key, score).
   usRank:{ composite:72, english:84, math:61, reading:73, science:32, stem:61, ela:72 },
   stateRank:{ composite:60, english:72, math:49, reading:60, science:22, stem:50, ela:60 },
-  benchmarks:{ english:18, math:22, reading:22, science:23, stem:26, ela:20 },
+  // Official ACT College Readiness Benchmarks only. STEM is intentionally
+  // omitted — ACT does not publish a STEM benchmark. See PRD § 5.4.6.2.
+  benchmarks:{ english:18, math:22, reading:22, science:23, ela:20 },
   ncrc:'Silver',
   categories:{
     english:{ score:26, items:[
@@ -42206,11 +42238,10 @@ function renderActReportHeroFull(d) {
   const der = d.derived || {};
   const derivedItems = [];
   if (selectedSet.has('math') && selectedSet.has('science') && typeof der.stem === 'number') {
-    const ok = der.stem >= (bm.stem || 0);
     derivedItems.push({
       kicker:'STEM',
       valHtml:`${der.stem}`,
-      chipHtml:`<span class="chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} BM ${bm.stem ?? '—'}</span>`
+      chipHtml:`<span class="chip equal">Derived score</span>`
     });
   }
   if (selectedSet.has('english') && selectedSet.has('reading') && selectedSet.has('writing') && typeof der.ela === 'number') {
@@ -42369,10 +42400,9 @@ function renderActReportHeroCustom(d) {
   const hasW = selectedSet.has('writing');
 
   if (hasM && hasS && typeof der.stem === 'number') {
-    const ok = der.stem >= (bm.stem || 0);
     derivedItems.push({ kicker:'STEM', tone:'on',
       valHtml:`${der.stem}`,
-      chipHtml:`<span class="chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} BM ${bm.stem ?? '—'}</span>` });
+      chipHtml:`<span class="chip equal">Derived score</span>` });
   } else if (hasM || hasS) {
     const missing = hasM ? 'Science' : 'Math';
     derivedItems.push({ kicker:'STEM', tone:'off',
@@ -42651,11 +42681,10 @@ function renderActDerivedStrip(d) {
   if (!der.stem && !der.ela && !der.writing) return '';
   const items = [];
   if (typeof der.stem === 'number') {
-    const ok = der.stem >= (bm.stem || 0);
     items.push(`<span class="actr-derived-item">
       <span class="nm">STEM</span>
       <span class="val">${der.stem}</span>
-      <span class="actr-bm-chip ${ok ? 'met' : 'below'}">${ok ? '✓' : '⚠'} Benchmark ${bm.stem || '—'}</span>
+      <span class="actr-bm-chip equal">Derived score</span>
     </span>`);
   }
   if (typeof der.ela === 'number') {
@@ -43167,11 +43196,25 @@ function renderActWritingSectionV2(d, opts = {}) {
   // lighter heading (the tab itself already says "Writing"), then route
   // students into the full essay-review page with an explicit CTA.
   if (embedded) {
-    // QR is the lean summary view: composite score, the "what to focus on"
-    // AI line, and 4 rubric-domain cards with per-domain takeaways. Pacing /
-    // length / rater metadata + the full essay + official rubric language all
-    // live on the Review Mode page; duplicating them here only creates two
-    // pages saying the same thing.
+    // QR is the lean summary view: composite score, an at-a-glance pacing /
+    // length / raters micro-stat, the AI takeaway line, and 4 rubric-domain
+    // cards. The richer 3-card .actw-strip + full essay + official rubric
+    // language stay on the Review Mode detail page so the two views don't
+    // visually duplicate each other — QR answers "did I write enough, in
+    // time, with rater agreement?", the detail page answers "what does each
+    // number mean and what does the actual essay look like?".
+    const raterShort = (r1 != null && r2 != null)
+      ? (raterAgree === 'agreed' ? 'Raters agreed'
+        : raterAgree === 'minor' ? '1-pt rater spread'
+        : '3rd rater resolved')
+      : 'Awaiting raters';
+    const microStat = `<div class="actw-microstat" aria-label="Pacing, length and rater summary">
+      <span class="ms-cell"><span class="actw-stat-dot ${timeDot}"></span><span class="ms-k">Time</span><span class="ms-v">${timeUsed} <span class="muted">/ ${timeAllowed} min</span></span></span>
+      <span class="ms-sep">·</span>
+      <span class="ms-cell"><span class="actw-stat-dot ${wordDot}"></span><span class="ms-k">Words</span><span class="ms-v">${wordCount} <span class="muted">/ ${wTarget[0]}–${wTarget[1]}</span></span></span>
+      <span class="ms-sep">·</span>
+      <span class="ms-cell"><span class="actw-stat-dot ${raterDot}"></span><span class="ms-v">${raterShort}</span></span>
+    </div>`;
     return `<div class="actw-embedded">
       <div class="actw-embedded-head">
         <div class="actw-embedded-title">
@@ -43180,6 +43223,7 @@ function renderActWritingSectionV2(d, opts = {}) {
           <span class="actw-headline-state">${reviewState}</span>
         </div>
       </div>
+      ${microStat}
       ${aiLine}
       <div class="actw-domain-grid">${domainRows}</div>
       <div class="qrec-cta-row">
