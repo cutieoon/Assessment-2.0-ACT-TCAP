@@ -3647,6 +3647,7 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .act-index-item.current{background:#dbeafe;color:#1d4ed8;font-weight:600}
 .act-index-item .idx-num{width:24px;height:24px;border-radius:50%;background:#d1d5db;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:#374151}
 .act-index-item.answered .idx-num{background:#bbf7d0;color:#15803d}
+.act-index-item.answered .idx-num{background:#fff;color:#6040ca;border:1px solid #6040ca}
 .act-index-item.flagged .idx-num{background:#fed7aa;color:#ea580c}
 .act-index-item.current .idx-num{background:#93c5fd;color:#1e40af}
 .act-index-item .idx-label{font-size:10px;color:#9ca3af;margin-left:auto;text-transform:uppercase}
@@ -3837,6 +3838,8 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 #page-stu-act .stu-ftab:hover{background:#4a4a4a;border-color:#888;color:#fff}
 #page-stu-act .stu-ftab.current{background:#3b82f6;border-color:#3b82f6;color:#fff}
 #page-stu-act .stu-ftab.answered{background:#2a4a2a;border-color:#4ade80;color:#4ade80}
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-ftab.answered{background:#fff;border-color:#6040ca;color:#6040ca}
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-ftab.skipped{background:#f8fafc;border-color:#cbd5e1;border-style:dashed;color:#94a3b8}
 .stu-footer-scroll{
   width:30px;height:30px;border-radius:50%;border:1px solid #d1d5db;background:#fff;
   display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6b7280;flex-shrink:0;transition:.15s;
@@ -4122,6 +4125,13 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .stu-nav-cell.answered{background:#f0fdf4;border-color:#86efac;color:#16a34a}
 .stu-nav-cell.marked::after{content:'';position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:#F75C46;border:1.5px solid #fff}
 .stu-nav-cell.skipped{background:#fff7ed;border-color:#fdba74;color:#ea580c}
+/* ACT in-test navigator is progress-only, not scoring. Keep correctness
+   colors reserved for reviewMode so the live test doesn't read as a result page. */
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-nav-cell.answered{background:#fff;border-color:#6040ca;color:#6040ca}
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-nav-cell.skipped{background:#f8fafc;border-color:#cbd5e1;border-style:dashed;color:#94a3b8}
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-nav-cell.current{background:#1e3a5f;border-color:#1e3a5f;color:#fff;box-shadow:0 0 0 3px rgba(30,58,95,.18)}
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-nav-cell.current.answered,
+#page-stu-act:not(.review-mode):not(.pending-preview) .stu-nav-cell.current.skipped{background:#1e3a5f;border-color:#1e3a5f;color:#fff;border-style:solid}
 /* Review mode (after submission, used by ACT report → student player)
    Idle cells are outline-only so the eye reads the status by ring color,
    while the currently-selected cell flips to a solid fill — same color
@@ -4621,6 +4631,48 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .student-profile-card .sp-fv{font-size:13px;font-weight:600;color:#27272a;line-height:1.4}
 .report-body{flex:1;padding:24px 32px 40px;max-width:1120px;margin:0 auto;width:100%}
 
+/* TCAP diagnostic report follows the ACT report chrome so report pages share
+   one mental model: top actions, report title, then student identity card. */
+#page-tcap-diag-report.report-page{background:#f5f5f7}
+#page-tcap-diag-report .report-header{
+  background:linear-gradient(135deg,#190d40 0%,#2d1b69 100%);
+  border-bottom:none;
+  padding:0;
+  padding-bottom:0!important;
+  gap:0;
+}
+#page-tcap-diag-report .report-header .rh-top{padding:14px 32px 6px}
+#page-tcap-diag-report .report-header .rh-title{padding:0 32px 18px}
+#page-tcap-diag-report .report-header h1{color:#fff;font-size:18px;font-weight:700}
+#page-tcap-diag-report .report-header .badge{
+  background:rgba(255,255,255,.15)!important;
+  color:#fff!important;
+  border:none;
+}
+#page-tcap-diag-report .report-dl-btn{
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.1);
+  color:#fff;
+  box-shadow:none;
+  backdrop-filter:blur(4px);
+}
+#page-tcap-diag-report .report-dl-btn:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);color:#fff}
+#page-tcap-diag-report .student-profile-card{
+  margin:0 32px 0;
+  top:12px;
+  border-radius:14px 14px 0 0;
+  border:none;
+  box-shadow:0 4px 24px rgba(0,0,0,.06);
+  padding:20px 24px;
+}
+#page-tcap-diag-report .student-profile-card .sp-avatar{
+  width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--kira),#a78bfa);color:#fff;border:none;
+  font-size:20px;
+}
+#page-tcap-diag-report .student-profile-card .sp-name{font-size:18px;color:#190d40}
+#page-tcap-diag-report .student-profile-card .sp-fields{gap:4px 20px}
+#page-tcap-diag-report .report-body{padding-top:24px;padding-bottom:120px!important}
+
 /* Score hero card */
 .score-hero{
   background:#fff;border-radius:0 0 14px 14px;border:none;padding:28px 28px 24px;
@@ -4707,12 +4759,12 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .heat-cell.mid{background:#fef3c7;color:#a16207}
 .heat-cell.low{background:#fee2e2;color:#b91c1c}
 .tcap-std-list{display:flex;flex-direction:column;gap:10px}
-.tcap-std-card{width:100%;border:1px solid #e6e6e6;background:#fff;border-radius:12px;padding:13px 14px;display:grid;grid-template-columns:minmax(220px,1.1fr) minmax(280px,1.5fr);gap:18px;align-items:center;text-align:left;font-family:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.tcap-std-card{width:100%;border:1px solid #e6e6e6;background:#fff;border-radius:12px;padding:13px 14px;display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,1.55fr) auto;gap:18px;align-items:center;text-align:left;font-family:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
 .tcap-std-card:hover{border-color:#e0dbff;box-shadow:0 4px 6px rgba(0,0,0,.05),0 2px 4px rgba(0,0,0,.04);transform:translateY(-1px)}
 .tcap-std-code{font-size:13px;font-weight:900;color:#18181b;letter-spacing:.2px}
 .tcap-std-name{margin-top:3px;font-size:11px;color:#71717a;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tcap-std-meta{margin-top:7px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;color:#71717a;font-weight:750}
-.tcap-std-risk{color:#d31510;background:#ffebe7;border:1px solid #ffcdc3;border-radius:6px;padding:2px 7px}
+.tcap-std-risk{color:#d31510;background:#ffebe7;border:1px solid #ffcdc3;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:850;white-space:nowrap}
 .tcap-std-bar{height:14px;border-radius:999px;overflow:hidden;display:flex;background:#f4f4f5;border:1px solid #e4e4e7}
 .tcap-std-seg{height:100%;min-width:2px;position:relative}
 .tcap-std-seg:hover{filter:saturate(1.2) brightness(.98)}
@@ -4748,6 +4800,13 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .tcap-cut-details summary .chev{color:#7452e4;font-size:13px}
 .tcap-cut-details[open] summary{border-bottom:1px solid #e6e6e6;background:#fafafa}
 .tcap-cut-edit-body{padding:16px}
+.tcap-threshold-list{display:flex;flex-direction:column;gap:10px}
+.tcap-threshold-row{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:14px;align-items:center;border:1px solid #e6e6e6;border-radius:10px;background:#fafafa;padding:12px 14px}
+.tcap-threshold-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:850;color:#383a42}
+.tcap-threshold-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.tcap-threshold-help{font-size:11px;color:#6d6d6d;margin:4px 0 0 18px;line-height:1.4}
+.tcap-threshold-input{width:96px;height:36px;border:1px solid #d5d5d5;border-radius:8px;background:#fff;color:#383a42;font:800 14px/1 var(--font-family,inherit);text-align:center;font-variant-numeric:tabular-nums}
+.tcap-threshold-input:focus{outline:2px solid #b5dfff;border-color:#58acf5}
 .heat-cell.empty{background:#f8fafc;color:#cbd5e1;border-color:#f1f5f9}
 .heat-cell.highlight{outline:2px solid #ef4444;outline-offset:2px;background:#fee2e2}
 @media (max-width:1100px){.act-score-layout{grid-template-columns:1fr}.act-core-grid,.act-derived-grid,.act-readiness-grid,.act-compare-grid{grid-template-columns:1fr}.act-score-head{flex-direction:column}}
@@ -7434,12 +7493,15 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .tcs-results-pane .tcs-results-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:0 0 14px;margin-bottom:14px;border-bottom:1px solid #eef0f4}
 .tcs-results-pane .tcs-results-meta-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tcs-results-pane .tcs-results-meta-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.tcs-foot-tab.res-correct{background:#dcfce7;border-color:#86efac;color:#15803d}
-.tcs-foot-tab.res-wrong{background:#fee2e2;border-color:#fca5a5;color:#b91c1c}
-.tcs-foot-tab.res-pending{background:#faf5ff;border-color:#c4b5fd;color:#7c3aed}
-.tcs-foot-tab.res-correct.current{background:#15803d;border-color:#15803d;color:#fff}
-.tcs-foot-tab.res-wrong.current{background:#b91c1c;border-color:#b91c1c;color:#fff}
-.tcs-foot-tab.res-pending.current{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.tcs-foot-tab.res-correct{background:#fff;border-color:#16a34a;color:#15803d}
+.tcs-foot-tab.res-wrong{background:#fff;border-color:#ef4444;color:#b91c1c}
+.tcs-foot-tab.res-pending{background:#fff;border-color:#a78bfa;color:#6d28d9}
+.tcs-foot-tab.res-correct:hover{background:#f0fdf4}
+.tcs-foot-tab.res-wrong:hover{background:#fef2f2}
+.tcs-foot-tab.res-pending:hover{background:#f5f3ff}
+.tcs-foot-tab.res-correct.current{background:#16a34a;border-color:#16a34a;color:#fff;box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+.tcs-foot-tab.res-wrong.current{background:#ef4444;border-color:#ef4444;color:#fff;box-shadow:0 0 0 3px rgba(239,68,68,.18)}
+.tcs-foot-tab.res-pending.current{background:#a78bfa;border-color:#a78bfa;color:#fff;box-shadow:0 0 0 3px rgba(167,139,250,.22)}
 .tcap-rev-list{display:flex;flex-direction:column;gap:14px;margin-top:14px}
 .tcap-rev-item{background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:16px 18px;box-shadow:0 1px 2px rgba(15,23,42,.03)}
 .tcap-rev-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f4f4f5}
@@ -8455,6 +8517,8 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .tcs-foot-tab:hover{border-color:#1e3a5f;color:#1e3a5f}
 .tcs-foot-tab.current{background:#1e3a5f;border-color:#1e3a5f;color:#fff}
 .tcs-foot-tab.answered{background:#dcfce7;border-color:#86efac;color:#15803d}
+.tcs-foot-tab.answered{background:#fff;border-color:#6040ca;color:#6040ca}
+.tcs-foot-tab.current.answered{background:#1e3a5f;border-color:#1e3a5f;color:#fff}
 .tcs-foot-tab.flagged::after{content:'';position:absolute;top:-3px;right:-3px;width:8px;height:8px;background:#f97316;border-radius:50%;border:1.5px solid #fff}
 .tcs-foot-btn{padding:9px 16px;border-radius:7px;border:1.5px solid #d4d4d8;background:#fff;color:#27272a;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:.12s}
 .tcs-foot-btn:hover{border-color:#1e3a5f;color:#1e3a5f}
@@ -8634,11 +8698,13 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .tcs-review-row:hover{background:#fff;border-color:#1e3a5f}
 .tcs-review-row .rv-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:#fff;color:#52525b;border:1.5px solid #d4d4d8}
 .tcs-review-row.answered .rv-num{background:#dcfce7;color:#15803d;border-color:#86efac}
+.tcs-review-row.answered .rv-num{background:#fff;color:#6040ca;border-color:#6040ca}
 .tcs-review-row.flagged .rv-num{background:#ffedd5;color:#c2410c;border-color:#fdba74}
 .tcs-review-row .rv-q{color:#27272a;font-weight:500}
 .tcs-review-row .rv-type{font-size:10px;color:#71717a;font-weight:600;text-transform:uppercase}
 .tcs-review-row .rv-status{font-size:11px;font-weight:600}
 .tcs-review-row.answered .rv-status{color:#15803d}
+.tcs-review-row.answered .rv-status{color:#6040ca}
 .tcs-review-row:not(.answered) .rv-status{color:#dc2626}
 .tcs-review-row .rv-go{font-size:11px;color:#7c3aed;font-weight:600;text-align:right}
 .tcs-review-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0 18px}
@@ -9679,22 +9745,20 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 </div>
 
 <!-- Student: TCAP Diagnostic Report -->
-<!-- Header chrome follows the SAT Score Report pattern (single-row hero
-     so the purple band stays compact). Title + actions live in the
-     same .rh-top row; .student-profile-card tucks below and visually
-     spans into the body surface. renderTcapStudentReport() fills
-     #tcapStudentInfo with the spotlight student. The top-of-body pill
-     row (TCAP DIAGNOSTIC / PREDICTED LEVEL / Grade 5 ELA · Aug 14)
-     was removed because the badge in H1 + the profile card fields
-     carry that context already. -->
+<!-- Header chrome follows the ACT Score Report pattern: top action row,
+     separate report title row, and a white student identity card tucked
+     into the body surface. renderTcapStudentReport() fills #tcapStudentInfo
+     with the spotlight student. -->
 <div class="page-view report-page" id="page-tcap-diag-report">
   <div class="report-header">
     <div class="rh-top">
-      <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">TCAP</span> Diagnostic Report</h1>
+      <button class="rpt-back-chip" onclick="switchRole('teacher');nav('homepage')" title="Back to Home"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to Home</button>
       <div class="actions">
         <button class="report-dl-btn" onclick="downloadTcapReport()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF</button>
-        <button class="stu-home-btn rpt" onclick="switchRole('teacher');nav('homepage')" title="Back to Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
       </div>
+    </div>
+    <div class="rh-title">
+      <h1><span class="badge" style="background:rgba(255,255,255,.15);color:#fff">TCAP</span> Diagnostic Report</h1>
     </div>
     <div class="student-profile-card" id="tcapStudentInfo"></div>
   </div>
@@ -25955,7 +26019,7 @@ function loadSessionDetail(sessionId, tab, opts) {
   // Drop any prior Analytics-tab demo override so the new session lands
   // on its own real (grade × subject), not a previously-picked combo.
   _tcapAnalyticsViewKey = null;
-  sessionDetailTab = (tab === 'analytics' || tab === 'cut-scores') ? tab : 'overview';
+  sessionDetailTab = (tab === 'analytics') ? tab : 'overview';
   // Optional Subpart context (TCAP only): land on this SP tab in Monitor/Analytics.
   // For non-TCAP sessions, opts.subpart is silently ignored.
   if (opts && opts.subpart) {
@@ -25986,7 +26050,7 @@ function loadSessionDetail(sessionId, tab, opts) {
 }
 function setSessionDetailTab(tab) {
   // Always restore the real session cohort when the user leaves Analytics,
-  // so Overview and Cut Scores never silently inherit a swapped TCAP_CLASS.
+  // so Overview never silently inherits a swapped TCAP_CLASS.
   if (tab !== 'analytics' && _tcapAnalyticsViewKey !== null) {
     _tcapAnalyticsViewKey = null;
     if (typeof currentSessionId !== 'undefined' && currentSessionId && typeof setTcapClassForSession === 'function') {
@@ -26037,7 +26101,7 @@ function sessionAnalyticsModel(session) {
         score:`${r.pred.scaleScore} · ${r.pred.level.label}`,
         gap:`${r.pred.gapToNext.scalePointsToNext} pts to Meeting`,
         skill:tcapWeakestStandards(r, 1)[0]?.name || 'Evidence-based reading',
-        practice:'Review priority'
+        note:'Standard review'
       })),
       note:'Projected, pending next diagnostic'
     };
@@ -26109,6 +26173,38 @@ function confirmRemoveStudent() {
   closeRemoveStudentModal();
   renderSessionDetail();
 }
+function renderTcapAnalyticsLevelRanges() {
+  const key = tcapKey(TCAP_CLASS.grade, TCAP_CLASS.subject);
+  const cuts = TCAPScoringAdapter.getCutScores(key);
+  const levels = TCAP_PROFILE.performanceLevels;
+  const range = TCAP_PROFILE.scaleRange;
+  const subjectLabel = tcapSubjectLabel(TCAP_CLASS.subject).replace('TCAP ', '');
+  const visual = {
+    belowBasic:      { bg:'#FFEBE7', border:'#FFCDC3', color:'#D31510' },
+    approaching:     { bg:'#FEF6EE', border:'#F9DBAF', color:'#B14C00' },
+    proficient:      { bg:'#E0F3FF', border:'#B5DFFF', color:'#026BDB' },
+    aboveProficient: { bg:'#E3FADC', border:'#CCF5CC', color:'#007C0F' },
+  };
+  const cards = levels.map(lvl => {
+    const lo = cuts[lvl.id][0];
+    const hi = cuts[lvl.id][1];
+    const v = visual[lvl.id] || { bg:'#fff', border:'#e6e6e6', color:'#383a42' };
+    return `<span style="display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:10px;border:1px solid ${v.border};background:${v.bg};min-width:0">
+      <span style="width:7px;height:7px;border-radius:999px;background:${v.color};flex-shrink:0"></span>
+      <span style="font-size:11px;font-weight:850;color:${v.color};white-space:nowrap">${lvl.fullLabel || lvl.label}</span>
+      <span style="font-size:11px;font-weight:900;color:#18181b;font-variant-numeric:tabular-nums;white-space:nowrap">${lo}–${hi}</span>
+    </span>`;
+  }).join('');
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 12px;padding:10px 12px;background:#fafafa;border:1px solid #eef0f4;border-radius:12px">
+      <div style="min-width:180px">
+        <div style="font-size:11px;font-weight:900;color:#18181b;letter-spacing:.2px">Score level guide</div>
+        <div style="font-size:11px;color:#71717a;line-height:1.4">Grade ${TCAP_CLASS.grade} ${subjectLabel} · scale ${range.min}–${range.max}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">${cards}</div>
+    </div>`;
+}
+
 function renderSessionAnalytics(session) {
   const model = sessionAnalyticsModel(session);
   const total = model.distribution.reduce((sum, d) => sum + d[1], 0) || 1;
@@ -26167,6 +26263,7 @@ function renderSessionAnalytics(session) {
     return `
       <div class="session-card" style="margin-bottom:16px;padding:18px;background:#fff;border-radius:16px">
         ${_overrideBanner}
+        ${renderTcapAnalyticsLevelRanges()}
         <div id="sessionAnalyticsTcapPredictionsBody">${renderTcapClass('__return__', null) || ''}</div>
       </div>
     `;
@@ -26790,7 +26887,7 @@ function renderSessionDetail() {
       return 'Not Started';
     };
     effective = Object.assign({}, session, {
-      title:`${session.title} · ${activeSp.code} ${activeSp.label}`,
+      title:session.title,
       status:spStatusToLifecycle(activeSp.status),
       students:activeSp.students != null ? activeSp.students : session.students,
       ready:activeSp.ready || 0,
@@ -26860,12 +26957,10 @@ function renderSessionDetail() {
   const _aiWrap = document.getElementById('sessionAiInsightsWrap');
   if (_aiWrap) _aiWrap.innerHTML = '';
   // ── Subpart selector tab (TCAP only) ──
-  // Tab dispatch — only TCAP exposes Cut Scores; non-TCAP sessions never see
-  // the tab and silently fall back to Overview if the URL/state somehow lands
-  // on 'cut-scores' for them.
+  // Teacher-facing sessions keep cut-score context inside Analytics as a
+  // read-only explanation, not as a separate tab/configuration surface.
   let tab = sessionDetailTab;
-  if (tab === 'cut-scores' && !isTcap) tab = 'overview';
-  if (tab !== 'analytics' && tab !== 'cut-scores') tab = 'overview';
+  if (tab !== 'analytics') tab = 'overview';
 
   // ── Tab strip + inline SP picker / lock chip (TCAP only) ─────────────
   // The Subpart picker AND the "Subparts disabled while viewing cut scores"
@@ -26887,59 +26982,21 @@ function renderSessionDetail() {
   // surfaces a short reminder that cut scores apply session-wide, not per-SP.
   const spTabsEl = document.getElementById('sessionSubpartTabsWrap');
   if (spTabsEl) {
-    // Cut Scores tab dims the rail because cut scores are composite-only,
-    // not per-SP. We keep the rail in the DOM (layout stable) but freeze
-    // interactions and drop saturation — see `.sp-rail-disabled` in CSS.
     spTabsEl.innerHTML = isTcap
-      ? renderTcapSubpartRail(session, { disabled: tab === 'cut-scores', view })
+      ? renderTcapSubpartRail(session, { view })
       : '';
   }
 
   let tabRightSlot = '';
-  if (isTcap && tab === 'cut-scores') {
-    tabRightSlot = `<span class="sp-tab-locked-note tcap-tab-lock" title="Cut scores apply to the composite scale score, not per-Subpart">🔒 District-level · cut scores apply to composite</span>`;
-  }
-  const cutScoresTab = isTcap
-    ? `<button class="session-detail-tab ${tab === 'cut-scores' ? 'active' : ''}" onclick="setSessionDetailTab('cut-scores')" title="District cut-score profile · applies to composite scale score">Cut Scores <span style="font-size:9px;opacity:.7;font-weight:600">· District</span></button>`
-    : '';
   document.getElementById('sessionDetailTabs').innerHTML = `
     <button class="session-detail-tab ${tab === 'overview' ? 'active' : ''}" onclick="setSessionDetailTab('overview')">Overview</button>
     <button class="session-detail-tab ${tab === 'analytics' ? 'active' : ''}" onclick="setSessionDetailTab('analytics')">Analytics</button>
-    ${cutScoresTab}
     ${tabRightSlot}
   `;
   document.getElementById('sessionOverviewPanel').classList.toggle('active', tab === 'overview');
   document.getElementById('sessionAnalyticsPanel').classList.toggle('active', tab === 'analytics');
   const cutPanel = document.getElementById('sessionCutScoresPanel');
-  if (cutPanel) cutPanel.classList.toggle('active', tab === 'cut-scores');
-  // When Cut Scores tab is active on a TCAP session, render the cut-score
-  // editor inline using the same renderer as the standalone tcap-config page,
-  // but pointed at the session-context container so the SP context is kept.
-  if (isTcap && tab === 'cut-scores') {
-    // Default the editor's selector to this session's grade × subject so the
-    // teacher lands on "their" profile instead of the global G5 ELA default.
-    // TCAP fixtures carry `tcapGrade` (number) + `tcapSubject` (lowercase
-    // string like 'ela' / 'math' / 'science' / 'ss'). HS EOC sessions also
-    // carry `blueprintKey` like 'algebra_1_eoc' — `tcapResolveCutKey`
-    // collapses that to the canonical `g9_math`/`g10_ela`/etc. form so
-    // the editor (which renders by grade × subject) always finds a
-    // matching profile.
-    if (typeof TCAP_CUT_STATE !== 'undefined') {
-      let candidate = null;
-      const bp = session.blueprintKey;
-      if (typeof bp === 'string' && /_eoc$/.test(bp)) {
-        const resolved = tcapResolveCutKey(bp);
-        if (TCAP_CUT_STATE[resolved]) candidate = resolved;
-      }
-      if (!candidate && session.tcapGrade && session.tcapSubject) {
-        const subjectId = String(session.tcapSubject).toLowerCase();
-        const tryKey = `g${session.tcapGrade}_${subjectId}`;
-        if (TCAP_CUT_STATE[tryKey]) candidate = tryKey;
-      }
-      if (candidate) tcapConfigGradeKey = candidate;
-    }
-    renderTcapConfig('sessionCutScoresInlineBody');
-  }
+  if (cutPanel) cutPanel.classList.remove('active');
   // AI insights panel (legacy expanded grid) is intentionally not re-rendered
   // here — the brief insight + CTAs now live inline in the hero card. The
   // wrap remains in the DOM but stays empty unless a future feature opts in.
@@ -33387,10 +33444,6 @@ function renderTcapStandardDistributionCards(standards, rows) {
   }
   return `<div class="tcap-std-list">${summaries.map(summary => {
     const total = summary.values.length || 1;
-    const counts = summary.bands.map(b => {
-      const names = b.students.map(x => `${x.row.name} (${Math.round(x.acc * 100)}%)`).join(', ') || 'No students';
-      return `<span class="tcap-std-count" title="${escapeAttr(names)}"><b style="color:${b.color}">${b.count}</b> ${b.label}</span>`;
-    }).join('');
     const segments = summary.bands.map(b => {
       const names = b.students.map(x => `${x.row.name} (${Math.round(x.acc * 100)}%)`).join(', ') || 'No students';
       const width = Math.max(0, (b.count / total) * 100);
@@ -33401,14 +33454,13 @@ function renderTcapStandardDistributionCards(standards, rows) {
         <div class="tcap-std-code">${escapeHtml(summary.std.code)}</div>
         <div class="tcap-std-name" title="${escapeAttr(summary.std.name || '')}">${escapeHtml(summary.std.name || summary.std.category || '')}</div>
         <div class="tcap-std-meta">
-          <span class="tcap-std-risk">${summary.below70} below 70%</span>
           <span>Avg ${Math.round(summary.avg * 100)}%</span>
         </div>
       </div>
       <div>
         <div class="tcap-std-bar" aria-label="${escapeAttr(summary.std.code)} mastery distribution">${segments}</div>
-        <div class="tcap-std-counts">${counts}</div>
       </div>
+      <span class="tcap-std-risk">${summary.below70} below 70%</span>
     </button>`;
   }).join('')}</div>`;
 }
@@ -33536,12 +33588,15 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
   const strip = TCAP_PROFILE.performanceLevels.map(lvl => {
     const n = counts[lvl.id];
     const pct = total ? Math.round((n/total)*100) : 0;
-    return `<div title="${(_lvlTip[lvl.id] || lvl.label)}" style="min-width:0;background:${lvl.bg};border:1px solid ${lvl.border};border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:help">
-      <div style="min-width:0">
-        <div style="font-size:11px;font-weight:900;color:${lvl.color};letter-spacing:.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lvl.label}</div>
-        <div style="font-size:10px;color:${lvl.color};font-weight:700;margin-top:2px;opacity:.85">${pct}% of class</div>
+    return `<div title="${(_lvlTip[lvl.id] || lvl.label)}" style="min-width:0;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:7px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:help">
+      <div style="display:flex;align-items:center;gap:7px;min-width:0">
+        <span style="width:7px;height:7px;border-radius:999px;background:${lvl.color};flex-shrink:0"></span>
+        <span style="font-size:11px;font-weight:850;color:#383a42;letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lvl.label}</span>
       </div>
-      <div style="font-size:24px;font-weight:900;color:${lvl.color};line-height:1;font-variant-numeric:tabular-nums">${n}</div>
+      <div style="display:flex;align-items:baseline;gap:5px;flex-shrink:0">
+        <span style="font-size:15px;font-weight:900;color:${lvl.color};line-height:1;font-variant-numeric:tabular-nums">${n}</span>
+        <span style="font-size:10px;color:#6d6d6d;font-weight:650">${pct}%</span>
+      </div>
     </div>`;
   }).join('');
 
@@ -33603,16 +33658,16 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
     const gapPts = r.pred.gapToNext ? r.pred.gapToNext.scalePointsToNext : null;
     const cutScore = r.pred.gapToNext ? r.pred.gapToNext.nextCutScore : onTrackFloor;
     const initials = r.name.split(/\s+/).map(w => w[0]).join('').slice(0,2);
-    return `<div style="border:1px solid #ddd6fe;background:#fff;border-radius:12px;padding:12px 14px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:38px;height:38px;border-radius:999px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;color:#6040ca;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
+    return `<div style="border:1px solid #e6e6e6;background:#fff;border-radius:10px;padding:10px 12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:999px;background:#f1edff;border:1px solid #e0dbff;color:#6040ca;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
         <div style="min-width:0;flex:1">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <span style="font-weight:900;color:#18181b;font-size:13px">${r.name}</span>
-            <span style="font-size:16px;font-weight:900;color:${r.pred.level.color};font-variant-numeric:tabular-nums">${r.pred.scaleScore}</span>
+            <span style="font-size:14px;font-weight:900;color:${r.pred.level.color};font-variant-numeric:tabular-nums">${r.pred.scaleScore}</span>
             ${tcapPillHTML(r.pred.level,{size:'sm'})}
           </div>
-          <div style="font-size:11px;color:#52525b;margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <div style="font-size:11px;color:#52525b;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             ${gapPts != null ? `<span style="color:#5b21b6;font-weight:800;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:999px;padding:2px 8px">▲ ${gapPts} pts to Meeting (cut ${cutScore})</span>` : ''}
           </div>
         </div>
@@ -33633,25 +33688,25 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
   //      page stays read-only until practice delivery exists.)
   //   3. Standards heatmap — unchanged, full-width data view.
   const body = `
-    <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:12px;flex-wrap:wrap">
+    <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px;flex-wrap:wrap">
         <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-          <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Prediction snapshot</h3>
+          <h3 style="margin:0;font-size:13px;font-weight:900;color:#18181b">Class performance summary</h3>
           <span style="font-size:11px;color:#71717a">Avg scale <b style="color:#18181b;font-variant-numeric:tabular-nums">${classAvgScale}</b> · Meeting cut <b style="color:#18181b;font-variant-numeric:tabular-nums">${onTrackFloor}</b></span>
           </div>
         </div>
       <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">${strip}</div>
       </div>
 
-    <div style="margin-bottom:16px">
-      <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);display:flex;flex-direction:column">
-        <div style="margin-bottom:12px">
+    <div style="margin-bottom:14px">
+      <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);display:flex;flex-direction:column">
+        <div style="margin-bottom:10px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Closest to Meeting</h3>
           </div>
-          <p style="font-size:11px;color:#71717a;margin:3px 0 0">Students within 8 scale points of Meeting. Use this as a review priority list; practice delivery is not available in this prototype.</p>
+          <p style="font-size:11px;color:#71717a;margin:3px 0 0">Students within 8 scale points of Meeting.</p>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">${razor || razorEmpty}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px">${razor || razorEmpty}</div>
       </div>
     </div>
 
@@ -33661,8 +33716,8 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
     <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:16px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap">
         <div style="min-width:0">
-          <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Priority standards</h3>
-          <p style="font-size:11px;color:#71717a;margin:3px 0 0">${heatStandards.length} standards sorted by students below 70% · hover bar segments for names · click a card to open details</p>
+          <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Standards Needing Review</h3>
+          <p style="font-size:11px;color:#71717a;margin:3px 0 0">Sorted by students below 70%.</p>
         </div>
       </div>
       ${standardCards}
@@ -34750,18 +34805,18 @@ function renderTcapStudentReport() {
 
   // Weakest standards review
   const weakest = tcapWeakestStandards(stu, 5);
-  const standardsReview = weakest.map((st) => {
+  const standardsReview = weakest.map((st, idx) => {
     const pct = Math.round(st.acc*100);
     const reason = st.acc < 0.45 ? 'Foundation gap — reteach with examples' : st.acc < 0.6 ? 'Partial understanding — review with feedback' : 'Near-mastery — quick check before the next diagnostic';
-    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #eef0f4;border-radius:10px;background:#fff">
+    const priority = idx < 2 ? `<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:#FEF6EE;border:1px solid #F9DBAF;color:#B14C00;font-size:10px;font-weight:800;letter-spacing:.2px;white-space:nowrap">High priority</span>` : '';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #eef0f4;border-radius:10px;background:#fff">
       <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
         <div style="width:44px;height:44px;border-radius:10px;background:${tcapAccBg(st.acc)};color:${tcapAcctBarColor(st.acc)};font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${pct}%</div>
         <div style="min-width:0">
-          <div style="font-size:13px;font-weight:700;color:#18181b">${st.code} <span style="font-weight:500;color:#52525b">· ${st.name}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;color:#18181b">${st.code} <span style="font-weight:500;color:#52525b">· ${st.name}</span>${priority}</div>
           <div style="font-size:11px;color:#71717a;margin-top:2px">${st.category} · ${reason}</div>
         </div>
       </div>
-      <div style="font-size:11px;color:#52525b;font-weight:600;flex-shrink:0">Review priority</div>
     </div>`;
   }).join('');
 
@@ -35001,9 +35056,8 @@ function renderTcapConfig(targetElId) {
     return `<button onclick="tcapSetConfigGradeNum(${g})" style="min-width:42px;padding:8px 12px;border-radius:8px;border:1px solid ${active?'#6040ca':'#e4e4e7'};background:${active?'#f5f3ff':'#fff'};color:${active?'#5b21b6':'#52525b'};font-weight:${active?700:500};font-size:12px;cursor:pointer">G${g}</button>`;
   }).join('');
 
-  // Scale-score bands — default view explains ranges first; sliders are
-  // kept as an advanced edit affordance so teachers don't read the page as
-  // a parameter-tuning task.
+  // Scale-score bands — teacher-facing surfaces are read-only. Threshold
+  // editing remains only on the standalone district-admin config page.
   const range = TCAP_PROFILE.scaleRange;
   const lvls = TCAP_PROFILE.performanceLevels;
   const cutVisual = {
@@ -35028,20 +35082,28 @@ function renderTcapConfig(targetElId) {
     const v = cutVisual[lvl.id] || { color:lvl.color };
     const prev = lvls[i];
     const prevHi = val - 1;
-    return `<div style="padding:12px 16px;background:#fafafa;border:1px solid #eef0f4;border-radius:10px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="display:flex;align-items:flex-start;gap:8px;min-width:0">
-          <span style="width:10px;height:10px;border-radius:2px;background:${v.color}"></span>
-          <span style="min-width:0">
-            <span style="display:block;font-size:12px;font-weight:800;color:#18181b">${lvl.fullLabel || lvl.label} begins at ${val}</span>
-            <span style="display:block;font-size:11px;color:#71717a;margin-top:2px">${prev.fullLabel || prev.label} ends at ${prevHi}</span>
-          </span>
+    return `<div class="tcap-threshold-row">
+      <div style="min-width:0">
+        <div class="tcap-threshold-title">
+          <span class="tcap-threshold-dot" style="background:${v.color}"></span>
+          <span>${lvl.fullLabel || lvl.label} starts at</span>
         </div>
-        <span style="font-size:14px;font-weight:800;color:${v.color};font-variant-numeric:tabular-nums">${val}</span>
+        <div class="tcap-threshold-help">${prev.fullLabel || prev.label} becomes ${cuts[prev.id][0]}–${prevHi}</div>
       </div>
-      <input type="range" min="${range.min}" max="${range.max}" value="${val}" step="1" oninput="tcapCutSliderInput(${i},this.value)" onchange="tcapCutSliderInput(${i},this.value,true)" style="width:100%;accent-color:${v.color};cursor:pointer"/>
+      <input class="tcap-threshold-input" type="number" min="${range.min}" max="${range.max}" value="${val}" step="1" onchange="tcapCutSliderInput(${i},this.value,true)" onkeydown="if(event.key==='Enter')this.blur()" aria-label="${lvl.fullLabel || lvl.label} starts at"/>
     </div>`;
   }).join('');
+  const thresholdEditor = inline ? '' : `
+        <details class="tcap-cut-details">
+          <summary>
+            <span>Edit level thresholds <span class="hint">District admin only · advanced</span></span>
+            <span class="chev">▾</span>
+          </summary>
+          <div class="tcap-cut-edit-body">
+            <p style="margin:0 0 14px;font-size:12px;color:#52525b;line-height:1.5">Use this only when an LEA-supplied cut-score profile needs to be previewed. Enter the first score for each level; the previous level automatically ends one point earlier.</p>
+            <div class="tcap-threshold-list">${sliders}</div>
+          </div>
+        </details>`;
 
   const body = `
     <div style="background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)">
@@ -35084,16 +35146,7 @@ function renderTcapConfig(targetElId) {
           <span style="font-size:11px;color:#6d6d6d;background:#fafafa;border:1px solid #e6e6e6;border-radius:999px;padding:4px 10px">Scale ${range.min}–${range.max}</span>
         </div>
         <div class="tcap-cut-ranges">${rangeCards}</div>
-        <details class="tcap-cut-details">
-          <summary>
-            <span>Edit level thresholds <span class="hint">District admin only · advanced</span></span>
-            <span class="chev">▾</span>
-          </summary>
-          <div class="tcap-cut-edit-body">
-            <p style="margin:0 0 14px;font-size:12px;color:#52525b;line-height:1.5">Use this only when an LEA-supplied cut-score profile needs to be previewed. Each row edits the starting score for a level; the range cards above update after the value changes.</p>
-            <div style="display:flex;flex-direction:column;gap:10px">${sliders}</div>
-          </div>
-        </details>
+        ${thresholdEditor}
       </div>
     </div>
   `;
