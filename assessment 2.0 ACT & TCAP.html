@@ -1852,86 +1852,71 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .assign-select{width:100%;height:40px;padding:0 36px 0 14px;border:1px solid #e4e4e7;border-radius:8px;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 14px center;font-size:14px;font-family:inherit;color:#18181b;appearance:none;cursor:pointer}
 .assign-select:focus{border-color:#7452e4;outline:none;box-shadow:0 0 0 3px rgba(116,82,228,.12)}
 /* ─────────────── Assign-modal — Student Picker (.aspk-*) ───────────────
- * PRD §5.7.3. Replaces the legacy .assign-students-* / .assign-class-*
- * accordion. Three visual bands stacked vertically:
- *   .aspk-search-wrap   — search input + suggestions dropdown anchor
- *   .aspk-selected      — chip strip (purple TAG, gray STUDENT) + summary
- *   .aspk-empty-roster  — friendly empty state when nothing chosen yet
- * Tag chips and student chips share a base .aspk-chip skeleton; variants
- * differentiate via .aspk-chip.tag / .aspk-chip.student. The accelerated
- * badge .aspk-accel-flag is reused in three places (suggestion row,
- * selected chip, footnote). */
+ * Mirrors packages/webapp/.../AssignToStudentsDialog/AddStudentsSection.tsx.
+ * Stacked layout (top → bottom):
+ *   .aspk-search-wrap       — search input + leading icon
+ *   .aspk-toolbar           — "X students selected" + "Clear all"
+ *   .aspk-class-list        — class group rows (collapsed by default)
+ *     .aspk-class-row       — checkbox + name + (sel/total) + chevron
+ *     .aspk-student-list    — expanded student rows under the class
+ *       .aspk-student-row   — checkbox + avatar + name/email + accel flag
+ * Tri-state checkbox uses .aspk-checkbox with .is-all|.is-partial|.is-none.
+ * The accelerated badge .aspk-accel-flag is kept (TCAP business rule). */
 .aspk-search-wrap{position:relative}
 .aspk-search{position:relative}
-.aspk-search-ic{position:absolute;left:12px;top:14px;width:16px;height:16px;color:#71717a;pointer-events:none}
-.aspk-search input{width:100%;height:44px;padding:0 14px 0 38px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;font-family:inherit;color:#18181b;outline:none}
+.aspk-search-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#71717a;pointer-events:none}
+.aspk-search input{width:100%;height:40px;padding:0 14px 0 38px;border:1px solid #e4e4e7;border-radius:8px;font-size:14px;font-family:inherit;color:#18181b;outline:none}
 .aspk-search input:focus{border-color:#7452e4;box-shadow:0 0 0 3px rgba(116,82,228,.12)}
 .aspk-search input::placeholder{color:#a1a1aa}
-.aspk-search-hint{display:block;margin-top:4px;font-size:11px;color:#a1a1aa;padding-left:2px}
 
-/* Suggestions dropdown — anchored under the search input. Inline (pushes
-   content below), not floating; matches PRD mock and keeps the user's
-   eye trail vertical. */
-.aspk-suggest{margin-top:8px;background:#fff;border:1px solid #e4e4e7;border-radius:10px;max-height:340px;overflow-y:auto;box-shadow:0 8px 24px rgba(24,24,27,.06)}
-.aspk-suggest-group{padding:6px 0}
-.aspk-suggest-group + .aspk-suggest-group{border-top:1px solid #f4f4f5}
-.aspk-suggest-group-head{padding:8px 14px 4px;font-size:10px;font-weight:800;color:#71717a;text-transform:uppercase;letter-spacing:.4px}
-.aspk-suggest-row{display:grid;align-items:center;width:100%;border:none;background:transparent;cursor:pointer;padding:8px 14px;text-align:left;color:#18181b;font-size:13px;font-family:inherit;transition:background .12s}
-.aspk-suggest-row:hover{background:#faf5ff}
-.aspk-suggest-row:hover .aspk-suggest-add{background:#7452e4;color:#fff;border-color:#7452e4}
-.aspk-suggest-tag{grid-template-columns:auto 1fr auto auto;gap:10px}
-.aspk-suggest-tag-kind{font-size:9px;font-weight:900;letter-spacing:.45px;text-transform:uppercase;color:#5b21b6;background:#ede9fe;border:1px solid #ddd6fe;padding:2px 6px;border-radius:4px}
-.aspk-suggest-tag-label{font-weight:700;color:#18181b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.aspk-suggest-tag-count{font-size:11px;color:#71717a;font-weight:600;white-space:nowrap}
-.aspk-suggest-student{grid-template-columns:1fr auto auto auto auto;gap:10px}
-.aspk-suggest-name{font-weight:600;color:#18181b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.aspk-suggest-grade{font-size:10px;font-weight:800;letter-spacing:.3px;color:#52525b;background:#f4f4f5;border-radius:4px;padding:2px 6px;white-space:nowrap}
-.aspk-suggest-ctx{font-size:11px;color:#71717a;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.aspk-suggest-add{font-size:10px;font-weight:800;color:#7452e4;background:#fff;border:1px solid #ddd6fe;border-radius:5px;padding:3px 8px;letter-spacing:.3px;white-space:nowrap;transition:all .12s}
-.aspk-suggest-foot{padding:8px 14px;border-top:1px solid #f4f4f5;background:#fafafa}
-.aspk-suggest-bulk{width:100%;background:#fff;border:1px dashed #c4b5fd;color:#5b21b6;font-weight:800;font-size:12px;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit}
-.aspk-suggest-bulk:hover{background:#faf5ff;border-style:solid}
-.aspk-suggest-empty{padding:16px 14px;text-align:center;font-size:12px;color:#71717a}
+/* Toolbar row — count + clear-all, sits between search and class list. */
+.aspk-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 2px 6px}
+.aspk-toolbar-count{font-size:13px;color:#52525b;font-weight:500;background:none;border:none;padding:0;font-family:inherit}
+.aspk-toolbar-count.is-empty{color:#a1a1aa}
+.aspk-toolbar-clear{font-size:13px;font-weight:600;color:#18181b;background:none;border:none;padding:6px 0;cursor:pointer;font-family:inherit}
+.aspk-toolbar-clear:hover{color:#7452e4}
+.aspk-toolbar-clear:disabled{color:#d4d4d8;cursor:not-allowed}
+.aspk-toolbar-clear:disabled:hover{color:#d4d4d8}
 
-/* Selected chip strip — appears below search/suggestions. Overflows
-   vertically once chips wrap past two rows so the modal doesn't grow
-   uncontrollably. */
-.aspk-selected{margin-top:14px;padding:12px 14px;background:#fafafa;border:1px solid #f4f4f5;border-radius:10px}
-.aspk-selected-head{font-size:10px;font-weight:800;color:#71717a;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-.aspk-chip-strip{display:flex;flex-wrap:wrap;gap:6px;max-height:140px;overflow-y:auto;padding-right:4px}
-.aspk-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 4px 5px 10px;border-radius:7px;font-size:12px;font-weight:600;line-height:1.2;border:1px solid transparent}
-.aspk-chip.tag{background:#ede9fe;border-color:#ddd6fe;color:#3b1d70}
-.aspk-chip.student{background:#fff;border-color:#e4e4e7;color:#18181b}
-.aspk-chip.student.is-accel{border-color:#ddd6fe;background:#faf5ff}
-.aspk-chip-kind{font-size:9px;font-weight:900;letter-spacing:.45px;text-transform:uppercase;color:#5b21b6;background:#fff;border:1px solid #ddd6fe;padding:1px 5px;border-radius:3px}
-.aspk-chip-label{font-weight:700}
-.aspk-chip-count{font-size:10px;font-weight:700;color:#5b21b6;background:#fff;border:1px solid #ddd6fe;padding:1px 5px;border-radius:999px}
-.aspk-chip-meta{font-size:10px;font-weight:700;color:#71717a;background:#f4f4f5;padding:1px 5px;border-radius:3px}
-.aspk-chip-x{width:18px;height:18px;border-radius:4px;border:none;background:transparent;color:#71717a;font-size:14px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;padding:0}
-.aspk-chip-x:hover{background:rgba(0,0,0,.06);color:#18181b}
-.aspk-chip.tag .aspk-chip-x{color:#5b21b6}
-.aspk-chip.tag .aspk-chip-x:hover{background:#ddd6fe;color:#3b1d70}
+/* Class group rows. Header is clickable (toggles expand); the inline
+   checkbox stops propagation so ticking doesn't also toggle expansion. */
+.aspk-class-list{display:flex;flex-direction:column;gap:2px;padding-right:4px}
+.aspk-class-block{display:flex;flex-direction:column}
+.aspk-class-row{display:flex;align-items:center;gap:12px;padding:6px 4px;cursor:pointer;border-radius:6px;min-height:40px}
+.aspk-class-row:hover{background:#fafafa}
+.aspk-class-trigger{flex:1;display:flex;align-items:center;gap:8px;background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:inherit;min-width:0}
+.aspk-class-name{font-size:14px;font-weight:500;color:#18181b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.aspk-class-count{font-size:14px;font-weight:500;color:#18181b;flex-shrink:0}
+.aspk-class-chevron{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;color:#52525b;opacity:.55;transition:transform .15s}
+.aspk-class-chevron.open{transform:rotate(180deg)}
 
-.aspk-summary{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#71717a;margin-top:10px;padding-top:10px;border-top:1px solid #ececef}
-.aspk-summary b{color:#18181b;font-weight:700}
-.aspk-clear{background:none;border:none;color:#7452e4;font-weight:600;cursor:pointer;font-size:12px;font-family:inherit;padding:0}
-.aspk-clear:hover{text-decoration:underline}
+/* Student rows — sit under their class header when expanded. Indent
+   matches production (avatar lines up under class name, not checkbox). */
+.aspk-student-list{display:flex;flex-direction:column}
+.aspk-student-row{display:flex;align-items:center;gap:12px;padding:6px 12px 6px 36px;cursor:pointer;border-radius:6px}
+.aspk-student-row:hover{background:#fafafa}
+.aspk-student-row.is-selected{background:#faf5ff}
+.aspk-student-row.is-selected:hover{background:#f3eaff}
+.aspk-student-avatar{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.3px;flex-shrink:0;background:#e4e4e7;color:#52525b}
+.aspk-student-info{flex:1;display:flex;flex-direction:column;min-width:0}
+.aspk-student-name{font-size:14px;font-weight:500;color:#18181b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aspk-student-email{font-size:13px;color:#71717a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Accelerated student disclosure — used in suggestion row, selected chip,
-   and the aggregate footnote under the chip strip. */
-.aspk-accel-flag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:#7c2d12;background:#fff7ed;border:1px solid #fed7aa;padding:2px 6px;border-radius:4px;white-space:nowrap}
-.aspk-accel-footnote{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;font-size:11px;color:#7c2d12;line-height:1.5}
+/* Tri-state checkbox — purple when checked/partial, neutral when empty. */
+.aspk-checkbox{flex-shrink:0;width:18px;height:18px;border-radius:4px;border:1.5px solid #d4d4d8;background:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:all .12s;color:#fff}
+.aspk-checkbox:hover{border-color:#7452e4}
+.aspk-checkbox.is-all{background:#7452e4;border-color:#7452e4}
+.aspk-checkbox.is-partial{background:#7452e4;border-color:#7452e4}
+.aspk-checkbox.is-none{background:#fff}
+
+/* No-results empty state inside the class list (search returned nothing). */
+.aspk-no-results{padding:24px 14px;text-align:center;font-size:13px;color:#71717a}
+
+/* Accelerated flag + footnote — TCAP-only business disclosure. */
+.aspk-accel-flag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:#7c2d12;background:#fff7ed;border:1px solid #fed7aa;padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.aspk-accel-footnote{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:10px 12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;font-size:11px;color:#7c2d12;line-height:1.5}
 .aspk-accel-footnote-icon{font-size:14px;line-height:1;flex-shrink:0;margin-top:1px}
 .aspk-accel-footnote b{color:#431407;font-weight:800}
-
-/* Empty roster card — replaces the chip strip when nothing is selected.
-   Anchored hint that the picker is functional, with a copy nudge to use
-   the search above. */
-.aspk-empty-roster{margin-top:14px;padding:24px 14px;text-align:center;background:#fafafa;border:1px dashed #e4e4e7;border-radius:10px}
-.aspk-empty-roster-icon{font-size:24px;margin-bottom:6px}
-.aspk-empty-roster-title{font-size:13px;font-weight:700;color:#52525b;margin-bottom:4px}
-.aspk-empty-roster-sub{font-size:11px;color:#a1a1aa;line-height:1.5}
-.aspk-empty-roster-sub b{color:#52525b;font-weight:700}
 .assign-switch{position:relative;width:36px;height:20px;border-radius:999px;background:#d4d4d8;cursor:pointer;flex-shrink:0;transition:background-color .15s}
 .assign-switch.on{background:#00BB6C}
 .assign-switch::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:999px;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
@@ -27148,10 +27133,11 @@ function _assignSeedClasses(type, isTcap, primaryClass) {
     };
   };
 
-  /* Group container — class + students + selection state. The picker's
-     selection state actually lives at top level on assignState (selectedTagIds
-     + selectedStudentIds) but we keep this Set field for backward compat
-     with any non-picker code path that still iterates per-class. */
+  /* Group container — class + students + selection state.
+     `selectedStudentIds` (Set per class) is the picker's source of truth,
+     mirroring production's ClassGroup type; `expanded` (bool per class)
+     drives the disclosure chevron. _assignEffectiveStudentIds() unions
+     them at submit time. */
   const makeClass = (cls, students) => ({
     id: cls.replace(/[^a-z0-9]+/gi,'-').toLowerCase(),
     name: cls,
@@ -27332,14 +27318,12 @@ function openAssignModal(type) {
     tcapAssessmentName,   // read-only, shown in context chip; NOT the assignment name
     tcapBlueprint,
     tcapSubpartDates,
-    /* Picker selection state — flattened to top-level from the legacy
-       per-class Sets. Two parallel sources: tag chips (purple) and
-       individual student picks (gray). Effective roster is the union of
-       both, deduped by student.id (see _assignEffectiveStudents). */
-    selectedTagIds: new Set(),       // string ids: `${kind}:${label}` (e.g. 'course:Algebra I')
-    selectedStudentIds: new Set(),   // student ids individually picked
+    /* Picker selection state — production-aligned class-group model.
+       Source of truth lives on each class (`class.selectedStudentIds`,
+       `class.expanded`). The top-level helpers (`_assignTotalSelected`,
+       `_assignEffectiveStudentIds`) aggregate across classes so the
+       downstream submit path (`assignNextStep`) doesn't change shape. */
     searchQuery: '',
-    suggestOpen: false,              // true once the search field gains focus or has input
     antiCheatEnabled: true,
     maxViolationCount: 5,
     reportState: 'pending_release',
@@ -27351,16 +27335,16 @@ function closeAssignModal() {
   document.getElementById('assignModalOverlay').classList.remove('open');
 }
 /* ─────────────── Assign-modal student picker — selection helpers ───────────────
- * Picker semantics (PRD §5.7): a teacher can select recipients via two
- * parallel paths — TAG chips (Course/Section/Period/Class/Grade/Teacher) or
- * individual STUDENT chips. Effective roster = union of both, deduped by
- * student.id. Tags are ids of the form `${kind}:${label}` so we can compare
- * cleanly against student.tags[].
+ * Production-aligned (packages/webapp/.../AssignToStudentsDialog/AddStudentsSection):
+ * a teacher picks recipients by expanding each class group and ticking
+ * students (or ticking the class header to grab the whole roster).
+ * Source of truth lives on `class.selectedStudentIds` (Set per class) +
+ * `class.expanded` (bool per class). Search filters classes/students
+ * in-place; no separate suggestion dropdown.
  *
- * The legacy per-class `selectedStudentIds` Sets are NOT used by the picker
- * — they're kept only because some downstream code still iterates classes.
- * Top-level `assignState.selectedTagIds` and `assignState.selectedStudentIds`
- * are the source of truth. */
+ * Top-level helpers below aggregate across all classes so downstream
+ * paths (`assignNextStep`, modal "X students selected" gate) keep their
+ * existing shape (a single Set of student ids). */
 
 function _assignAllStudents() {
   const seen = new Set();
@@ -27371,32 +27355,13 @@ function _assignAllStudents() {
   return out;
 }
 
-function _assignTagId(tag) { return `${tag.kind}:${tag.label}`; }
-
-/* Aggregate every distinct tag across the seeded roster. Each tag carries:
- *   - id, kind, label   — shape mirrors student.tags[]
- *   - studentIds[]      — pre-resolved roster for this tag (for chip expand)
- *   - count             — studentIds.length, displayed as "(N)" in the chip
- */
-function _assignAllTags() {
-  const map = new Map();
-  _assignAllStudents().forEach(s => (s.tags || []).forEach(t => {
-    const id = _assignTagId(t);
-    if (!map.has(id)) map.set(id, { id, kind:t.kind, label:t.label, studentIds:[] });
-    map.get(id).studentIds.push(s.id);
-  }));
-  return Array.from(map.values()).map(t => ({ ...t, count: t.studentIds.length }));
-}
-
-/* Effective roster = union of (students under any selected tag) + (students
- * picked individually). Returns a Set of student ids; callers map back to
- * full student objects via _assignStudentById when they need names/grade. */
+/* Effective roster — union of every class's `selectedStudentIds`, deduped
+ * by student.id. Same return shape as the legacy implementation so
+ * `assignNextStep` continues to read `effectiveIds.has(s.id)`. */
 function _assignEffectiveStudentIds() {
-  const ids = new Set(assignState.selectedStudentIds);
-  const allTags = _assignAllTags();
-  assignState.selectedTagIds.forEach(tagId => {
-    const tag = allTags.find(t => t.id === tagId);
-    if (tag) tag.studentIds.forEach(sid => ids.add(sid));
+  const ids = new Set();
+  (assignState.classes || []).forEach(c => {
+    (c.selectedStudentIds || new Set()).forEach(id => ids.add(id));
   });
   return ids;
 }
@@ -27407,65 +27372,62 @@ function _assignStudentById(id) {
   return _assignAllStudents().find(s => s.id === id) || null;
 }
 
-/* Whether any selected tag's roster contains this student id — used to
- * stop the user removing an "implicitly added" student via the individual
- * × button (we surface a hint instead). */
-function _assignStudentCoveredByTag(studentId) {
-  const allTags = _assignAllTags();
-  for (const tagId of assignState.selectedTagIds) {
-    const tag = allTags.find(t => t.id === tagId);
-    if (tag && tag.studentIds.includes(studentId)) return true;
-  }
-  return false;
-}
-
-/* Search suggestions — splits matches into two groups (tags first, then
- * individual students). Tag matches surface BOTH by tag-label fragment AND
- * by any student-name fragment within that tag's roster (so typing a
- * student name still surfaces the section tag they belong to, in case the
- * teacher actually wants the whole section).
- *
- * Returns {tags:[...], students:[...]} where each row is already filtered
- * for "not currently selected" so the dropdown doesn't show what's already
- * in the chip strip. Empty query returns {tags:[], students:[]} — the
- * Recent-Tags section handles empty state separately. */
-function _assignSearchSuggestions() {
+/* Filter classes for search query. Returns a list of `{ ...class, _matchedStudents }`
+ * where `_matchedStudents` is the visible subset (defaults to full roster).
+ * A class survives the filter if EITHER its name matches the query OR at
+ * least one of its students matches by name/email. When a class matches
+ * by name, all its students stay visible (so the teacher can still pick
+ * any of them); when only some students match, only those are shown. */
+function _assignFilteredClasses() {
   const q = (assignState.searchQuery || '').trim().toLowerCase();
-  if (!q) return { tags:[], students:[] };
+  const classes = assignState.classes || [];
+  if (!q) return classes.map(c => ({ ...c, _matchedStudents: c.students }));
 
-  const allTags = _assignAllTags();
-  const allStudents = _assignAllStudents();
-
-  // Tag match: label contains q OR any student in the tag matches q
-  const tagMatches = allTags
-    .filter(t => !assignState.selectedTagIds.has(t.id))
-    .filter(t => {
-      if (t.label.toLowerCase().includes(q)) return true;
-      return t.studentIds.some(sid => {
-        const s = allStudents.find(x => x.id === sid);
-        return s && s.name.toLowerCase().includes(q);
-      });
-    })
-    // Class beats Course beats Grade/Teacher — Class is the most specific
-    // tag (a fully-qualified "Course · Period N" identifier) so it usually
-    // matches the teacher's intent better than the broad Course chip
-    // (which fans out across all periods).
-    .sort((a, b) => {
-      const order = { class:0, course:1, grade:2, teacher:3 };
-      return (order[a.kind] || 9) - (order[b.kind] || 9);
-    });
-
-  // Student match: direct name OR email match, excluded if already chosen
-  const studentMatches = allStudents
-    .filter(s => !assignState.selectedStudentIds.has(s.id))
-    .filter(s => s.name.toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q));
-
-  return { tags: tagMatches.slice(0, 8), students: studentMatches.slice(0, 12) };
+  const out = [];
+  classes.forEach(c => {
+    const classMatches = c.name.toLowerCase().includes(q);
+    const studentMatches = c.students.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      (s.email || '').toLowerCase().includes(q) ||
+      (s.tags || []).some(t => t.label.toLowerCase().includes(q))
+    );
+    if (classMatches) {
+      out.push({ ...c, _matchedStudents: c.students });
+    } else if (studentMatches.length > 0) {
+      // When matching by student, force-expand so the teacher can see hits.
+      out.push({ ...c, expanded: true, _matchedStudents: studentMatches });
+    }
+  });
+  return out;
 }
 
-/* (former _assignRecentTags helper removed — the focus-only "Suggested
- * for TCAP" empty-state panel was pulled per UX feedback. The picker now
- * shows suggestions only after the user types something.) */
+/* Tri-state for a class header checkbox: 'all' | 'partial' | 'none'.
+ * Used to drive both the visual indeterminate dash and the click handler
+ * (clicking 'all' clears, anything else fills to all). */
+function _assignClassSelectState(c) {
+  const total = c.students.length;
+  const sel = (c.selectedStudentIds || new Set()).size;
+  if (sel === 0) return 'none';
+  if (sel >= total) return 'all';
+  return 'partial';
+}
+
+/* Initials fallback when student.avatarUrl is absent. Production uses
+ * KiraUserAvatar (emoji or upload); the prototype just shows colored
+ * initials so the row layout matches without dragging in image assets. */
+function _assignAvatarInitials(name) {
+  const parts = (name || '').trim().split(/\s+/);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+/* Stable hue per student id so re-renders don't flash the avatar color. */
+function _assignAvatarHue(id) {
+  let h = 0;
+  for (let i = 0; i < (id || '').length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  return Math.abs(h) % 360;
+}
 function renderAssignModal() {
   const isTcap = assignState.assessmentType === 'tcap';
   // ─── Modal title — for TCAP, append the locked context so the header
@@ -27680,15 +27642,9 @@ function assignSetWritingResolution(value) {
 }
 function assignSetSearch(value) {
   assignState.searchQuery = value;
-  // Suggestions only open once the user has typed something. Earlier
-  // iteration auto-popped a "Suggested for TCAP" panel on focus alone —
-  // pulled per UX feedback because it crowded the modal before any user
-  // intent and forced a large vertical decision before the search field
-  // had been touched.
-  assignState.suggestOpen = !!(value && value.trim().length);
-  // Re-render is required so the suggestions list reflects the new query,
-  // but a full re-render kills input focus + caret position. Capture both
-  // BEFORE the render and restore them after the DOM is replaced.
+  // Re-render is required so the class list reflects the new filter,
+  // but a full re-render kills input focus + caret position. Capture
+  // both BEFORE the render and restore them after the DOM is replaced.
   renderAssignModal();
   const inp = document.querySelector('.aspk-search input');
   if (inp) {
@@ -27696,76 +27652,38 @@ function assignSetSearch(value) {
     try { inp.setSelectionRange(value.length, value.length); } catch (e) { /* noop */ }
   }
 }
-/* Focus handler intentionally a no-op — kept so the inline onfocus binding
- * doesn't throw if any code path still references it. The picker only opens
- * suggestions on typed input, never on focus alone. */
-function assignFocusSearch() { /* intentionally empty — see assignSetSearch */ }
-function assignAddTag(tagId) {
-  if (!tagId) return;
-  assignState.selectedTagIds.add(tagId);
-  // Once a tag is added, drop any individual picks already covered by it
-  // so the chip strip stays minimal (the tag chip implies its roster).
-  const allTags = _assignAllTags();
-  const tag = allTags.find(t => t.id === tagId);
-  if (tag) tag.studentIds.forEach(sid => assignState.selectedStudentIds.delete(sid));
-  // Clear the search input — pattern feels right after a successful add
-  assignState.searchQuery = '';
-  assignState.suggestOpen = false;
+function assignToggleClassExpansion(classId) {
+  const c = (assignState.classes || []).find(x => x.id === classId);
+  if (!c) return;
+  c.expanded = !c.expanded;
   renderAssignModal();
 }
-function assignRemoveTag(tagId) {
-  assignState.selectedTagIds.delete(tagId);
-  renderAssignModal();
-}
-function assignAddStudent(studentId) {
-  if (!studentId) return;
-  // Skip if already covered by a selected tag — surface a hint via toast
-  // instead of silently no-op'ing so the teacher knows why.
-  if (_assignStudentCoveredByTag(studentId)) {
-    if (typeof iteToast === 'function') iteToast('Already included via a selected tag.', 'info');
-    return;
+function assignToggleClassAllStudents(classId) {
+  const c = (assignState.classes || []).find(x => x.id === classId);
+  if (!c) return;
+  if (!c.selectedStudentIds) c.selectedStudentIds = new Set();
+  const state = _assignClassSelectState(c);
+  if (state === 'all') {
+    c.selectedStudentIds.clear();
+  } else {
+    c.students.forEach(s => c.selectedStudentIds.add(s.id));
   }
-  assignState.selectedStudentIds.add(studentId);
-  assignState.searchQuery = '';
-  assignState.suggestOpen = false;
   renderAssignModal();
 }
-function assignRemoveStudent(studentId) {
-  assignState.selectedStudentIds.delete(studentId);
-  renderAssignModal();
-}
-function assignSelectAllResults() {
-  const sug = _assignSearchSuggestions();
-  sug.tags.forEach(t => assignState.selectedTagIds.add(t.id));
-  sug.students.forEach(s => {
-    if (!_assignStudentCoveredByTag(s.id)) assignState.selectedStudentIds.add(s.id);
-  });
-  assignState.searchQuery = '';
-  assignState.suggestOpen = false;
+function assignToggleStudent(classId, studentId) {
+  const c = (assignState.classes || []).find(x => x.id === classId);
+  if (!c) return;
+  if (!c.selectedStudentIds) c.selectedStudentIds = new Set();
+  if (c.selectedStudentIds.has(studentId)) c.selectedStudentIds.delete(studentId);
+  else c.selectedStudentIds.add(studentId);
   renderAssignModal();
 }
 function assignClearAllStudents() {
-  assignState.selectedTagIds.clear();
-  assignState.selectedStudentIds.clear();
+  (assignState.classes || []).forEach(c => {
+    if (c.selectedStudentIds) c.selectedStudentIds.clear();
+  });
   renderAssignModal();
 }
-/* Click-outside to close the suggestions dropdown — mirrors the SP picker
- * pattern in Analytics. Single document listener guarded by suggestOpen so
- * we don't pay re-render cost when the modal is closed. */
-document.addEventListener('click', (ev) => {
-  if (!assignState || !assignState.suggestOpen) return;
-  const wrap = document.querySelector('.aspk-search-wrap');
-  if (wrap && !wrap.contains(ev.target)) {
-    assignState.suggestOpen = false;
-    renderAssignModal();
-  }
-});
-document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape' && assignState && assignState.suggestOpen) {
-    assignState.suggestOpen = false;
-    renderAssignModal();
-  }
-});
 function assignToggleAntiCheat() {
   assignState.antiCheatEnabled = !assignState.antiCheatEnabled;
   renderAssignModal();
@@ -28117,40 +28035,23 @@ function _assignSectionGrading() {
  * AND in the selected-chip; an aggregate footnote appears under the chip
  * strip when ≥1 accelerated student is in the effective roster. */
 function _assignSectionStudents() {
-  const allTags = _assignAllTags();
+  /* Production-aligned roster picker — mirrors
+   * packages/webapp/.../AssignToStudentsDialog/AddStudentsSection.tsx.
+   * Layout (top → bottom):
+   *   1. Search input (filters classes + students in-place)
+   *   2. Toolbar row: "X students selected" · "Clear all"
+   *   3. Class group rows (collapsed by default), each with
+   *      tri-state checkbox, name, "(selected/total)", chevron
+   *   4. Expanded class shows student rows: checkbox, avatar, name,
+   *      email, optional accelerated flag (TCAP-specific) */
   const total = _assignTotalSelected();
   const effectiveIds = _assignEffectiveStudentIds();
+  const filtered = _assignFilteredClasses();
+  const q = (assignState.searchQuery || '').trim();
 
-  /* ─── Selected chip strip ─── */
-  const tagChips = Array.from(assignState.selectedTagIds).map(tagId => {
-    const tag = allTags.find(t => t.id === tagId);
-    if (!tag) return '';
-    return `<span class="aspk-chip tag" data-kind="${tag.kind}">
-      <span class="aspk-chip-kind">${tag.kind === 'course' ? 'Course' : tag.kind === 'class' ? 'Class' : tag.kind === 'grade' ? 'Grade' : 'Teacher'}</span>
-      <span class="aspk-chip-label">${tag.label}</span>
-      <span class="aspk-chip-count">${tag.count}</span>
-      <button class="aspk-chip-x" onclick="assignRemoveTag('${tag.id}')" aria-label="Remove ${tag.label}">×</button>
-    </span>`;
-  }).join('');
-
-  const studentChips = Array.from(assignState.selectedStudentIds).map(sid => {
-    const s = _assignStudentById(sid);
-    if (!s) return '';
-    const accel = s.tcapTestOverride?.kind === 'accelerated';
-    return `<span class="aspk-chip student${accel ? ' is-accel' : ''}">
-      <span class="aspk-chip-label">${s.name}</span>
-      <span class="aspk-chip-meta">G${s.grade}</span>
-      ${accel ? `<span class="aspk-accel-flag" title="Grade-${s.tcapTestOverride.from} student taking ${s.tcapTestOverride.to}">↗ Accelerated</span>` : ''}
-      <button class="aspk-chip-x" onclick="assignRemoveStudent('${s.id}')" aria-label="Remove ${s.name}">×</button>
-    </span>`;
-  }).join('');
-
-  const allSelectedChips = tagChips + studentChips;
-
-  /* Accelerated footnote — surface under chip strip if any effective
-     student carries an override. Counted from the effective roster (not
-     just individual picks) so a tag covering an accelerated student also
-     triggers the disclosure. */
+  /* TCAP accelerated footnote — counted from the effective roster
+   * (not just individual picks) so a class header tick that grabs an
+   * accelerated student also triggers the disclosure. */
   let accelCount = 0;
   effectiveIds.forEach(sid => {
     const s = _assignStudentById(sid);
@@ -28163,90 +28064,74 @@ function _assignSectionStudents() {
       </div>`
     : '';
 
-  const summary = total > 0
-    ? `<div class="aspk-summary">
-        <span><b>${total}</b> student${total === 1 ? '' : 's'} selected${assignState.selectedTagIds.size > 0 ? ` across ${assignState.selectedTagIds.size} tag${assignState.selectedTagIds.size === 1 ? '' : 's'}${assignState.selectedStudentIds.size > 0 ? ` + ${assignState.selectedStudentIds.size} hand-picked` : ''}` : ''}</span>
-        <button class="aspk-clear" onclick="assignClearAllStudents()">Clear all</button>
-      </div>`
-    : '';
-
-  /* ─── Suggestions / empty state ─── */
-  const renderTagRow = (tag) => {
-    const kindLabel = tag.kind === 'course' ? 'Course' : tag.kind === 'class' ? 'Class' : tag.kind === 'grade' ? 'Grade' : 'Teacher';
-    return `<button class="aspk-suggest-row aspk-suggest-tag" onclick="assignAddTag('${tag.id}')">
-      <span class="aspk-suggest-tag-kind">${kindLabel}</span>
-      <span class="aspk-suggest-tag-label">${tag.label}</span>
-      <span class="aspk-suggest-tag-count">${tag.count} student${tag.count === 1 ? '' : 's'}</span>
-      <span class="aspk-suggest-add">+ Add</span>
+  const renderCheckbox = (state, onclick, ariaLabel) => {
+    // state = 'all' | 'partial' | 'none'
+    return `<button class="aspk-checkbox is-${state}" type="button" onclick="event.stopPropagation();${onclick}" aria-label="${ariaLabel}" aria-checked="${state === 'all'}" role="checkbox">
+      ${state === 'all' ? '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 7 12 13 4"/></svg>' : ''}
+      ${state === 'partial' ? '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="8" x2="13" y2="8"/></svg>' : ''}
     </button>`;
   };
-  const renderStudentRow = (s) => {
+
+  const renderStudentRow = (s, c) => {
+    const isSelected = (c.selectedStudentIds || new Set()).has(s.id);
     const accel = s.tcapTestOverride?.kind === 'accelerated';
-    const classTag = (s.tags || []).find(t => t.kind === 'class');
-    const ctx = classTag?.label || '';
-    return `<button class="aspk-suggest-row aspk-suggest-student" onclick="assignAddStudent('${s.id}')">
-      <span class="aspk-suggest-name">${s.name}</span>
-      <span class="aspk-suggest-grade">G${s.grade}</span>
-      <span class="aspk-suggest-ctx">${ctx}</span>
+    const initials = _assignAvatarInitials(s.name);
+    const hue = _assignAvatarHue(s.id);
+    return `<div class="aspk-student-row ${isSelected ? 'is-selected' : ''}" onclick="assignToggleStudent('${c.id}','${s.id}')">
+      ${renderCheckbox(isSelected ? 'all' : 'none', `assignToggleStudent('${c.id}','${s.id}')`, `${isSelected ? 'Deselect' : 'Select'} ${s.name}`)}
+      <span class="aspk-student-avatar" style="background:hsl(${hue} 70% 88%);color:hsl(${hue} 50% 30%)">${initials}</span>
+      <div class="aspk-student-info">
+        <span class="aspk-student-name">${s.name}</span>
+        <span class="aspk-student-email">${s.email || ''}</span>
+      </div>
       ${accel ? `<span class="aspk-accel-flag" title="Grade-${s.tcapTestOverride.from} student taking ${s.tcapTestOverride.to}">↗ Accelerated</span>` : ''}
-      <span class="aspk-suggest-add">+ Add</span>
-    </button>`;
+    </div>`;
   };
 
-  /* Suggestions panel — appears ONLY when there is typed query text.
-     Empty-state focus does not pop a panel (see assignSetSearch comment). */
-  let suggestBody = '';
-  if (assignState.suggestOpen) {
-    const q = (assignState.searchQuery || '').trim();
-    const sug = _assignSearchSuggestions();
-    const totalHits = sug.tags.length + sug.students.length;
-    if (totalHits === 0) {
-      suggestBody = `<div class="aspk-suggest-empty">No tags or students match "${q}".</div>`;
-    } else {
-      const tagBlock = sug.tags.length > 0
-        ? `<div class="aspk-suggest-group">
-            <div class="aspk-suggest-group-head">Tags · ${sug.tags.length}</div>
-            ${sug.tags.map(renderTagRow).join('')}
-          </div>` : '';
-      const studentBlock = sug.students.length > 0
-        ? `<div class="aspk-suggest-group">
-            <div class="aspk-suggest-group-head">Students · ${sug.students.length}</div>
-            ${sug.students.map(renderStudentRow).join('')}
-          </div>` : '';
-      const selectAll = totalHits > 1
-        ? `<div class="aspk-suggest-foot">
-            <button class="aspk-suggest-bulk" onclick="assignSelectAllResults()">Select all results: ${totalHits}</button>
-          </div>` : '';
-      suggestBody = tagBlock + studentBlock + selectAll;
-    }
-  }
+  const renderClassRow = (c) => {
+    const state = _assignClassSelectState(c);
+    const sel = (c.selectedStudentIds || new Set()).size;
+    const total = c.students.length;
+    const expanded = !!c.expanded;
+    const visibleStudents = c._matchedStudents || c.students;
+    const studentList = expanded
+      ? `<div class="aspk-student-list">${visibleStudents.map(s => renderStudentRow(s, c)).join('')}</div>`
+      : '';
+    return `<div class="aspk-class-block">
+      <div class="aspk-class-row" onclick="assignToggleClassExpansion('${c.id}')">
+        ${renderCheckbox(state, `assignToggleClassAllStudents('${c.id}')`, `Toggle all in ${c.name}`)}
+        <button type="button" class="aspk-class-trigger" onclick="event.stopPropagation();assignToggleClassExpansion('${c.id}')">
+          <span class="aspk-class-name">${c.name}</span>
+          <span class="aspk-class-count">(${sel}/${total})</span>
+        </button>
+        <span class="aspk-class-chevron ${expanded ? 'open' : ''}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </div>
+      ${studentList}
+    </div>`;
+  };
+
+  const classListBody = filtered.length === 0
+    ? `<div class="aspk-no-results">No classes or students match "${q}".</div>`
+    : filtered.map(renderClassRow).join('');
+
+  const toolbarRow = `<div class="aspk-toolbar">
+    <span class="aspk-toolbar-count ${total === 0 ? 'is-empty' : ''}">${total} student${total === 1 ? '' : 's'} selected</span>
+    <button type="button" class="aspk-toolbar-clear" onclick="assignClearAllStudents()" ${total === 0 ? 'disabled' : ''}>Clear all</button>
+  </div>`;
 
   return `
     <div class="aspk-search-wrap">
       <div class="aspk-search">
         <svg class="aspk-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search students, courses, periods, or teachers" value="${(assignState.searchQuery || '').replace(/"/g,'&quot;')}"
-          oninput="assignSetSearch(this.value)"
-          onfocus="assignFocusSearch()" />
-        <span class="aspk-search-hint">e.g. "Miguel", "Algebra I", "Period 1"</span>
+        <input type="text" placeholder="Search by name, course, period, class, or teacher" value="${(assignState.searchQuery || '').replace(/"/g,'&quot;')}"
+          oninput="assignSetSearch(this.value)" />
+      </div>
     </div>
-      ${suggestBody ? `<div class="aspk-suggest">${suggestBody}</div>` : ''}
-    </div>
-
-    ${allSelectedChips ? `
-      <div class="aspk-selected">
-        <div class="aspk-selected-head">Currently selected</div>
-        <div class="aspk-chip-strip">${allSelectedChips}</div>
-        ${summary}
-        ${accelFootnote}
-          </div>
-    ` : `
-      <div class="aspk-empty-roster">
-        <div class="aspk-empty-roster-icon">👥</div>
-        <div class="aspk-empty-roster-title">No students selected yet</div>
-        <div class="aspk-empty-roster-sub">Use the search above to add by tag (e.g. <b>Algebra I · Period 1</b>) or by individual name.</div>
-          </div>
-    `}
+    ${toolbarRow}
+    <div class="aspk-class-list">${classListBody}</div>
+    ${accelFootnote}
   `;
 }
 function _assignSectionProctor() {
@@ -28306,7 +28191,7 @@ function assignNextStep() {
   }
   const totalSelected = _assignTotalSelected();
   // Build a roster snapshot from the picker's effective student set
-  // (selectedTagIds expanded ∪ selectedStudentIds, deduped). The new
+  // (union of every class's selectedStudentIds, deduped). The new
   // session row in Monitor uses these names; ordering preserves the
   // seed roster's natural order so the demo rosters look stable.
   const effectiveIds = _assignEffectiveStudentIds();
