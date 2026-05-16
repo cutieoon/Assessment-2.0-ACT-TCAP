@@ -27565,7 +27565,7 @@ function renderAssignModal() {
         body: _assignSectionGrading(),
       })}
       ${assignAccordionCard({
-        id:'students', title:'Add students', subtitle:'Search by name, course, period, class, or teacher',
+        id:'students', title:'Add Classes or Students', subtitle:'Send invitations to classes or students',
         icon: ICON_USERS, tone:'people',
         value: totalSelected ? `${totalSelected} student${totalSelected > 1 ? 's' : ''} selected` : '',
         open: assignState.opens.students,
@@ -28079,7 +28079,7 @@ function _assignSectionStudents() {
     const hue = _assignAvatarHue(s.id);
     return `<div class="aspk-student-row ${isSelected ? 'is-selected' : ''}" onclick="assignToggleStudent('${c.id}','${s.id}')">
       ${renderCheckbox(isSelected ? 'all' : 'none', `assignToggleStudent('${c.id}','${s.id}')`, `${isSelected ? 'Deselect' : 'Select'} ${s.name}`)}
-      <span class="aspk-student-avatar" style="background:hsl(${hue} 70% 88%);color:hsl(${hue} 50% 30%)">${initials}</span>
+      <span class="aspk-student-avatar" style="background:hsl(${hue} 65% 55%);color:#fff">${initials}</span>
       <div class="aspk-student-info">
         <span class="aspk-student-name">${s.name}</span>
         <span class="aspk-student-email">${s.email || ''}</span>
@@ -28116,16 +28116,19 @@ function _assignSectionStudents() {
     ? `<div class="aspk-no-results">No classes or students match "${q}".</div>`
     : filtered.map(renderClassRow).join('');
 
+  const countLabel = total === 0
+    ? 'Selected (No students)'
+    : `Selected (${total} student${total === 1 ? '' : 's'})`;
   const toolbarRow = `<div class="aspk-toolbar">
-    <span class="aspk-toolbar-count ${total === 0 ? 'is-empty' : ''}">${total} student${total === 1 ? '' : 's'} selected</span>
-    <button type="button" class="aspk-toolbar-clear" onclick="assignClearAllStudents()" ${total === 0 ? 'disabled' : ''}>Clear all</button>
+    <span class="aspk-toolbar-count ${total === 0 ? 'is-empty' : ''}">${countLabel}</span>
+    <button type="button" class="aspk-toolbar-clear" onclick="assignClearAllStudents()" ${total === 0 ? 'disabled' : ''}>Clear All</button>
   </div>`;
 
   return `
     <div class="aspk-search-wrap">
       <div class="aspk-search">
         <svg class="aspk-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search by name, course, period, class, or teacher" value="${(assignState.searchQuery || '').replace(/"/g,'&quot;')}"
+        <input type="text" placeholder="Search classes or students..." value="${(assignState.searchQuery || '').replace(/"/g,'&quot;')}"
           oninput="assignSetSearch(this.value)" />
       </div>
     </div>
