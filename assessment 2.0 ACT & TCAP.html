@@ -6039,8 +6039,44 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
    Two-Part · Shared Stimulus card (Lv 2: typed + optional)
    Matches SBAC/Cambium "Shared stimulus" pattern. Top is a 5-tab
    type selector; body morphs based on selection.
+
+   Sticky behavior — when the editor scrolls past the stimulus card
+   so the teacher is editing Part A / B / scoring options, the card
+   pins to the top of the .ite-main scroll viewport in a compact
+   form. Click the "Expand" pill to peek at the full passage without
+   scrolling back up. Detected via an IntersectionObserver on the
+   .tp-stim-sentinel element rendered just above the card; see
+   iteAttachStimSticky() in the JS section.
    ──────────────────────────────────────────────────────────────── */
-.tp-stim-card{background:#fff;border:1px solid #e4e4e7;border-radius:14px;margin-bottom:18px;overflow:hidden}
+.tp-stim-card{background:#fff;border:1px solid #e4e4e7;border-radius:14px;margin-bottom:18px;overflow:hidden;position:sticky;top:0;z-index:12;transition:box-shadow .2s ease,border-radius .2s ease,margin-bottom .2s ease}
+.tp-stim-sentinel{height:1px;margin:-1px 0 0;pointer-events:none;visibility:hidden}
+.tp-stim-card.is-stuck{border-top-left-radius:0;border-top-right-radius:0;border-top-color:transparent;box-shadow:0 8px 18px -10px rgba(20,20,40,.22);margin-bottom:14px}
+.tp-stim-card .tp-stim-pinned-hint,.tp-stim-card .tp-stim-expand-btn{display:none}
+.tp-stim-card.is-stuck .tp-stim-pinned-hint{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#7c3aed;background:#faf7ff;border:1px solid #ede9fe;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
+.tp-stim-card.is-stuck .tp-stim-expand-btn{display:inline-flex;align-items:center;gap:4px;margin-left:auto;border:1px solid #e4e4e7;background:#fff;color:#52525b;font-size:11px;font-weight:600;padding:4px 10px;border-radius:7px;cursor:pointer;font-family:inherit;transition:.15s}
+.tp-stim-card.is-stuck .tp-stim-expand-btn:hover{border-color:#c4b5fd;color:#7c3aed;background:#faf7ff}
+.tp-stim-card.is-stuck .tp-stim-expand-btn .tp-stim-expand-ic{font-size:11px;line-height:1;display:inline-block;transition:transform .2s ease}
+.tp-stim-card.is-stuck.is-expanded .tp-stim-expand-btn .tp-stim-expand-ic{transform:rotate(180deg)}
+/* Stuck-collapsed: shrink everything to a single thin pinned bar */
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-head{padding:8px 18px 6px;border-bottom-color:transparent}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-title{margin-bottom:0}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-tabs{display:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-body{padding:0 18px 10px}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-body > .q-section-label{display:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-passage{min-height:0;height:48px;resize:none;font-size:12px;line-height:1.55;background:#fafafa;color:#52525b;border-color:#f4f4f5;padding:8px 12px;-webkit-mask-image:linear-gradient(to bottom,#000 60%,transparent);mask-image:linear-gradient(to bottom,#000 60%,transparent);pointer-events:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-meta{display:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-eq{padding:6px 12px;font-size:13px;background:#fafafa;color:#52525b;pointer-events:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-eq-preview{margin-top:4px;padding:6px 12px;font-size:13px;background:#fafafa}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-eq-preview .tp-stim-eq-render{font-size:14px}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-img-zone{padding:8px 12px}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-img-fields{display:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-img-preview{gap:10px}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-img-thumb{width:32px;height:32px;font-size:16px}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-table-wrap{max-height:64px;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 60%,transparent);mask-image:linear-gradient(to bottom,#000 60%,transparent);pointer-events:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-empty{padding:6px 10px}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-empty-ic,.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-empty-pick{display:none}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-empty-title{font-size:12px;margin-bottom:0}
+.tp-stim-card.is-stuck:not(.is-expanded) .tp-stim-empty-sub{display:none}
 .tp-stim-head{padding:14px 18px 0;border-bottom:1px solid #f4f4f5}
 .tp-stim-title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .tp-stim-title-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52525b}
@@ -20411,6 +20447,9 @@ function renderItemTypesEdit() {
   const cardWidth = WIDE_TYPES.has(t.id) ? 1240 : 880;
   document.getElementById('iteMain').innerHTML = `<div style="max-width:${cardWidth}px;margin:0 auto;width:100%">${renderIteMain(t)}</div>`;
   document.getElementById('iteProp').innerHTML = '';
+  // Wire the sticky-stimulus observer for any item type that renders a
+  // .tp-stim-card (currently Two-Part). Safe no-op for other types.
+  if (typeof iteAttachStimSticky === 'function') iteAttachStimSticky();
 }
 
 function renderIteSidebar() {
@@ -20812,16 +20851,52 @@ function renderTpStimulus(s) {
   }
 
   return `
+    <div class="tp-stim-sentinel" aria-hidden="true"></div>
     <div class="tp-stim-card">
       <div class="tp-stim-head">
         <div class="tp-stim-title">
           <span class="tp-stim-title-label">Shared stimulus</span>
           <span class="tp-stim-title-badge ${type==='none'?'opt':''}">${type==='none'?'Optional':'Active'}</span>
+          <span class="tp-stim-pinned-hint" title="Stimulus is pinned at top while you scroll">📌 Pinned</span>
+          <button class="tp-stim-expand-btn" onclick="iteTpToggleStimExpand()" title="Expand or collapse the pinned stimulus"><span class="tp-stim-expand-ic">⌃</span><span class="tp-stim-expand-label">Expand</span></button>
         </div>
         <div class="tp-stim-tabs" role="tablist" aria-label="Stimulus type">${tabs}</div>
       </div>
       <div class="tp-stim-body">${body}</div>
     </div>`;
+}
+
+// ─── Sticky stimulus observer ───
+// While the teacher scrolls down to edit Part A / Part B / scoring, the
+// shared stimulus card pins to the top of .ite-main in a compact form so
+// passage evidence stays visible. We watch a 1px sentinel placed just
+// above the card; once it scrolls out of the viewport, we toggle .is-stuck
+// on the card. The "Expand" pill toggles .is-expanded for a temporary
+// peek at the full passage without scrolling back up. Re-attached after
+// every iteRerender() because the editor wipes innerHTML.
+let _tpStimObserver = null;
+function iteAttachStimSticky() {
+  if (_tpStimObserver) { try { _tpStimObserver.disconnect(); } catch(e){} _tpStimObserver = null; }
+  const root = document.querySelector('.ite-main');
+  const sentinel = document.querySelector('.tp-stim-sentinel');
+  const card = document.querySelector('.tp-stim-card');
+  if (!root || !sentinel || !card) return;
+  _tpStimObserver = new IntersectionObserver(([entry]) => {
+    const rb = entry.rootBounds || root.getBoundingClientRect();
+    const stuck = !entry.isIntersecting && entry.boundingClientRect.top <= rb.top;
+    card.classList.toggle('is-stuck', stuck);
+    if (!stuck) card.classList.remove('is-expanded');
+    const lbl = card.querySelector('.tp-stim-expand-label');
+    if (lbl) lbl.textContent = card.classList.contains('is-expanded') ? 'Collapse' : 'Expand';
+  }, { root, threshold: 0 });
+  _tpStimObserver.observe(sentinel);
+}
+function iteTpToggleStimExpand() {
+  const card = document.querySelector('.tp-stim-card');
+  if (!card) return;
+  card.classList.toggle('is-expanded');
+  const lbl = card.querySelector('.tp-stim-expand-label');
+  if (lbl) lbl.textContent = card.classList.contains('is-expanded') ? 'Collapse' : 'Expand';
 }
 
 // ─── Reading Set / Passage-Based · interactive catalog editor ─────────────
@@ -22459,7 +22534,9 @@ const ITEM_STUDENT_BUILDERS = {
     // When the question carries a split-view stimulus (passage already on
     // the left pane), suppress the inline passage block. Otherwise, fall
     // back to the legacy single-pane layout that inlines passageHtml.
-    const hasStimulus = !!(q.content && q.content.stimulus);
+    // `q` is undefined when the catalog "Try as student" preview calls this
+    // builder with just `t` — guard accordingly.
+    const hasStimulus = !!(q && q.content && q.content.stimulus);
     const passage = (c.passageHtml || '').replace(/%B(\d+)%/g, (_, n) => a.b.includes(+n) ? 'selected' : '');
     return `
       <div class="its-q-stem">${c.stem || 'Read the passage. Then answer Part A and Part B.'}</div>
@@ -22542,7 +22619,9 @@ const ITEM_STUDENT_BUILDERS = {
     // already displayed in the left pane — suppress the legacy slide-in
     // trigger to avoid two ways of viewing the same content. Slide-in is
     // kept in the codebase for non-stimulus essays as a fallback.
-    const hasStimulus = !!(q.content && q.content.stimulus);
+    // `q` is undefined when the catalog "Try as student" preview calls this
+    // builder with just `t` — guard accordingly.
+    const hasStimulus = !!(q && q.content && q.content.stimulus);
     if (srcN > 0 && !hasStimulus) window._tcsActiveSources = sources;
     return `
       <div class="its-q-stem">${c.stem}</div>
