@@ -1,0 +1,18 @@
+---
+description: Use Kira design system for assessment prototype UI/UX changes
+globs: *.html
+alwaysApply: false
+---
+
+# Kira Prototype Design
+
+When the user asks to adjust, redesign, polish, or review the assessment prototype UI/UX, first load and follow:
+
+`/Users/xiaoyue/.cursor/skills/kira-design-system/SKILL.md`
+
+Apply the Kira production design system as the default source of truth:
+
+- Use Kira brand purple and semantic state colors before inventing new colors.
+- Prefer Kira spacing, radius, subtle borders, and low-shadow card patterns.
+- Remove duplicate UI affordances before adding more components.
+- Keep prototype changes aligned with production Kira interaction patterns when possible.

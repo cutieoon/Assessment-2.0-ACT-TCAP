@@ -785,28 +785,21 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .sp-act-btn:disabled:hover{background:#fff;border-color:#e4e4e7}
 .tcap-controls-hint{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;border:1px dashed #c4b5fd;background:#f5f3ff;color:#5b21b6;font-size:11px;font-weight:700;letter-spacing:.2px}
 .tcap-controls-hint .arr{margin-left:6px;font-size:13px;line-height:1}
-/* ── TCAP Subpart Control Rail ──────────────────────────────────────────
-   Horizontal row of per-SP cards on Monitor, sitting between the hero card
-   (schedule + AI insights) and the Overview / Analytics tabs. Replaces the
-   tab-row dropdown + quick-actions pattern: every SP's runtime state and
-   action buttons are simultaneously visible, so the proctor never has to
-   "switch then act". Click card body → switches active SP for the panels
-   below; click an action button → operates on THAT card's SP regardless of
-   which card is currently active. */
-.sp-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:0 0 28px;padding-bottom:16px;border-bottom:1px solid #f1f1f5;transition:opacity .15s,filter .15s}
+/* ── TCAP Subpart Rail + focused action panel ───────────────────────────
+   Monitor is a linear proctoring flow, not four independent cards. The rail
+   gives compact status for every Subpart; the panel below exposes actions
+   only for the selected SP so the teacher sees one clear next decision. */
+.sp-rail-shell{margin:0 0 24px;padding-bottom:16px;border-bottom:1px solid #f1f1f5;transition:opacity .15s,filter .15s}
+.sp-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin:0}
 /* Cut Scores tab dims the SP rail because cut scores apply to the
    composite scale score, not per-Subpart. Keeps layout stable (no
    page jump on tab switch) and reinforces the lock chip in the tab
    strip that says "District-level · cut scores apply to composite". */
-.sp-rail.sp-rail-disabled{opacity:.45;filter:saturate(.55)}
-.sp-rail.sp-rail-disabled .sp-rail-card,
-.sp-rail.sp-rail-disabled .sp-act-btn{pointer-events:none;cursor:default}
-/* SP rail card — calm/neutral design. State color shows ONLY on the
-   permanent left spine; everything else (SP code, status pill, action
-   buttons) stays neutral so the row reads as "one set of cards" instead
-   of a 4-color collage. Active card = subtle shadow ring (no extra hue,
-   since state already owns the spine). */
-.sp-rail-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:14px 14px 14px 16px;border:1px solid #e4e4e7;border-radius:10px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;min-width:0;min-height:150px;overflow:hidden}
+.sp-rail-shell.sp-rail-disabled{opacity:.45;filter:saturate(.55)}
+.sp-rail-shell.sp-rail-disabled .sp-rail-card,
+.sp-rail-shell.sp-rail-disabled .sp-act-btn{pointer-events:none;cursor:default}
+/* SP rail cell — compact status only. Actions live in the selected panel. */
+.sp-rail-card{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px 12px 12px 14px;border:1px solid #e4e4e7;border-radius:10px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s;min-width:0;min-height:92px;overflow:hidden}
 .sp-rail-card:hover{border-color:#d8d4ee;background:#fafaff}
 /* Permanent left spine — the ONE place the state color lives */
 .sp-rail-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#e4e4e7;transition:background .15s}
@@ -855,10 +848,23 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .sp-rail-divider{height:1px;background:#f4f4f5;margin:2px -14px}
 /* Attention dot — static, small, no halo. Just enough to say "look here". */
 .sp-rail-attention{position:absolute;top:10px;right:10px;width:6px;height:6px;border-radius:50%;background:#ef4444;pointer-events:none;z-index:1}
-/* Action row — fixed min-height so every card's bottom edge aligns */
-.sp-rail-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:32px;margin-top:auto}
-.sp-rail-actions .sp-act-btn{flex:1 1 auto;justify-content:center;min-width:80px;height:30px;text-align:center}
-.sp-rail-actions .sp-act-btn.ghost{flex:1;justify-content:center;color:#15803d;background:#f0fdf4;border-color:#bbf7d0}
+.sp-rail-detail{margin-top:10px;display:grid;grid-template-columns:minmax(250px,.9fr) minmax(320px,1.25fr) auto;align-items:center;gap:14px;padding:12px 14px;border:1px solid #e4e4e7;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(24,24,27,.04)}
+.sp-rail-detail-main{display:flex;align-items:center;gap:12px;min-width:0}
+.sp-rail-detail-code{display:grid;place-items:center;min-width:38px;height:32px;padding:0 8px;border-radius:8px;background:#f5f3ff;color:#5b21b6;font-size:12px;font-weight:900;letter-spacing:.3px;flex-shrink:0}
+.sp-rail-detail-copy{min-width:0}
+.sp-rail-detail-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:850;color:#18181b;line-height:1.25}
+.sp-rail-detail-sub{margin-top:4px;font-size:11.5px;color:#52525b;line-height:1.35}
+.sp-session-context{min-width:0;border-left:1px solid #eef0f4;padding-left:14px}
+.sp-session-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;color:#71717a;line-height:1.35}
+.sp-session-meta b{color:#18181b;font-weight:800;font-variant-numeric:tabular-nums}
+.sp-session-ai{margin-top:6px;font-size:11.5px;color:#3f3f46;line-height:1.4}
+.sp-session-ai b{color:#18181b}
+.sp-session-end{border:none;background:transparent;color:#b91c1c;font-size:11px;font-weight:800;font-family:inherit;cursor:pointer;padding:0}
+.sp-session-end:hover{text-decoration:underline}
+.sp-rail-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.sp-rail-actions .sp-act-btn{justify-content:center;min-width:92px;height:32px;text-align:center}
+.sp-rail-actions .sp-act-btn.ghost{justify-content:center;color:#15803d;background:#f0fdf4;border-color:#bbf7d0;cursor:default}
+.sp-rail-actions .sp-act-btn.locked-note{min-width:0;color:#71717a;background:#fafafa;border-color:#e4e4e7;cursor:default}
 .monitor-control-bar{display:grid;grid-template-columns:1.35fr 1fr auto;gap:16px;align-items:center;margin-bottom:16px;padding:14px 16px;border:1px solid #e4e4e7;border-radius:14px;background:#fff;box-shadow:0 1px 2px rgba(24,24,27,.04)}
 .monitor-control-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:15px;font-weight:800;color:#18181b}
 .monitor-mode-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:#f5f3ff;color:#5b21b6;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px}
@@ -873,11 +879,16 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-action-btn.primary{background:#6040ca;color:#fff;border-color:#6040ca}
 .monitor-action-btn.danger{color:#b91c1c;border-color:#fecaca;background:#fff}
 .join-code-menu{position:relative}
-.join-code-dropdown{position:absolute;top:40px;right:0;width:260px;background:#fff;border:1px solid #e4e4e7;border-radius:14px;box-shadow:0 18px 45px rgba(15,23,42,.16);padding:12px;z-index:60;display:none}
+.join-code-dropdown{position:absolute;top:40px;right:0;width:274px;background:#fff;border:1px solid #e4e4e7;border-radius:10px;box-shadow:0 12px 28px rgba(15,23,42,.16);padding:6px;z-index:60;display:none}
 .join-code-dropdown.open{display:block}
-.join-code-value{border:1px solid #e4e4e7;background:#fafafa;border-radius:12px;padding:12px;text-align:center;font-size:24px;font-weight:900;letter-spacing:1px;color:#18181b;margin:8px 0}
-.join-code-dropdown button{width:100%;height:34px;border:1px solid #e4e4e7;background:#fff;border-radius:9px;font-size:12px;font-weight:800;color:#18181b;cursor:pointer;font-family:inherit;margin-top:6px}
-.join-code-feedback{min-height:16px;margin-top:8px;font-size:11px;font-weight:800;color:#16a34a;text-align:center}
+.join-code-item{width:100%;height:58px;border:none;background:#fff;border-radius:6px;padding:0 16px;display:flex;align-items:center;gap:18px;color:#18181b;font-family:inherit;font-size:18px;font-weight:500;text-align:left}
+.join-code-item.status{background:#f4f4f5;color:#18181b}
+.join-code-item.action{cursor:pointer}
+.join-code-item.action:hover{background:#fafafa}
+.join-code-item svg{width:20px;height:20px;flex-shrink:0;color:#71717a}
+.join-code-item.status svg{color:#16a34a}
+.join-code-divider{height:1px;background:#e4e4e7;margin:6px -6px}
+.join-code-feedback{display:none}
 .ai-insights-panel{display:none;margin-bottom:16px;border:1px solid #ddd6fe;background:linear-gradient(180deg,#fff,#faf9ff);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(96,64,202,.08)}
 .ai-insights-panel.open{display:block}
 .ai-insights-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
@@ -914,6 +925,7 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-hero-title-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;line-height:1.25}
 .monitor-hero-title{font-size:22px;font-weight:600;color:#190d40}
 .monitor-hero-subtitle{font-size:18px;font-weight:500;color:#6d6d6d}
+.monitor-title-code{display:inline-flex;align-items:center;position:relative;margin-left:4px;vertical-align:middle}
 .monitor-hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px;font-size:12px;color:#190d40}
 .monitor-hero-meta .meta-creator{display:inline-flex;align-items:center;gap:6px}
 .monitor-hero-meta .meta-avatar{width:18px;height:18px;border-radius:999px;background:#ddd6fe;color:#5b21b6;font-size:10px;font-weight:800;display:grid;place-items:center}
@@ -921,11 +933,11 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-hero-meta .meta-modified{display:inline-flex;align-items:center;gap:6px;color:#190d40}
 .monitor-hero-meta svg{width:14px;height:14px;stroke-width:2;stroke:currentColor;fill:none}
 .monitor-hero-cta{display:flex;align-items:center;gap:10px;margin-top:14px}
-.session-code-btn{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:999px;border:1px solid #e4e4e7;background:#fff;color:#18181b;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
+.session-code-btn{display:inline-flex;align-items:center;gap:14px;height:48px;padding:0 22px;border-radius:999px;border:1px solid #e4e4e7;background:#fff;color:#18181b;font-size:18px;font-weight:650;font-family:inherit;cursor:pointer;box-shadow:0 1px 2px rgba(15,23,42,.03)}
 .session-code-btn:hover{background:#fafafa}
 .session-code-btn:disabled{opacity:.5;cursor:not-allowed}
-.session-code-btn .qr-ic{width:16px;height:16px}
-.session-code-btn .chev{width:14px;height:14px;color:#71717a}
+.session-code-btn .qr-ic{width:20px;height:20px}
+.session-code-btn .chev{width:18px;height:18px;color:#18181b}
 .monitor-hero-insights{position:relative;margin-top:16px;border-radius:10px;padding:2px;background:linear-gradient(90deg,#e35290,#7452e4,#026bdb);min-height:120px}
 .monitor-hero-insights .insights-body{background:#ebf7ff;border-radius:8px;padding:16px 18px;min-height:116px}
 .monitor-hero-insights .insights-head{display:flex;align-items:center;gap:6px;margin-bottom:6px;color:#012d5c;font-weight:600;font-size:13px;flex-wrap:wrap}
@@ -1014,10 +1026,12 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
    chrome". This block dials everything back to one calmer surface:
    no cover, smaller title, single-line AI insights inline, horizontal
    time timeline, low-contrast End Session. */
-.monitor-hero.tcap-monitor{padding:16px 18px;gap:32px}
+.monitor-hero.tcap-monitor{display:flex;flex-direction:column;padding:16px 18px;gap:12px}
 .monitor-hero.tcap-monitor .monitor-hero-cover{display:none}
 .monitor-hero.tcap-monitor .monitor-hero-top{gap:0}
 .monitor-hero.tcap-monitor .monitor-hero-title{font-size:18px;font-weight:700}
+.monitor-hero.tcap-monitor .monitor-title-code{margin-left:8px}
+.monitor-hero.tcap-monitor .monitor-title-code .session-code-btn{height:34px;font-size:13px;padding:0 14px;gap:8px}
 .monitor-hero.tcap-monitor .monitor-hero-subtitle{display:none}
 .monitor-hero.tcap-monitor .monitor-hero-meta{font-size:11px;color:#71717a;margin-top:4px;gap:8px}
 .monitor-hero.tcap-monitor .monitor-hero-meta .meta-avatar{width:16px;height:16px;font-size:9px;background:#f1f1f5;color:#71717a}
@@ -1025,9 +1039,19 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-hero.tcap-monitor .monitor-hero-meta .meta-creator{color:#71717a}
 .monitor-hero.tcap-monitor .monitor-hero-meta svg{width:11px;height:11px;color:#a1a1aa}
 .monitor-hero.tcap-monitor .monitor-hero-cta{margin-top:10px}
-.monitor-hero.tcap-monitor .session-code-btn{height:30px;font-size:12px;padding:0 12px}
-.monitor-hero.tcap-monitor .session-code-btn .qr-ic{width:13px;height:13px}
-.monitor-hero.tcap-monitor .session-code-btn .chev{width:12px;height:12px}
+.monitor-hero.tcap-monitor .session-code-btn{height:34px;font-size:13px;padding:0 14px}
+.monitor-hero.tcap-monitor .session-code-btn .qr-ic{width:15px;height:15px}
+.monitor-hero.tcap-monitor .session-code-btn .chev{width:14px;height:14px}
+.monitor-hero.tcap-monitor .monitor-hero-insights{display:none}
+/* TCAP header timing meta — replaces the old right-side timer card. */
+.monitor-hero.tcap-monitor .tcap-session-meta-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:10px 12px;border:1px solid #eef0f4;border-radius:10px;background:#fafafa;flex-wrap:wrap}
+.monitor-hero.tcap-monitor .tcap-session-meta-group{display:flex;align-items:center;gap:16px;flex-wrap:wrap;min-width:0}
+.monitor-hero.tcap-monitor .tcap-session-meta-item{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.monitor-hero.tcap-monitor .tcap-session-meta-item .lab{font-size:10px;font-weight:800;color:#a1a1aa;text-transform:uppercase;letter-spacing:.45px}
+.monitor-hero.tcap-monitor .tcap-session-meta-item .val{font-size:13px;font-weight:700;color:#18181b;font-variant-numeric:tabular-nums}
+.monitor-hero.tcap-monitor .tcap-session-meta-item .date{font-size:11px;font-weight:500;color:#71717a}
+.monitor-hero.tcap-monitor .tcap-session-end{background:transparent;border:0;color:#b91c1c;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;padding:4px 6px;border-radius:6px}
+.monitor-hero.tcap-monitor .tcap-session-end:hover{background:#fef2f2;color:#991b1b}
 /* AI insights — strip gradient border + colored bg, inline as a low-key block */
 .monitor-hero.tcap-monitor .monitor-hero-insights{margin-top:12px;padding:0;background:transparent;min-height:0;border-radius:0}
 .monitor-hero.tcap-monitor .monitor-hero-insights .insights-body{background:transparent;padding:10px 12px;min-height:0;border-radius:8px;border:1px solid #ece9fb;background:#fbfaff}
@@ -1037,8 +1061,8 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-hero.tcap-monitor .tcap-insights-narrative{font-size:12px;color:#3f3f46;line-height:1.5;margin-top:4px}
 .monitor-hero.tcap-monitor .tcap-insights-narrative .row{margin-bottom:2px;gap:6px}
 .monitor-hero.tcap-monitor .tcap-insights-narrative .row .ico{width:13px;font-size:11px}
-/* Right column — collapse the giant disc + bring everything closer */
-.monitor-hero.tcap-monitor .monitor-hero-right{min-height:0;align-items:flex-start}
+/* TCAP no longer uses a separate right-side timer card; timing lives in header meta. */
+.monitor-hero.tcap-monitor .monitor-hero-right{display:none}
 /* ─── TCAP monitor — compact shadcn-flavored window strip ───
  * The default ACT/SAT timer-card is a vertical hero (big circular timer
  * on top, status + actions below). For TCAP we collapse it into a
@@ -1058,6 +1082,9 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-hero.tcap-monitor .timer-card .timer-head-limit b{font-size:14px;font-weight:600;color:#18181b;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
 .monitor-hero.tcap-monitor .timer-status-pill{padding:3px 10px;margin-top:0;border:1px solid #f4f4f5;background:#fff}
 .monitor-hero.tcap-monitor .timer-status-pill .label{font-size:11px;font-weight:600;letter-spacing:.2px}
+/* TCAP status is subpart-scoped and already appears on each SP card.
+   Hide the timer-level status pill so "Paused" doesn't read as assignment-wide. */
+.monitor-hero.tcap-monitor .timer-status-pill{display:none!important}
 
 /* Window strip — single horizontal row of "from → until", with a thin
    progress bar underneath. Implemented as a CSS grid so we can place
@@ -2966,6 +2993,15 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .rte-bar .rte-hl:hover{background:#f5f3ff;color:#6d28d9}
 .rte-bar .rte-hl.is-disabled{color:#a1a1aa;cursor:not-allowed}
 .rte-bar .rte-hl.is-disabled:hover{background:transparent;color:#a1a1aa}
+/* ACT English [*] insertion-marker tool — drops a non-editable [*] chip
+   at the caret position, anchored to the currently active passage question.
+   Visually distinct from .rte-hl (monospace + brackets) so teachers can
+   tell the two passage-anchoring tools apart at a glance. */
+.rte-bar .rte-marker{
+  padding:0 10px;gap:4px;color:#7c3aed;font-weight:700;font-size:11px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.3px;
+}
+.rte-bar .rte-marker:hover{background:#f5f3ff;color:#6d28d9}
 /* Highlighted reference in passage that corresponds to current question */
 .passage-text-panel .q-ref{
   padding:1px 2px;border-radius:2px;cursor:pointer;transition:.15s;
@@ -3102,6 +3138,13 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
   color:#fff !important;transform:scale(1.15);
   transition:transform .08s,background .08s;
 }
+/* ── Carousel mode for passage-bound questions ────────────────────────────
+   One slide visible at a time; dots strip at the top is the navigator.
+   Stack-mode (all slides at once) was prototyped and reverted — kept as a
+   commented experiment in case we revisit. Brief flash on slide-switch is
+   retained to give a visual ack when a dot is clicked.                     */
+.pq-slide{border-radius:8px;transition:background .35s ease-out}
+.pq-slide.pq-flash{background:rgba(124,58,237,.10)}
 /* Question slide header — mirrors the standalone .q-card-head layout so
    passage-bound and standalone questions read identically. The numbered
    badge keeps its purple Kira fill so users still recognize "this is
@@ -4663,6 +4706,48 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .heat-cell.high{background:#dcfce7;color:#047857}
 .heat-cell.mid{background:#fef3c7;color:#a16207}
 .heat-cell.low{background:#fee2e2;color:#b91c1c}
+.tcap-std-list{display:flex;flex-direction:column;gap:10px}
+.tcap-std-card{width:100%;border:1px solid #e6e6e6;background:#fff;border-radius:12px;padding:13px 14px;display:grid;grid-template-columns:minmax(220px,1.1fr) minmax(280px,1.5fr);gap:18px;align-items:center;text-align:left;font-family:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.tcap-std-card:hover{border-color:#e0dbff;box-shadow:0 4px 6px rgba(0,0,0,.05),0 2px 4px rgba(0,0,0,.04);transform:translateY(-1px)}
+.tcap-std-code{font-size:13px;font-weight:900;color:#18181b;letter-spacing:.2px}
+.tcap-std-name{margin-top:3px;font-size:11px;color:#71717a;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcap-std-meta{margin-top:7px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;color:#71717a;font-weight:750}
+.tcap-std-risk{color:#d31510;background:#ffebe7;border:1px solid #ffcdc3;border-radius:6px;padding:2px 7px}
+.tcap-std-bar{height:14px;border-radius:999px;overflow:hidden;display:flex;background:#f4f4f5;border:1px solid #e4e4e7}
+.tcap-std-seg{height:100%;min-width:2px;position:relative}
+.tcap-std-seg:hover{filter:saturate(1.2) brightness(.98)}
+.tcap-std-counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.tcap-std-count{font-size:10px;color:#71717a;font-weight:800;white-space:nowrap}
+.tcap-std-drawer-overlay{position:fixed;inset:0;background:rgba(24,24,27,.28);z-index:10020;opacity:0;pointer-events:none;transition:opacity .18s}
+.tcap-std-drawer-overlay.open{opacity:1;pointer-events:auto}
+.tcap-std-drawer{position:fixed;top:0;right:0;width:min(520px,94vw);height:100vh;background:#fff;border-left:1px solid #e4e4e7;box-shadow:-16px 0 36px rgba(15,23,42,.16);z-index:10021;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s ease}
+.tcap-std-drawer.open{transform:translateX(0)}
+.tcap-std-drawer-head{padding:18px 20px;border-bottom:1px solid #eef0f4;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.tcap-std-drawer-kicker{font-size:10px;font-weight:900;color:#6040ca;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.tcap-std-drawer-title{font-size:18px;font-weight:900;color:#18181b;line-height:1.25}
+.tcap-std-drawer-sub{font-size:12px;color:#71717a;margin-top:5px;line-height:1.45}
+.tcap-std-drawer-close{width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:#71717a;font-size:20px;cursor:pointer;font-family:inherit}
+.tcap-std-drawer-close:hover{background:#f4f4f5;color:#18181b}
+.tcap-std-drawer-body{flex:1;overflow:auto;padding:18px 20px 24px}
+.tcap-std-student-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #f4f4f5}
+.tcap-std-student-row:last-child{border-bottom:none}
+.tcap-std-student-main{display:flex;align-items:center;gap:10px;min-width:0}
+.tcap-std-student-avatar{width:32px;height:32px;border-radius:999px;background:#f1edff;color:#6040ca;border:1px solid #e0dbff;display:grid;place-items:center;font-size:11px;font-weight:900;letter-spacing:.2px;flex-shrink:0}
+.tcap-std-student-name{font-size:13px;font-weight:850;color:#18181b}
+.tcap-std-student-meta{font-size:11px;color:#71717a;margin-top:3px}
+.tcap-std-score{font-size:13px;font-weight:900;font-variant-numeric:tabular-nums;border-radius:7px;padding:5px 8px}
+.tcap-cut-ranges{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.tcap-cut-card{border:1px solid #e6e6e6;border-radius:12px;background:#fff;padding:14px 14px 13px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.tcap-cut-card .label{font-size:12px;font-weight:900;letter-spacing:.15px;margin-bottom:8px}
+.tcap-cut-card .range{font-size:24px;font-weight:900;color:#383a42;font-variant-numeric:tabular-nums;line-height:1}
+.tcap-cut-card .desc{font-size:11px;color:#6d6d6d;line-height:1.45;margin-top:9px}
+.tcap-cut-details{margin-top:16px;border:1px solid #e6e6e6;border-radius:12px;background:#fff;overflow:hidden}
+.tcap-cut-details summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;font-size:13px;font-weight:850;color:#383a42}
+.tcap-cut-details summary::-webkit-details-marker{display:none}
+.tcap-cut-details summary .hint{font-size:11px;font-weight:600;color:#6d6d6d}
+.tcap-cut-details summary .chev{color:#7452e4;font-size:13px}
+.tcap-cut-details[open] summary{border-bottom:1px solid #e6e6e6;background:#fafafa}
+.tcap-cut-edit-body{padding:16px}
 .heat-cell.empty{background:#f8fafc;color:#cbd5e1;border-color:#f1f5f9}
 .heat-cell.highlight{outline:2px solid #ef4444;outline-offset:2px;background:#fee2e2}
 @media (max-width:1100px){.act-score-layout{grid-template-columns:1fr}.act-core-grid,.act-derived-grid,.act-readiness-grid,.act-compare-grid{grid-template-columns:1fr}.act-score-head{flex-direction:column}}
@@ -8044,6 +8129,29 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .rs-ptab .rs-ptab-label-editing{background:#fff;color:#18181b;outline:none;box-shadow:0 0 0 2px rgba(124,58,237,.35);cursor:text;overflow:visible;text-overflow:clip;max-width:none;white-space:normal}
 .rs-ptab-add{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:6px 10px;border-radius:7px;border:1px dashed #c4b5fd;background:#fff;color:#7c3aed;cursor:pointer;font-family:inherit;white-space:nowrap}
 .rs-ptab-add:hover{background:#f5f3ff;border-color:#7c3aed}
+.rs-ptab-add.disabled{opacity:.45;cursor:not-allowed;border-color:#e4e4e7;color:#a1a1aa;background:#fafafa}
+.rs-ptab-add.disabled:hover{background:#fafafa;border-color:#e4e4e7}
+/* Hover-reveal X on each passage tab; appears only when total passages > 1
+   so we always keep at least one passage in the set. */
+.rs-ptab .rs-ptab-del{display:none;align-items:center;justify-content:center;width:16px;height:16px;border-radius:4px;border:none;background:transparent;color:#a1a1aa;font-size:13px;line-height:1;cursor:pointer;padding:0;margin-left:2px;flex-shrink:0;font-family:inherit}
+.rs-ptab:hover .rs-ptab-del{display:inline-flex}
+.rs-ptab .rs-ptab-del:hover{background:#fee2e2;color:#dc2626}
+.rs-ptab.active .rs-ptab-del{color:#7c3aed}
+.rs-ptab.active .rs-ptab-del:hover{background:#fee2e2;color:#dc2626}
+/* Reading Set add-question picker — anchored to the + dot in the question
+   nav header. Reuses the .add-q-menu-item/aqm-icon visual language from
+   the Quick Test add-q-menu so authors see one consistent picker pattern
+   across every editor surface. */
+.rs-addq-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:300px;max-width:340px;background:#fff;border:1px solid #e4e4e7;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:60;display:none;max-height:420px;overflow-y:auto}
+.rs-addq-menu.open{display:block}
+.rs-addq-menu .add-q-menu-item{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;border:none;background:none;cursor:pointer;font-size:12px;color:#18181b;font-family:inherit;transition:background .1s;text-align:left}
+.rs-addq-menu .add-q-menu-item:hover{background:#f4f4f5}
+.rs-addq-menu .add-q-menu-item.phase2{opacity:.6;cursor:not-allowed}
+.rs-addq-menu .add-q-menu-item.phase2:hover{background:transparent}
+.rs-addq-menu .aqm-meta{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.rs-addq-menu .aqm-name{font-weight:600;color:#18181b;font-size:12px}
+.rs-addq-menu .aqm-hint{font-size:10.5px;color:#71717a;font-weight:400;line-height:1.35}
+.rs-addq-menu .add-q-menu-item.phase2 .aqm-name{color:#52525b}
 .rs-passage-shell .passage-split{min-height:440px;max-height:600px}
 .rs-passage-shell .passage-text-panel{font-size:14.5px;line-height:1.85;padding:22px 24px}
 .rs-passage-shell .passage-text-panel p{text-indent:0;margin-bottom:14px;display:flex;gap:8px;align-items:flex-start}
@@ -8858,7 +8966,7 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
           <div class="create-item" data-cat="standardized" style="position:relative;overflow:visible" onclick="openDrawer('tcap')">
             <span style="position:absolute;top:-7px;right:-7px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 2px 6px rgba(239,68,68,.35);letter-spacing:.3px;line-height:1.3;z-index:2;pointer-events:none">🔥 Hot</span>
             <div class="ci-icon" style="background:linear-gradient(135deg,#6040ca,#8b5cf6);color:#fff">🏛</div>
-            <div class="ci-body"><div class="ci-title">TCAP Assessment</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and personalized practice on submit</div></div>
+            <div class="ci-body"><div class="ci-title">TCAP Assessment</div><div class="ci-desc">Tennessee state diagnostic · Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) + 4 EOC courses (G9–10) · scale score, performance level, and standards gaps on submit</div></div>
           </div>
           <div class="create-item disabled" data-cat="custom">
             <div class="ci-icon" style="background:linear-gradient(135deg,#ede9fe,#fef3c7)">📄</div>
@@ -9062,50 +9170,6 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
     <div class="assign-modal-footer">
       <button class="btn-kira-outline" onclick="closeAssignModal()">Cancel</button>
       <button class="btn-kira-default" onclick="assignNextStep()" id="assignNextBtn">Assign</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== Practice Assign Confirm Modal ===================== -->
-<div class="stu-modal-overlay" id="practiceAssignModalOverlay" onclick="if(event.target===this)closePracticeAssignModal()">
-  <div class="stu-modal" onclick="event.stopPropagation()">
-    <div class="stu-modal-header">
-      <div class="modal-icon info" id="practiceAssignIcon">🎯</div>
-      <div>
-        <div class="stu-modal-title" id="practiceAssignTitle">Assign practice?</div>
-        <div style="font-size:12px;color:#71717a;margin-top:3px" id="practiceAssignSubtitle">Confirm before creating practice plans.</div>
-      </div>
-    </div>
-    <div class="stu-modal-body" id="practiceAssignBody"></div>
-    <div class="stu-modal-footer">
-      <button class="modal-cancel" id="practiceAssignCancelBtn" onclick="closePracticeAssignModal()">Cancel</button>
-      <button class="modal-confirm" id="practiceAssignConfirmBtn" onclick="confirmPracticeAssign()">Assign practice</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== TCAP Practice Preview Modal (Student) ===================== -->
-<!-- Used by TCAP Student Diagnostic Report. Opens via openTcapPracticePreview('all'|standardCode). -->
-<div class="stu-modal-overlay" id="tcapPracticePreviewOverlay" onclick="if(event.target===this)closeTcapPracticePreview()">
-  <div class="stu-modal" style="width:680px;max-width:94vw" onclick="event.stopPropagation()">
-    <div class="stu-modal-header">
-      <div class="modal-icon" id="tcapPracticePreviewIcon" style="background:#f5f3ff;color:#5b21b6">📋</div>
-      <div style="min-width:0">
-        <div class="stu-modal-title" id="tcapPracticePreviewTitle">Your practice plan</div>
-        <div style="font-size:12px;color:#71717a;margin-top:3px" id="tcapPracticePreviewSubtitle">~15 min · 5 standards</div>
-      </div>
-    </div>
-    <div class="stu-modal-body" id="tcapPracticePreviewBody"></div>
-    <div class="stu-modal-footer">
-      <button class="modal-cancel" id="tcapPracticePreviewDlBtn" onclick="downloadTcapPracticePreview()" style="display:flex;align-items:center;gap:7px">
-        <span id="tcapPracticePreviewDlIcon" style="display:inline-flex;align-items:center" aria-hidden="true">
-          <!-- Lucide Download icon (shadcn convention) — currentColor so it inherits button text color -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        </span>
-        <span id="tcapPracticePreviewDlLabel">Download as image</span>
-      </button>
-      <button class="modal-cancel" onclick="closeTcapPracticePreview()">Cancel</button>
-      <button class="modal-confirm" onclick="startTcapPracticeFromPlan()" style="background:#6040ca;box-shadow:0 2px 8px rgba(96,64,202,.25)" onmouseover="this.style.boxShadow='0 4px 16px rgba(96,64,202,.35)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(96,64,202,.25)'">Start practice ▸</button>
     </div>
   </div>
 </div>
@@ -9607,7 +9671,6 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
         <p style="font-size:13px;color:#52525b;margin:4px 0 0" id="tcapClassSubtitle"></p>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button onclick="tcapAssignRiskBucket()" style="background:#6040ca;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 1px 2px rgba(0,0,0,.04)">🎯 Assign practice to Risk Bucket</button>
         <button onclick="nav('tcap-config')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">⚙️ Cut-score profile</button>
       </div>
     </div>
@@ -12233,14 +12296,9 @@ const DW_TCAP_CONFIG = {
    * would promise UX we can't deliver this iteration. The mode array is
    * preserved as a single-entry list so downstream `find(m => m.id ===
    * dwTcap.mode)` calls keep returning a real label, and re-introducing
-   * additional modes later only requires appending entries here.
-   *
-   * NOTE: this does NOT remove the AI "practice plan" recommendations that
-   * appear in Analytics or in the student report — those are downstream
-   * AI-generated suggestions, separate from "create a practice assessment"
-   * as a teacher-authored mode. */
+   * additional modes later only requires appending entries here. */
   modes: [
-    { id:'diagnostic', label:'Diagnostic', desc:'Full TCAP-style assessment · predicts scale score + 4-level performance + per-standard gaps + practice plan', recommended:true }
+    { id:'diagnostic', label:'Diagnostic', desc:'Full TCAP-style assessment · predicts scale score + 4-level performance + per-standard gaps', recommended:true }
   ],
   /* Length picker removed for pilot — TDOE locks the per-Subpart item count
    * and time inside TCAP_SUBPART_BLUEPRINT (e.g. ELA G5 = 55 items / 235
@@ -12665,11 +12723,11 @@ const TEMPLATE_CONFIGS = {
     id:'tcap',
     title:'TCAP Diagnostic',
     eyebrow:'Standardized Template · Tennessee',
-    desc:'Grade-aware state diagnostic with performance-level prediction, cut-score reporting, and practice plan output.',
+    desc:'Grade-aware state diagnostic with performance-level prediction, cut-score reporting, and per-standard gaps.',
     complexity:'high',
     launch:'legacyDrawer',
     legacyType:'tcap',
-    chips:['Grade required','Scale score','Practice plan']
+    chips:['Grade required','Scale score','Standards gaps']
   },
   sat: {
     id:'sat',
@@ -13161,7 +13219,7 @@ function renderTemplateSetup() {
           <div class="ts-metric"><div class="val">~${totalTime}</div><div class="label">Minutes</div></div>
         </div>
         <div class="ts-summary-line"><strong>Grade ${dwTcap.grade}</strong> · ${subjectLabel}${(() => { const eoc = tcapEocCourseLabel(selectedSubjects[0]?.id, dwTcap.grade); return eoc ? ` <span style="color:#5b21b6;font-weight:700">→ ${eoc}</span>` : ''; })()} · ${tcapCleanModeLabel(modeObj.label)} · TDOE blueprint</div>
-        <div class="ts-summary-line">Outputs: TCAP scale score, 4-level prediction, standards gaps, and personalized practice path.</div>
+        <div class="ts-summary-line">Outputs: TCAP scale score, 4-level prediction, and standards gaps.</div>
         <div class="ts-summary-line">Teacher can optionally check AI suggested skills later in <strong>Review Skills</strong>, not inside this setup step.</div>
       </div>
 
@@ -13179,8 +13237,8 @@ function renderTemplateSetup() {
             <div class="ts-level">Above<br>Proficient</div>
           </div>
           <div class="ts-practice-preview">
-            <div class="ts-practice-row"><span>Razor's Edge students</span><strong>Auto-flagged</strong></div>
-            <div class="ts-practice-row"><span>Practice plan</span><strong>Generated after diagnostic</strong></div>
+            <div class="ts-practice-row"><span>Closest-to-Meeting students</span><strong>Flagged</strong></div>
+            <div class="ts-practice-row"><span>Standards gaps</span><strong>Ranked by mastery</strong></div>
             <div class="ts-practice-row"><span>Board-ready evidence</span><strong>Proficiency view</strong></div>
           </div>
         </div>
@@ -14048,7 +14106,7 @@ const KIRA_AUTO_ROUTES = [
   {
     id: 'tcap',
     pattern: /(\btcap\b|\btacp\b|\btcpa\b|tennessee\s+comprehensive|tnready)/,
-    greeting: "I see you're starting a <b>TCAP</b> assessment.<br><br>TCAP is the Tennessee state diagnostic — Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) plus 4 EOC courses (G9–10). Subpart structure follows the TDOE blueprint, and on submit students get a scale score, performance level, per-standard gaps, and a personalized practice plan.<br><br>Tell me the <b>grade</b> and <b>subject</b> and I'll draft it — or pick one below.",
+    greeting: "I see you're starting a <b>TCAP</b> assessment.<br><br>TCAP is the Tennessee state diagnostic — Achievement (ELA / Math / Science G3–8 · Social Studies G6–8) plus 4 EOC courses (G9–10). Subpart structure follows the TDOE blueprint, and on submit students get a scale score, performance level, and per-standard gaps.<br><br>Tell me the <b>grade</b> and <b>subject</b> and I'll draft it — or pick one below.",
     chips: ['Grade 5 ELA','Grade 7 Math','Grade 8 Science','Grade 10 English I (EOC)']
   },
   {
@@ -14225,7 +14283,7 @@ function askKiraDirectGenerate(route) {
     { icon:'🧭', label:'Reading your TCAP setup from the conversation...' },
     { icon:'🏛', label:'Applying grade, subject, purpose, and length...' },
     { icon:'📊', label:'Preparing scale-score and performance-level outputs...' },
-    { icon:'🎯', label:'Connecting standards gaps to practice recommendations...' },
+    { icon:'🎯', label:'Connecting standards gaps to analytics...' },
     { icon:'✅', label:'Creating TCAP assessment draft...' }
   ] : route === 'act' ? [
     { icon:'📝', label:'Reading your ACT practice request...' },
@@ -14524,7 +14582,7 @@ function openDrawer(type) {
 
 
       <div class="dw-hint info" style="background:#f5f3ff;border:1px solid #ddd6fe;color:#4c1d95;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.55;margin-top:12px">
-        <strong>After students submit:</strong> scale score, performance level, standards gaps, and a personalized practice plan.
+        <strong>After students submit:</strong> scale score, performance level, and standards gaps.
         <div style="font-size:11px;color:#6d28d9;margin-top:4px;font-weight:500">Scoring uses <b>TDOE default cut scores</b> · admins can override in Cut Score Configuration.</div>
       </div>
       <div id="dwTcapHsDisclosure">${renderTcapHsDisclosureBlock()}</div>
@@ -14627,7 +14685,7 @@ function drawerGenerate() {
     { icon: '📊', label: 'Applying district cut-score profile (Below → Exceeding)...' },
     { icon: '📖', label: `Sampling items across ${DW_TCAP_CONFIG.subjects.find(s=>s.id===dwTcap.subjects[0])?.label || 'selected subject'} reporting categories...` },
     { icon: '🎯', label: 'Calibrating predictive model weights (prior × coverage × difficulty)...' },
-    { icon: '🧠', label: 'Preparing personalized practice graph stub...' },
+    { icon: '🧠', label: 'Preparing standards-gap report...' },
     { icon: '✅', label: `${tcapModeLabel} form assembled & ready to assign.` }
   ] : [
     { icon: '📝', label: `Parsing ${testLabel} section blueprint...` },
@@ -14977,7 +15035,7 @@ const SESSION_DATA = [
     ],
     // Aggregated student-level view across all 4 SP (legacy reports, share-able to old grader)
     studentRows:[
-      { name:'Aaliyah J.', grade:'5', score:'342 · Meeting',        status:'Completed', reportState:'Pending Release', progress:'45 / 45', lastActivity:'Practice plan ready · weak standard RI.5.3' },
+      { name:'Aaliyah J.', grade:'5', score:'342 · Meeting',        status:'Completed', reportState:'Pending Release', progress:'45 / 45', lastActivity:'Standards gaps ready · weak standard RI.5.3' },
       { name:'Daniela R.', grade:'5', score:'318 · Approaching',     status:'Completed', reportState:'Pending Release', progress:'45 / 45', lastActivity:'Near Target · 6 pts to Meeting' },
       { name:'Jamila B.',  grade:'5', score:'305 · Approaching',     status:'Completed', reportState:'Locked',          progress:'45 / 45', lastActivity:'Needs teacher review · constructed response' },
       { name:'Gabriel P.', grade:'5', score:'272 · Below',           status:'Completed', reportState:'Pending Release', progress:'45 / 45', lastActivity:'Foundational Support · vocabulary + evidence' }
@@ -15228,7 +15286,7 @@ const SESSION_DATA = [
       }
     ],
     studentRows:[
-      { name:'Felix W.',  grade:'7', score:'335 · Meeting',   status:'Completed', reportState:'Released', progress:'40 / 40', lastActivity:'Composite released · Practice plan ready' },
+      { name:'Felix W.',  grade:'7', score:'335 · Meeting',   status:'Completed', reportState:'Released', progress:'40 / 40', lastActivity:'Composite released · standards gaps ready' },
       { name:'Grace H.',  grade:'7', score:'312 · Approaching',  status:'Completed', reportState:'Released', progress:'40 / 40', lastActivity:'Near Target · 8 pts to Meeting' }
     ]
   },
@@ -15651,21 +15709,22 @@ function tcapSpQuickActions(sp) {
   return { state, html: `<div class="sp-quick-actions" data-sp="${sp.code}">${pill}${actions}</div>` };
 }
 // ── Subpart Control Rail rendering ───────────────────────────────────────
-// Horizontal 4-card row (auto-fits 5+ SPs). Replaces the tab-row dropdown.
-// Card body click = switch active SP (drives Overview / Analytics panels);
-// action button click = operate on that SP regardless of active. Re-uses
-// tcapSpRuntimeState + tcapSpAction so any state change re-renders this row
-// alongside the rest of Monitor via renderSessionDetail().
+// Compact rail + selected action panel. The rail answers "where are we?";
+// the panel answers "what can I do next?" for the active SP. This preserves
+// TCAP's teacher-controlled unlock flow without making four cards compete.
 function renderTcapSubpartRail(session, opts) {
   if (!session || !Array.isArray(session.subparts) || session.testType !== 'tcap') return '';
   // `disabled` dims the entire rail + freezes interactions. Used when the
   // Cut Scores tab is active (cut scores are composite-only, not per-SP).
   const disabled = !!(opts && opts.disabled);
-  const cls = 'sp-rail' + (disabled ? ' sp-rail-disabled' : '');
+  const view = (opts && opts.view) || session;
+  const cls = 'sp-rail-shell' + (disabled ? ' sp-rail-disabled' : '');
   const ariaHidden = disabled ? ' aria-hidden="true" tabindex="-1"' : '';
-  return `<div class="${cls}"${ariaHidden}>${
-    session.subparts.map(sp => _tcapRailCard(session, sp)).join('')
-  }</div>`;
+  const selected = session.subparts.find(sp => sp.code === currentSubpartCode) || session.subparts[0];
+  return `<div class="${cls}"${ariaHidden}>
+    <div class="sp-rail">${session.subparts.map(sp => _tcapRailCard(session, sp)).join('')}</div>
+    ${_tcapRailDetailPanel(selected, session, view)}
+  </div>`;
 }
 function _tcapRailCard(session, sp) {
   const state = tcapSpRuntimeState(sp);
@@ -15680,7 +15739,6 @@ function _tcapRailCard(session, sp) {
   // stop propagation so confirming an action doesn't double-switch.
   const switchHandler = isLocked ? '' : `onclick="setActiveSubpart('${sp.code}');renderSessionDetail()"`;
   const meta = _tcapRailMeta(sp, state);
-  const actions = _tcapRailActions(sp, state);
   const attention = _tcapRailAttentionDot(sp, state);
   const tlim = sp.timeLimitMinutes | 0;
   const timeChip = tlim > 0
@@ -15695,7 +15753,6 @@ function _tcapRailCard(session, sp) {
     </div>
     <span class="sp-rail-state ${state}"><span class="dot"></span>${label}</span>
     ${meta ? `<div class="sp-rail-meta">${meta}</div>` : ''}
-    <div class="sp-rail-actions" onclick="event.stopPropagation()">${actions}</div>
   </div>`;
 }
 // Live elapsed minutes for a Subpart's "in progress" rail card. Reads
@@ -15777,13 +15834,70 @@ function _tcapRailAttentionDot(sp, state) {
   if (behind <= 0) return '';
   return `<span class="sp-rail-attention" title="${behind} student${behind === 1 ? '' : 's'} need${behind === 1 ? 's' : ''} attention"></span>`;
 }
+function _tcapRailDetailPanel(sp, session, view) {
+  if (!sp) return '';
+  const state = tcapSpRuntimeState(sp);
+  const label = TCAP_SP_STATE_LABEL[state] || 'Locked';
+  const meta = _tcapRailMeta(sp, state);
+  const actions = _tcapRailActions(sp, state);
+  const subtitle = _tcapRailDetailSubtitle(sp, state);
+  const context = _tcapRailSessionContext(sp, session, view);
+  return `<div class="sp-rail-detail">
+    <div class="sp-rail-detail-main">
+      <span class="sp-rail-detail-code">${sp.code}</span>
+      <div class="sp-rail-detail-copy">
+        <div class="sp-rail-detail-title">
+          <span>${sp.label || 'Subpart'}</span>
+          <span class="sp-rail-state ${state}"><span class="dot"></span>${label}</span>
+          ${meta ? `<span class="sp-rail-meta">${meta}</span>` : ''}
+        </div>
+        <div class="sp-rail-detail-sub">${subtitle}</div>
+      </div>
+    </div>
+    ${context}
+    <div class="sp-rail-actions">${actions}</div>
+  </div>`;
+}
+function _tcapRailDetailSubtitle(sp, state) {
+  const tlim = sp.timeLimitMinutes ? `${sp.timeLimitMinutes} min TDOE-locked time` : 'TDOE-locked subpart';
+  if (state === 'ready') return `${tlim}. Unlock when the class is ready to begin this Subpart.`;
+  if (state === 'in_progress') return `${sp.behindPaceCount || 0} student${(sp.behindPaceCount || 0) === 1 ? '' : 's'} behind pace. Pause or end only when needed.`;
+  if (state === 'paused') return `Timers are frozen for students mid-task. Resume to continue, or end to auto-submit remaining work.`;
+  if (state === 'submitted' || state === 'released') return `This Subpart is closed for the current cohort. Review results in the tabs below.`;
+  if (state === 'locked') return `Locked until the prior Subpart is submitted or released.`;
+  return tlim;
+}
+function _tcapRailSessionContext(sp, session, view) {
+  const w = parseScheduleWindow(view || session || {});
+  const limitMin = (view && view.timeLimitMinutes) || sp.timeLimitMinutes || (session && session.timeLimitMinutes) || 45;
+  const state = tcapSpRuntimeState(sp);
+  const inProgress = (view && view.inProgress) || sp.inProgress || 0;
+  const behindPace = state === 'in_progress' || state === 'paused'
+    ? Math.max(2, Math.floor(inProgress * 0.35))
+    : 0;
+  const insight = (() => {
+    if (state === 'ready') return `Unlock when students are seated and ready. Auto-submit uses the Subpart window.`;
+    if (state === 'in_progress') return `<b>${behindPace} students</b> 10+ min behind pace. Auto-submit fires at window close.`;
+    if (state === 'paused') return `<b>${sp.inProgress || 0} frozen</b>. Resume to continue, or end to auto-submit remaining work.`;
+    if (state === 'submitted' || state === 'released') return `Subpart closed. Review results below; composite score appears once all Subparts are submitted.`;
+    return `Unlocks after the prior Subpart ends.`;
+  })();
+  return `<div class="sp-session-context">
+    <div class="sp-session-meta">
+      <span>Duration <b>${limitMin} min</b></span>
+      <span>Window <b>${w.from.time} - ${w.until.time}</b> ${w.from.date}</span>
+      <button class="sp-session-end" onclick="openEndAssignmentModal()">End session</button>
+    </div>
+    <div class="sp-session-ai"><b>AI insight</b> · ${insight}</div>
+  </div>`;
+}
 function _tcapRailActions(sp, state) {
   const btn = (action, klass, html) => `<button class="sp-act-btn ${klass}" onclick="tcapSpAction('${sp.code}','${action}')">${html}</button>`;
-  if (state === 'ready')        return btn('unlock','primary','▶ Unlock SP');
-  if (state === 'in_progress')  return btn('pause','','⏸ Pause') + btn('end','danger','⏹ End SP');
-  if (state === 'paused')       return btn('resume','primary','▶ Resume') + btn('end','danger','⏹ End SP');
-  if (state === 'submitted' || state === 'released') return `<span class="sp-act-btn ghost">✅ Submitted</span>`;
-  if (state === 'locked')       return `<button class="sp-act-btn" disabled>🔒 Locked</button>`;
+  if (state === 'ready')        return btn('unlock','primary','Unlock SP');
+  if (state === 'in_progress')  return btn('pause','','Pause') + btn('end','danger','End SP');
+  if (state === 'paused')       return btn('resume','primary','Resume') + btn('end','danger','End SP');
+  if (state === 'submitted' || state === 'released') return `<span class="sp-act-btn ghost">Submitted</span>`;
+  if (state === 'locked')       return `<span class="sp-act-btn locked-note">Awaits prior SP</span>`;
   return '';
 }
 // Close any open Demo / overflow popover on outside click. Cheap pass:
@@ -17037,14 +17151,13 @@ function renderAssessmentAssignmentArea(session, assigned) {
       </div>
     `;
   }
-  const practiceCount = session.testType === 'tcap' && typeof tcapPracticeAssignedCount !== 'undefined' ? tcapPracticeAssignedCount : 0;
   const filter = String(currentAssignmentFilter || 'all').toLowerCase();
   const visible = assignments.filter(item => {
     if (filter === 'all') return true;
     const m = String(deliveryModeLabel(item.deliveryMode) || '').toLowerCase();
     return filter === 'live' ? m.includes('live') : m.includes('scheduled');
   });
-  const cards = visible.map(item => renderAssignmentCard(item, session, practiceCount)).join('');
+  const cards = visible.map(item => renderAssignmentCard(item, session)).join('');
   const empty = visible.length === 0
     ? `<div style="grid-column:1/-1;padding:36px 12px;text-align:center;font-size:12px;color:#a1a1aa;font-weight:600">No ${filter === 'all' ? '' : filter + ' '}assignments yet.</div>`
     : '';
@@ -17095,13 +17208,12 @@ function assignmentLifecycleStatus(item) {
   return { label: item.status || 'Draft', kind:'draft' };
 }
 
-function renderAssignmentCard(item, session, practiceCount) {
+function renderAssignmentCard(item, session) {
   const isBase = item.id === session.id;
   const mode = deliveryModeLabel(item.deliveryMode);
   const isLive = String(mode).toLowerCase().includes('live');
   const lifecycle = assignmentLifecycleStatus(item);
-  const showPractice = isBase && practiceCount > 0;
-  const practicePill = showPractice ? `<span class="assignment-practice-pill" style="margin-left:6px">✓ ${practiceCount} practice</span>` : '';
+  const practicePill = '';
   const titleText = item.title || item.className || 'Assignment';
   const studentsCount = item.students || 0;
   const timeLimit = item.timeLimitMinutes ? `${item.timeLimitMinutes} mins` : '—';
@@ -17516,6 +17628,14 @@ function copyJoinValue(value, message) {
   const done = () => {
     const el = document.getElementById('joinCodeCopyFeedback') || document.getElementById('joinCodeDropdownFeedback');
     if (el) el.textContent = message;
+    const status = document.getElementById('joinCodeCopiedStatus');
+    if (status) {
+      status.style.display = 'flex';
+      const divider = document.getElementById('joinCodeCopiedDivider');
+      if (divider) divider.style.display = 'block';
+      const label = status.querySelector('.join-code-status-label');
+      if (label) label.textContent = message && /link/i.test(message) ? 'Link copied!' : 'Copied!';
+    }
   };
   if (navigator.clipboard?.writeText) navigator.clipboard.writeText(value).then(done).catch(done);
   else done();
@@ -17561,10 +17681,10 @@ function renderAiInsightsPanel(session) {
   const isTcap = session.testType === 'tcap';
   const completed = session.submitted || 0;
   const riskText = isTcap
-    ? '4 students are below Proficient. Start with the students closest to the next cut score, then assign standards-based practice.'
+    ? '4 students are below Proficient. Start with the students closest to the next cut score, then review the standards where mastery is weakest.'
     : `${session.inProgress || 0} students are still in progress. Review auto-submit and locked report rows before release.`;
   const nextStep = isTcap
-    ? 'Assign TCAP practice for the risk bucket, then check whether weak standards cluster around informational text.'
+    ? 'Check whether weak standards cluster around informational text, then plan the next teacher-led review.'
     : 'Open grader for pending written responses, then release reports after teacher review.';
   return `<div class="ai-insights-panel ${aiInsightsOpen ? 'open' : ''}">
     <div class="ai-insights-head">
@@ -17838,6 +17958,27 @@ function renderSessionMonitorHero(view, session) {
   const joinEnabled = !['Completed','Ended','Released'].includes(lifecycle);
   const joinCode = view.assignmentCode || 'KIRA-TEST';
   const joinLink = `https://app.kira-learning.com/join/${joinCode}`;
+  const isTcapMonitor = session.testType === 'tcap';
+  const sessionCodeControl = `
+    <button class="session-code-btn" ${joinEnabled ? `onclick="toggleJoinCodeDropdown()"` : 'disabled'}>
+      <svg class="qr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="16" y="16" width="5" height="5" rx="1"/></svg>
+      Assignment Code
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="join-code-menu" style="position:relative">
+      <div class="join-code-dropdown" id="joinCodeDropdown" style="top:0;left:0">
+        <div class="join-code-item status" id="joinCodeCopiedStatus" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12.5 11 15.5 16.5 9"/></svg>
+          <span class="join-code-status-label">Copied!</span>
+        </div>
+        <div class="join-code-divider" id="joinCodeCopiedDivider" style="display:none"></div>
+        <button class="join-code-item action" onclick="copyJoinValue('${joinCode.replace(/'/g,"\\'")}','Code copied')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="16" y="16" width="5" height="5" rx="1"/></svg>
+          <span>Copy Code</span>
+        </button>
+        <div class="join-code-feedback" id="joinCodeDropdownFeedback"></div>
+      </div>
+    </div>`;
   return `
     <div class="monitor-hero-left">
       <div class="monitor-hero-top">
@@ -17846,6 +17987,7 @@ function renderSessionMonitorHero(view, session) {
           <div class="monitor-hero-title-row">
             <span class="monitor-hero-title">${view.title || 'Untitled session'}</span>
             <span class="monitor-hero-subtitle">${testTypeLabel(session.testType || 'generic')}</span>
+            ${isTcapMonitor ? `<div class="monitor-title-code">${sessionCodeControl}</div>` : ''}
           </div>
           <div class="monitor-hero-meta">
             <span class="meta-creator">
@@ -17860,25 +18002,10 @@ function renderSessionMonitorHero(view, session) {
             <span class="meta-dot">•</span>
             <span>${session.className || ''}</span>
           </div>
-          <div class="monitor-hero-cta">
-            <button class="session-code-btn" ${joinEnabled ? `onclick="toggleJoinCodeDropdown()"` : 'disabled'}>
-              <svg class="qr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="16" y="16" width="5" height="5" rx="1"/></svg>
-              Session code
-              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="join-code-menu" style="position:relative">
-              <div class="join-code-dropdown" id="joinCodeDropdown" style="top:0;left:0">
-                <div style="font-size:10px;font-weight:900;color:#71717a;text-transform:uppercase;letter-spacing:.3px">Assignment code</div>
-                <div class="join-code-value">${joinCode}</div>
-                <button onclick="copyJoinValue('${joinCode.replace(/'/g,"\\'")}','Code copied')">Copy code</button>
-                <button onclick="copyJoinValue('${joinLink.replace(/'/g,"\\'")}','Link copied')">Copy link</button>
-                <div class="join-code-feedback" id="joinCodeDropdownFeedback"></div>
-              </div>
-            </div>
-          </div>
+          ${isTcapMonitor ? '' : `<div class="monitor-hero-cta">${sessionCodeControl}</div>`}
         </div>
       </div>
-      <div class="monitor-hero-insights">
+      ${isTcapMonitor ? '' : `<div class="monitor-hero-insights">
         <div class="insights-body">
           ${tcapInsightsHtml || `
           <div class="insights-head">
@@ -17888,11 +18015,11 @@ function renderSessionMonitorHero(view, session) {
           <div class="insights-text">${insightText}</div>
           `}
         </div>
-      </div>
+      </div>`}
     </div>
-    <div class="monitor-hero-right">
+    ${isTcapMonitor ? '' : `<div class="monitor-hero-right">
       ${renderSessionTimerView(view, session, status, isLive)}
-    </div>
+    </div>`}
   `;
 }
 function renderSessionTimerView(view, session, status, isLive) {
@@ -17905,6 +18032,11 @@ function renderSessionTimerView(view, session, status, isLive) {
   // which contrasts cleanly with `elapsed`, `remaining`, and the multi-
   // day district testing window surfaced elsewhere on Monitor.
   const limitLabel = session?.testType === 'tcap' ? 'Duration' : 'Time limit';
+  // TCAP status is already expressed at Subpart level (SP cards: Paused,
+  // Ready, Locked, etc.). Repeating the active SP status in the timer card
+  // makes it read like the whole session is paused, so hide the timer-level
+  // pill for TCAP while keeping it for ACT/SAT/generic monitors.
+  const showTimerStatus = session?.testType !== 'tcap';
   const headEdit = status === 'NOT_STARTED'
     ? `<button class="timer-edit" title="Edit timer" onclick="iteToast('Edit timer — opens timing dialog','info')">
          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -17921,10 +18053,10 @@ function renderSessionTimerView(view, session, status, isLive) {
             <svg class="timer-head-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           </div>
           <div class="timer-head-limit">${limitLabel} <b>${limitText}</b></div>
-          <span class="timer-status-pill ${status}">
+          ${showTimerStatus ? `<span class="timer-status-pill ${status}">
             <span class="dot"></span>
             <span class="label">${cfg.label}</span>
-          </span>
+          </span>` : ''}
         </div>
         ${renderTimerCircular(view, session, status)}
         ${renderTimerControls(view, session, status, true)}
@@ -17940,10 +18072,10 @@ function renderSessionTimerView(view, session, status, isLive) {
       <div class="timer-head">
         <div class="schedule-clock">⏰</div>
         <div class="timer-head-limit">${limitLabel} <b>${limitText}</b></div>
-        <span class="timer-status-pill ${status}">
+        ${showTimerStatus ? `<span class="timer-status-pill ${status}">
           <span class="dot"></span>
           <span class="label">${cfg.label}</span>
-        </span>
+        </span>` : ''}
       </div>
       <div class="timer-scheduled">
         ${(status === 'ENDED' || status === 'EXPIRED' || status === 'EXTENDED')
@@ -18485,7 +18617,7 @@ const ITEM_TYPES = [
     id:'passage', name:'Reading Set / Passage-Based', icon:'📖', phase:'must',
     sub:'A reading set holds 1+ passages and 1+ child items, where each item can reference any subset of passages — single, paired (compare / contrast), or all. Student sees a TestNav-style split view: passage tabs on the left, item on the right. Child items inherit each one\'s own scoring rule (Auto for MC / Two-Part / Hot Text · AI rubric for CR / Essay).',
     subjects:['ELA','SS','Science'], standards:['TCAP','SBAC','PARCC','ACT','SAT'],
-    scoring:'Inherits from each child item (Auto for MC/Two-Part/Hot Text · Human for CR/Essay)', kira:'Supported', nameCn:'阅读组 / 共享语段', subCn:'阅读组承载 1 篇或多篇 passage、1 道或多道子题；每道子题可以指向其中任意一篇或多篇——单文、配对（compare / contrast）或跨全部。学生端为 TestNav 式分栏：左侧 passage 切换 tab、右侧题目，题目可只引一篇也可跨篇取证。每道子题各走自身评分规则（MC / Two-Part / Hot Text 自动 · CR / Essay AI rubric）。', scoringCn:'继承自每道子题（MC / Two-Part / Hot Text 自动 · CR / Essay 人工）', kiraCn:'已支持',
+    scoring:'Inherits from each child item (Auto for MC/Two-Part/Hot Text · Human for CR/Essay)', kira:'NOT supported · build needed', nameCn:'阅读组 / 共享语段', subCn:'阅读组承载 1 篇或多篇 passage、1 道或多道子题；每道子题可以指向其中任意一篇或多篇——单文、配对（compare / contrast）或跨全部。学生端为 TestNav 式分栏：左侧 passage 切换 tab、右侧题目，题目可只引一篇也可跨篇取证。每道子题各走自身评分规则（MC / Two-Part / Hot Text 自动 · CR / Essay AI rubric）。', scoringCn:'继承自每道子题（MC / Two-Part / Hot Text 自动 · CR / Essay 人工）', kiraCn:'暂未支持 · 需自研',
     teacher:`
       <div class="passage-block rs-passage-block">
         <div class="passage-block-header">
@@ -18611,9 +18743,9 @@ const ITEM_TYPES = [
   },
   {
     id:'cr', name:'Constructed Response (Short)', icon:'📝', phase:'must',
-    sub:'1–3 sentence open response to a focused prompt. AI grades 0–4 against a per-criterion rubric; teacher can review and override every score before release.',
+    sub:'Evidence-based short response (1–3 sentences) — student cites the passage / stimulus to answer a focused prompt. AI grades 0–4 against a per-criterion rubric; teacher can review and override every score before release. Use this for "explain using two details from the text"-style items; for multi-paragraph essays use Writing Prompt / Essay instead.',
     subjects:['ELA','Math','Science','SS'], standards:['TCAP','ACT'],
-    scoring:'AI rubric + teacher override · 0–4 pts', kira:'Supported (FREE_RESPONSE_SHORT)', nameCn:'简答题（短）', subCn:'1–3 句话的开放回答，对应一个聚焦的提问。AI 按每条 rubric 评 0–4 分，教师可在发布前逐条复核与修改。', scoringCn:'AI rubric + 教师复核 · 0–4 分', kiraCn:'已支持 (FREE_RESPONSE_SHORT)',
+    scoring:'AI rubric + teacher override · 0–4 pts', kira:'NOT supported · build needed', nameCn:'简答题（短·有证据）', subCn:'1–3 句的"有证据"短答 — 学生需引用文本/情境作答。AI 按每条 rubric 评 0–4 分，教师可在发布前逐条复核与修改。适合"用文中两处细节解释…"这类题；多段写作请用 Writing Prompt / Essay。', scoringCn:'AI rubric + 教师复核 · 0–4 分', kiraCn:'暂未支持 · 需自研',
     teacher:`
       <div class="editor-row"><span class="key">Stem</span><span>Explain why mitochondria are called the "powerhouse of the cell."</span></div>
       <div class="rubric">
@@ -18631,24 +18763,24 @@ const ITEM_TYPES = [
   },
   {
     id:'essay', name:'Writing Prompt / Essay', icon:'📄', phase:'must',
-    sub:'Long-form writing with an optional source set and planning checklist. AI grades on 4 traits (Focus, Development, Organization, Conventions) for 0–10 pts; teacher can override every trait before release.',
-    subjects:['ELA','SS'], standards:['TCAP','ACT-Writing'],
-    scoring:'AI rubric (4 traits) + teacher · 0–10 pts', kira:'Supported (ESSAY)', nameCn:'写作题 / 作文', subCn:'长文写作，可挂参考素材和提纲清单。AI 按 4 个维度（Focus / Development / Organization / Conventions）评 0–10 分；教师可在发布前对每个维度复核与修改。', scoringCn:'AI rubric（4 维度）+ 教师复核 · 0–10 分', kiraCn:'已支持 (ESSAY)',
+    sub:'TCAP-style multi-paragraph writing — one passage rendered directly above the prompt, response goes in a writing area below. AI grades on 4 traits (Focus, Development, Organization, Conventions) for 0–10 pts; teacher can override every trait before release. ACT Writing has its own scoring flow inside the ACT report module; SBAC-style paired-source Performance Tasks ship in Phase 2.',
+    subjects:['ELA','SS'], standards:['TCAP'],
+    scoring:'AI rubric (4 traits) + teacher · 0–10 pts', kira:'NOT supported · build needed', nameCn:'写作题 / 作文', subCn:'TCAP 形态的多段写作 — 1 段 passage 直接放在题面前，下方写作区。AI 按 4 个维度（Focus / Development / Organization / Conventions）评 0–10 分；教师可在发布前对每个维度复核与修改。ACT Writing 走自己的评分链路（在 ACT 报告里）；SBAC 多 source 形态的 Performance Task 留到第二阶段。', scoringCn:'AI rubric（4 维度）+ 教师复核 · 0–10 分', kiraCn:'暂未支持 · 需自研',
     teacher:`
-      <div class="editor-row"><span class="key">Prompt</span><span>Write an opinion essay: Should schools require a 4-day week?</span></div>
-      <div class="editor-row"><span class="key">Sources</span><span>2 articles attached</span></div>
+      <div class="editor-row"><span class="key">Prompt</span><span>Analyze how the author develops the change in Marisol's feelings about the lake.</span></div>
+      <div class="editor-row"><span class="key">Passage</span><span>"The Lost Lake" · narrative · 4 ¶</span></div>
       <div class="rubric">
         <div class="r-line"><span>Focus & purpose</span><span>4pt</span></div>
         <div class="r-line"><span>Evidence</span><span>3pt</span></div>
         <div class="r-line"><span>Organization</span><span>2pt</span></div>
         <div class="r-line"><span>Conventions</span><span>1pt</span></div>
       </div>
-      <div class="badge-row">⚙️ Min 250 words · planner enabled</div>`,
+      <div class="badge-row">📖 Single-passage stimulus · 4-trait rubric · AI scoring on</div>`,
     student:`
-      <div class="stem">Should schools require a 4-day week? Use the sources to support your view.</div>
+      <div class="stem">Analyze how the author develops the change in Marisol's feelings about the lake. Use details from the passage.</div>
       <div class="essay-area" style="min-height:84px">
-        <div class="row1">A four-day school week could give students more time to rest, but it also raises concerns about<span class="cur"></span></div>
-        <div class="meta"><span>📋 Planner · 2/4 sources cited</span><span>87 / 250+ words</span></div>
+        <div class="row1">At the start of the trip, Marisol dreaded going back to the lake — the cabin and dock reminded her of her grandfather<span class="cur"></span></div>
+        <div class="meta"><span>📖 Passage · "The Lost Lake"</span><span>87 words · multi-paragraph</span></div>
       </div>`
   },
   {
@@ -19531,6 +19663,18 @@ function iteSetReplay(id, val)       { iteState(id).settings.replayLimit = val; 
 function iteSetTolerance(id, val)    { iteState(id).tolerance = val; }
 function iteSetPrimaryNum(id, val)   { iteState(id).primary = val; }
 function iteSetAudioFile(id, val)    { iteState(id).audioFile = val; }
+// Essay passage editing — TCAP form keeps a single passage instead of paired
+// sources. Author types plain text in a textarea; we round-trip it through a
+// minimal "blank-line ⇒ paragraph" convention so the stored shape is still
+// HTML and the student-side renderer can drop it into `passageHtml` directly.
+function iteSetEssayPassageTitle(val) { iteState('essay').passageTitle = String(val||''); }
+function iteSetEssayPassageHtml(val) {
+  const trimmed = String(val||'').trim();
+  if (!trimmed) { iteState('essay').passageHtml = ''; return; }
+  const escape = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const paras = trimmed.split(/\n\s*\n+/).map(p => `<p>${escape(p.trim())}</p>`);
+  iteState('essay').passageHtml = paras.join('');
+}
 
 function iteToggleSetting(id, key) {
   const s = iteState(id).settings;
@@ -20249,9 +20393,12 @@ const ITE_DEFAULTS = {
     wordLimit: 200,
   },
   essay: {
-    stem: 'Some schools are considering switching to a four-day school week, with longer days and Fridays off. Write an opinion essay arguing whether your school should adopt this schedule. Use evidence from the sources provided.',
-    sources: [{label:'Source A — "The Case for a 4-Day Week" (article, 380 words)'},{label:'Source B — Survey: Parent perspectives (chart + 200 words)'}],
-    checklist: ['State your opinion clearly in the introduction','Use evidence from at least 2 sources','Address the opposing view','Conclude with a call to action'],
+    // TCAP form: prompt + ONE passage (passageHtml is the stimulus students
+    // see directly above the prompt). No "Source N" array, no Planning
+    // Checklist — those are SBAC PT-only mechanics deferred to Phase 2.
+    stem: 'Read the passage. In a well-organized essay, analyze how the author develops the change in Marisol\'s feelings about the lake. Use specific details from the passage to support your response.',
+    passageTitle: 'from "The Lost Lake"',
+    passageHtml: '<p>The first day of summer break, Marisol thought she\'d be glad to leave school behind — but the moment her brother mentioned the family fishing trip, her stomach tightened. She hadn\'t been back to the lake since their grandfather died.</p><p>Three hours into the drive, she watched the highway signs shrink toward the mountains. Her brother sang along to the radio. Their mother glanced at her in the rearview mirror but said nothing.</p><p>When they finally pulled up to the cabin, Marisol stayed in the car. The lake was the same color it had always been — a kind of gray-blue that looked nothing like a postcard. She climbed out slowly, and to her surprise, the smell that hit her was not pipe smoke at all. It was pine. Just pine.</p><p>She walked to the dock alone, and after a long while, she sat down. The water moved against the wood, the same as before. Her grandfather wasn\'t there. But she was.</p>',
     rubric: [{criterion:'Focus & purpose',pts:4},{criterion:'Use of evidence',pts:3},{criterion:'Organization',pts:2},{criterion:'Conventions',pts:1}],
     settings: {planning:true, spellcheck:true},
     minWords: 250, maxWords: 500,
@@ -21047,8 +21194,16 @@ function _rsSetQ(n){
   }
   _rsRerender();
 }
-function _rsAddPassageStub(){
+// Cap aligned with what real K-12 reading sets ship: ACT Reading paired
+// passages top out at 2, SBAC Performance Tasks rarely use more than 3.
+// Going past 3 makes the tab strip wrap unhappily and overloads students.
+const RS_MAX_PASSAGES = 3;
+function _rsAddPassage(){
   const ids = Object.keys(_RS_DATA.passages || {});
+  if (ids.length >= RS_MAX_PASSAGES) {
+    iteToast(`Reading sets cap at ${RS_MAX_PASSAGES} passages. Delete one to add another.`, 'info');
+    return;
+  }
   const nextNum = ids.reduce((max, id) => {
     const m = String(id).match(/^P(\d+)$/);
     return Math.max(max, m ? parseInt(m[1], 10) : 0);
@@ -21068,7 +21223,167 @@ function _rsAddPassageStub(){
   iteToast(`Added ${id}. Add text, then attach questions or evidence refs.`, 'success');
   _rsRerender();
 }
-function _rsAddQStub(){ iteToast('Mock — production adds an item shell to this reading set','info'); }
+// Back-compat shim — older HTML may still reference _rsAddPassageStub.
+function _rsAddPassageStub(){ _rsAddPassage(); }
+function _rsDeletePassage(ev, id){
+  if (ev && typeof ev.stopPropagation === 'function') ev.stopPropagation();
+  if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+  if (!_RS_DATA.passages[id]) return;
+  const ids = Object.keys(_RS_DATA.passages);
+  if (ids.length <= 1) {
+    iteToast('At least one passage must remain. Edit the existing passage instead.', 'info');
+    return;
+  }
+  // Count attached questions so we can warn before destroying linkage.
+  const attached = (_RS_DATA.questions || []).filter(q =>
+    Array.isArray(q.refs) && q.refs.includes(id)
+  );
+  const msg = attached.length
+    ? `Delete ${id}? ${attached.length} question${attached.length===1?'':'s'} reference this passage and will lose their evidence anchor (the question stays, but its passage ref is removed).`
+    : `Delete ${id}?`;
+  if (!confirm(msg)) return;
+  delete _RS_DATA.passages[id];
+  // Strip the deleted id from question refs; if a question loses ALL refs,
+  // re-anchor it to the first remaining passage so dot-click still resolves
+  // to a visible passage. We keep the question itself — evidence-anchor
+  // metadata is recoverable from the question stem; questions aren't.
+  const remaining = Object.keys(_RS_DATA.passages);
+  (_RS_DATA.questions || []).forEach(q => {
+    if (!Array.isArray(q.refs)) return;
+    q.refs = q.refs.filter(r => r !== id);
+    if (q.refs.length === 0 && remaining.length > 0) q.refs = [remaining[0]];
+  });
+  if (_rsState.passage === id) _rsState.passage = remaining[0];
+  iteToast(`Deleted ${id}.`, 'success');
+  _rsRerender();
+}
+// Picker for "+ add question" inside the reading set. The picker mirrors
+// Cambium / Edcite conventions where a stimulus accepts any item type, but
+// we MVP-gate Phase 2 surfaces (tooltip + click → toast) to keep the editor
+// honest about what currently renders end-to-end.
+const _RS_ADDQ_TYPES = [
+  { id:'mc',       icon:'📝', name:'Multiple Choice',   hint:'Single or multiple correct answers', phase:'must',
+    typeLabel:'📝 MC · 1 pt',
+    seed:{ stem:'New multiple-choice stem — edit me.', explanation:'',
+      choices:[
+        { letter:'A', text:'Option A', correct:true },
+        { letter:'B', text:'Option B' },
+        { letter:'C', text:'Option C' },
+        { letter:'D', text:'Option D' }
+      ] } },
+  { id:'twopart',  icon:'🧬', name:'Two-Part / Evidence-Based', hint:'Claim → cite the supporting sentence', phase:'must',
+    typeLabel:'🧬 Two-Part · 2 pt',
+    seed:{ stem:'<b>Part B</b> · Which sentence from the passage best supports the claim in Part A?', explanation:'',
+      choices:[
+        { letter:'A', text:'Evidence sentence A', correct:true },
+        { letter:'B', text:'Evidence sentence B' },
+        { letter:'C', text:'Evidence sentence C' },
+        { letter:'D', text:'Evidence sentence D' }
+      ] } },
+  { id:'hottext',  icon:'🖍️', name:'Hot Text',          hint:'Click a sentence in the passage as the answer', phase:'must',
+    typeLabel:'🖍 Hot Text · 1 pt',
+    seed:{ stem:'Highlight the sentence that best supports the central idea.', explanation:'',
+      choices:[
+        { letter:'A', text:'Sentence option A', correct:true },
+        { letter:'B', text:'Sentence option B' },
+        { letter:'C', text:'Sentence option C' },
+        { letter:'D', text:'Sentence option D' }
+      ] } },
+  { id:'inline',   icon:'🔽', name:'Inline Choice (Cloze)', hint:'Drop-down inside the passage / sentence', phase:'must',
+    typeLabel:'🔽 Inline Choice · 1 pt',
+    seed:{ stem:'Choose the best option to complete the sentence.', explanation:'',
+      choices:[
+        { letter:'A', text:'Option 1', correct:true },
+        { letter:'B', text:'Option 2' },
+        { letter:'C', text:'Option 3' }
+      ] } },
+  { id:'cr',       icon:'💬', name:'Constructed Response', hint:'Evidence-based short response (1–3 sentences, cites the passage)', phase:'must',
+    typeLabel:'💬 CR · 2 pt',
+    seed:{ stem:'In 1–3 sentences, cite evidence from the passage to support your answer.', explanation:'',
+      choices:[] } },
+  { id:'essay',    icon:'📄', name:'Writing Prompt / Essay', hint:'Performance Task w/ essay — ships in Phase 2', phase:'phase2', tooltip:'SBAC-style Performance Task (passages + multi-paragraph essay) lands in Phase 2. For now, attach a Writing Prompt as a standalone item.' },
+  { id:'dragdrop', icon:'🧲', name:'Drag & Drop / Gap Match', hint:'Phase 2 — preview design only', phase:'phase2', tooltip:'Phase 2 — visible in library, not yet wired into Reading Set authoring.' }
+];
+let _rsAddQOpen = false;
+function _rsToggleAddQMenu(ev){
+  if (ev && typeof ev.stopPropagation === 'function') ev.stopPropagation();
+  const menu = document.getElementById('rs-addq-menu');
+  if (!menu) return;
+  _rsAddQOpen = !menu.classList.contains('open');
+  if (_rsAddQOpen) menu.classList.add('open');
+  else menu.classList.remove('open');
+}
+function _rsCloseAddQMenu(){
+  const menu = document.getElementById('rs-addq-menu');
+  if (!menu) return;
+  menu.classList.remove('open');
+  _rsAddQOpen = false;
+}
+// Close picker on outside click. Defensive guard so this only binds once
+// across rerenders (the menu DOM is recreated each time _rsRerender runs).
+if (!window._rsOutsideClickWired) {
+  document.addEventListener('click', (e) => {
+    if (!_rsAddQOpen) return;
+    const menu = document.getElementById('rs-addq-menu');
+    if (!menu) return;
+    if (menu.contains(e.target)) return;
+    if (e.target && e.target.closest && e.target.closest('.pq-dot.add-dot')) return;
+    _rsCloseAddQMenu();
+  });
+  window._rsOutsideClickWired = true;
+}
+function _rsAddQuestion(typeId){
+  const def = _RS_ADDQ_TYPES.find(t => t.id === typeId);
+  if (!def) return;
+  if (def.phase === 'phase2') {
+    iteToast(def.tooltip || 'Phase 2 item type — not yet wired in Reading Set authoring.', 'info');
+    _rsCloseAddQMenu();
+    return;
+  }
+  const existing = _RS_DATA.questions || [];
+  const nextN = existing.reduce((m,q) => Math.max(m, q.n||0), 0) + 1;
+  const seed = (def.seed && JSON.parse(JSON.stringify(def.seed))) || { stem:'New question', explanation:'', choices:[] };
+  const newQ = {
+    n: nextN,
+    typeLabel: def.typeLabel || `${def.icon} ${def.name}`,
+    refs: [_rsState.passage || Object.keys(_RS_DATA.passages)[0]],
+    stem: seed.stem,
+    explanation: seed.explanation,
+    choices: seed.choices || []
+  };
+  _RS_DATA.questions.push(newQ);
+  _rsState.q = nextN;
+  iteToast(`Added Q${nextN} — ${def.name}.`, 'success');
+  _rsCloseAddQMenu();
+  _rsRerender();
+}
+// Back-compat shim — older HTML may still reference _rsAddQStub.
+function _rsAddQStub(ev){ _rsToggleAddQMenu(ev); }
+function _rsBuildAddQMenuHtml(){
+  const must = _RS_ADDQ_TYPES.filter(t => t.phase !== 'phase2');
+  const phase2 = _RS_ADDQ_TYPES.filter(t => t.phase === 'phase2');
+  const renderItem = (t) => {
+    const cls = t.phase === 'phase2' ? 'add-q-menu-item phase2' : 'add-q-menu-item';
+    const titleAttr = t.tooltip ? ` title="${escapeHtml(t.tooltip)}"` : '';
+    const badge = t.phase === 'phase2'
+      ? '<span class="add-q-menu-badge phase2">PHASE 2</span>'
+      : '';
+    return `<button class="${cls}" type="button" onclick="_rsAddQuestion('${t.id}')"${titleAttr}>
+      <span class="aqm-icon">${t.icon}</span>
+      <span class="aqm-meta">
+        <span class="aqm-name">${escapeHtml(t.name)}</span>
+        <span class="aqm-hint">${escapeHtml(t.hint || '')}</span>
+      </span>
+      ${badge}
+    </button>`;
+  };
+  return `<div class="rs-addq-menu" id="rs-addq-menu" role="menu" aria-label="Add question type">
+    <div class="add-q-menu-section-label">MVP must-have</div>
+    ${must.map(renderItem).join('')}
+    <div class="add-q-menu-section-label">Phase 2 — preview</div>
+    ${phase2.map(renderItem).join('')}
+  </div>`;
+}
 function _rsHighlightStub(){ iteToast('Select passage text first, then click — attaches the span to the active question as an inline q-ref','info'); }
 function _rsSetExplanation(qNum, value){
   const q = _RS_DATA.questions.find(q => q.n === qNum);
@@ -21094,11 +21409,17 @@ function _rsBuildPassageEditor(){
   const p = _RS_DATA.passages[_rsState.passage] || _RS_DATA.passages.P1;
   const activeQ = _RS_DATA.questions.find(q => q.n === _rsState.q) || _RS_DATA.questions[0];
   const passageEntries = Object.entries(_RS_DATA.passages);
+  const canDelete = passageEntries.length > 1;
   const passageTabsHtml = passageEntries.map(([id, ps]) => `
     <button class="rs-ptab ${id === _rsState.passage ? 'active' : ''}" type="button" onclick="_rsSetPassage('${id}')" title="Click to switch · double-click name to rename">
       <span class="rs-ptab-code">${id}</span>
       <span class="rs-ptab-label" ondblclick="_rsStartRenamePassage(event,'${id}')" title="Double-click to rename">${escapeHtml((ps.label || `${id} · ${ps.title || 'Passage'}`).replace(/^P\d+\s*·\s*/, ''))}</span>
+      ${canDelete ? `<span class="rs-ptab-del" role="button" aria-label="Delete ${id}" title="Delete ${id}" onclick="_rsDeletePassage(event,'${id}')">×</span>` : ''}
     </button>`).join('');
+  const atCap = passageEntries.length >= RS_MAX_PASSAGES;
+  const addPassageBtnHtml = atCap
+    ? `<button class="rs-ptab-add disabled" type="button" disabled title="Reading sets cap at ${RS_MAX_PASSAGES} passages — delete one to add another">+ Passage</button>`
+    : `<button class="rs-ptab-add" type="button" onclick="_rsAddPassage()" title="Add a new passage to this set (max ${RS_MAX_PASSAGES})">+ Passage</button>`;
   // Re-class every q-ref inside paragraphs so the one whose data-q matches
   // the active dot lights up purple, others fade out. Mirrors the live ACT
   // edit page where clicking a dot reveals the anchored span in the passage.
@@ -21133,7 +21454,7 @@ function _rsBuildPassageEditor(){
       <div class="passage-block-header">
         <div class="rs-passage-nav" aria-label="Reading set passages">
           ${passageTabsHtml}
-          <button class="rs-ptab-add" type="button" onclick="_rsAddPassageStub()">+ Passage</button>
+          ${addPassageBtnHtml}
         </div>
       </div>
       <div class="passage-split">
@@ -21161,8 +21482,9 @@ function _rsBuildPassageEditor(){
             <div class="pq-dots-wrap">
               <div class="pq-dots">
                 ${dotsHtml}
-                <button class="pq-dot add-dot" type="button" onclick="_rsAddQStub()">+</button>
+                <button class="pq-dot add-dot" type="button" onclick="_rsToggleAddQMenu(event)" aria-haspopup="menu" aria-expanded="false" title="Add a question to this reading set">+</button>
               </div>
+              ${_rsBuildAddQMenuHtml()}
             </div>
           </div>
           <div class="pq-single-body">
@@ -21391,26 +21713,14 @@ const ITEM_EDITOR_BUILDERS = {
     const total = s.rubric.reduce((sum,r)=>sum+(parseInt(r.pts)||0),0);
     const body = `
       <div class="answer-area" style="min-height:120px"><em>Student long-form essay area · ${s.minWords}–${s.maxWords} words</em></div>
-      <div class="q-section-label">Source materials</div>
-      <ul class="q-list">
-        ${s.sources.map((src, i) => `
-        <li class="q-list-row">
-          <span class="q-list-tag">📎</span>
-          <input class="q-list-input" value="${(src.label||'').replace(/"/g,'&quot;')}" oninput="iteUpdateSource('essay',${i},this.value)" placeholder="Source label">
-          <span class="q-list-actions"><button onclick="iteDelSource('essay',${i})">×</button></span>
-        </li>`).join('')}
-      </ul>
-      <button class="q-add-opt-btn" onclick="iteAddSource('essay')">+ Add source</button>
-      <div class="q-section-label">Planning checklist <span class="q-section-help">shown to students before they write</span></div>
-      <ul class="q-list">
-        ${s.checklist.map((c, i) => `
-        <li class="q-list-row">
-          <span class="q-list-tag">☐</span>
-          <input class="q-list-input" value="${c.replace(/"/g,'&quot;')}" oninput="iteUpdateChecklist('essay',${i},this.value)" placeholder="Checklist item">
-          <span class="q-list-actions"><button onclick="iteDelChecklist('essay',${i})">×</button></span>
-        </li>`).join('')}
-      </ul>
-      <button class="q-add-opt-btn" onclick="iteAddChecklist('essay')">+ Add checklist item</button>
+      <div class="q-section-label">Stimulus passage <span class="q-section-help">rendered directly above the prompt for students (TCAP single-passage form)</span></div>
+      <div class="ed-card" style="margin-top:6px;margin-bottom:14px">
+        <div class="ed-row"><label>Passage title</label><input class="ed-input" value="${(s.passageTitle||'').replace(/"/g,'&quot;')}" oninput="iteSetEssayPassageTitle(this.value)" placeholder='e.g. from "The Lost Lake"'></div>
+        <div class="ed-row" style="align-items:flex-start"><label style="margin-top:8px">Passage body</label>
+          <textarea class="ed-input" style="min-height:130px;line-height:1.55;font-family:inherit;resize:vertical" oninput="iteSetEssayPassageHtml(this.value)" placeholder="Paste or type the passage students will read before writing. Separate paragraphs with a blank line.">${(s.passageHtml||'').replace(/<\/p>\s*<p>/g,'\n\n').replace(/^<p>/,'').replace(/<\/p>$/,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')}</textarea>
+        </div>
+        <div style="font-size:11px;color:#71717a;padding:0 4px 4px">SBAC-style paired sources + planning checklist deferred to Phase 2 — TCAP authoring uses one passage.</div>
+      </div>
       <div class="q-section-label">${s.rubric.length}-trait rubric · ${total} points total</div>
       <ul class="q-list">
         ${s.rubric.map((r, i) => `
@@ -22151,7 +22461,7 @@ const ITS_ANSWER_DEFAULTS = {
   fib:      () => ({blanks: ['', '']}),
   gridin:   () => ({val: ''}),
   cr:       () => ({text: ''}),
-  essay:    () => ({text: '', checklist: [false,false,false,false]}),
+  essay:    () => ({text: ''}),
   hottext:  () => ({sel: []}),
   dragdrop: () => ({slots: [null, null]}),
   inline:   () => ({choices: [null, null, null]}),
@@ -22407,16 +22717,17 @@ const _itcDefaults = {
   fib:      {stem:'Type your answer in each blank.', template:'The capital of Tennessee is %BLANK0%. The Mississippi River flows past the city of %BLANK1%.', blanks:[{placeholder:'city name'},{placeholder:'city name'}]},
   gridin:   {stem:'If 3x + 5 = 20, what is the value of x?', instr:'Enter your numeric answer using the keypad below.'},
   cr:       {stem:'Explain why mitochondria are called the "powerhouse of the cell." Use specific evidence from the text.', instr:'Write 1–3 sentences. You may type up to 200 words.', maxWords:200},
-  essay:    {stem:'Should your school adopt a four-day school week? Use evidence from the sources to support your view.',
-             instr:'Plan your response, then write a multi-paragraph essay. Cite at least one source by number when you use it.',
-             minWords:0, sources:2,
-             checklist:['State your opinion clearly in the introduction','Use evidence from at least 2 sources','Address the opposing view','Conclude with a call to action'],
-             sourcesData:[
-               {label:'Source 1', title:'Why Some Schools Are Switching to Four-Day Weeks', byline:'Education Today · 2024',
-                bodyHtml:'<p>Across rural and small-town America, more than 850 school districts have shifted to a four-day school week — usually closing on Mondays or Fridays. Supporters point to several benefits.</p><p>"<b>Teacher recruiting got noticeably easier</b> after we moved to a four-day week," said Superintendent Lyle Carter of a Colorado district that made the switch in 2022. Students often use the extra day off for medical appointments, family time, or after-school jobs that would otherwise pull them out of class.</p><p>A 2023 study from the University of Oregon found that <b>student attendance rose by an average of 6%</b> in districts that adopted the schedule, and <b>teacher turnover dropped by 4%</b>. However, the same study cautioned that the longer school days these districts adopted (often 7.5 hours instead of 6.5) can be tiring for younger students.</p>'},
-               {label:'Source 2', title:'A Parent\'s View: We Tried the Four-Day Week, and It Hurt Our Kids', byline:'Editorial, Memphis Commercial Appeal · 2024',
-                bodyHtml:'<p>When our county switched to a four-day school week, my husband and I — both nurses — suddenly had to find childcare for an extra weekday. We are not alone. <b>Roughly 65% of working parents in our district reported the change made their family budget tighter</b>, according to a survey by the local school board.</p><p>Beyond the financial strain, my own children — ages 8 and 11 — came home from the longer school days exhausted. Reading scores in our district <b>dropped 11 points</b> in the two years following the switch. Our youngest started skipping breakfast just to make it onto the early-morning bus.</p><p>A four-day week sounds appealing in the abstract. In practice, for working families and younger learners, the costs add up faster than the supposed benefits.</p>'},
-             ]},
+  // TCAP Writing form: a single passage rendered directly above the prompt
+  // (no "Source N" tabs, no fold-out source viewer, no Planning Checklist).
+  // Mirrors TDOE TCAP TNReady writing items (5–8 ELA, English I/II EOC) where
+  // students see ONE passage in the stem area and respond with a multi-paragraph
+  // essay below. SBAC-style paired-sources Performance Tasks are a separate
+  // form deferred to Phase 2 (see Reading Set picker → Writing Prompt = PHASE 2).
+  essay:    {stem:'Read the passage. <b>In a well-organized essay, analyze how the author develops the change in Marisol\'s feelings about the lake.</b> Use specific details from the passage to support your response.',
+             instr:'Manage your time so that you can plan, write, and review your response. Refer back to the passage as needed.',
+             minWords:0,
+             passageTitle:'from "The Lost Lake"',
+             passageHtml:'<p>The first day of summer break, Marisol thought she\'d be glad to leave school behind — but the moment her brother mentioned the family fishing trip, her stomach tightened. She hadn\'t been back to the lake since their grandfather died. The cabin would still smell like his pipe smoke. The dock would still creak the way it always had.</p><p>Three hours into the drive, she watched the highway signs shrink toward the mountains. Her brother sang along to the radio. Their mother glanced at her in the rearview mirror but said nothing.</p><p>When they finally pulled up to the cabin, Marisol stayed in the car. The lake was the same color it had always been — a kind of gray-blue that looked nothing like a postcard. She climbed out slowly, and to her surprise, the smell that hit her was not pipe smoke at all. It was pine. Just pine.</p><p>She walked to the dock alone, and after a long while, she sat down. The water moved against the wood, the same as before. Her grandfather wasn\'t there. But she was.</p>'},
   hottext:  {stem:'Click the two sentences that best support the central idea of the passage.', instr:'Tap a sentence to select it. Tap again to unselect. Choose two.', targetCount:2,
              sentences:[
                'Many cities across the United States have grown rapidly in recent decades.',
@@ -22612,32 +22923,22 @@ const ITEM_STUDENT_BUILDERS = {
     const a = itsAns('essay');
     const c = _itcContent('essay', q);
     const wc = a.text.trim() ? a.text.trim().split(/\s+/).length : 0;
-    const checks = c.checklist || [];
-    const sources = c.sourcesData || [];
-    const srcN = sources.length || c.sources || 0;
-    // When the question carries a split-view stimulus, the sources are
-    // already displayed in the left pane — suppress the legacy slide-in
-    // trigger to avoid two ways of viewing the same content. Slide-in is
-    // kept in the codebase for non-stimulus essays as a fallback.
-    // `q` is undefined when the catalog "Try as student" preview calls this
-    // builder with just `t` — guard accordingly.
-    const hasStimulus = !!(q && q.content && q.content.stimulus);
-    if (srcN > 0 && !hasStimulus) window._tcsActiveSources = sources;
+    // TCAP Writing form: passage block sits directly above the prompt — no
+    // "View N sources" fold-out, no planning checklist. SBAC-style paired
+    // sources + checklist live behind a `c.sourcesData` fallback for any
+    // legacy demo content that still passes that shape; clean TCAP authoring
+    // should use `passageHtml` instead.
+    const passageHtml = c.passageHtml || '';
+    const passageTitle = c.passageTitle || '';
+    const passageBlock = passageHtml ? `
+      <div class="its-passage" role="region" aria-label="Passage">
+        ${passageTitle ? `<div style="font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#7c3aed;margin-bottom:8px">${passageTitle}</div>` : ''}
+        ${passageHtml}
+      </div>` : '';
     return `
       <div class="its-q-stem">${c.stem}</div>
+      ${passageBlock}
       <div class="its-q-instr">${c.instr}</div>
-      ${(srcN > 0 && !hasStimulus) ? `
-      <button class="its-source-trigger" onclick="tcsOpenSources()" title="Open the source viewer (slides in from the left)">
-        <span class="src-ic">📎</span>
-        <span>View ${srcN} source${srcN === 1 ? '' : 's'} →</span>
-      </button>` : ''}
-      <div class="its-checklist">
-        <div class="ck-title">Planning checklist · ${a.checklist.filter(Boolean).length}/${checks.length} done</div>
-        ${checks.map((c,i) => `
-          <div class="ck-item ${a.checklist[i]?'done':''}" onclick="itsTglCheck(${i})" style="cursor:pointer">
-            <span class="ck-box">${a.checklist[i]?'✓':''}</span><span>${c}</span>
-          </div>`).join('')}
-      </div>
       <div class="its-essay-area">
         <div class="essay-tools">
           <button class="tk">B</button><button class="tk"><i>I</i></button><button class="tk">U</button>
@@ -25718,12 +26019,12 @@ function sessionAnalyticsModel(session) {
       .slice(0, 3);
     return {
       title:`${tcapSubjectLabel(TCAP_CLASS.subject)} · Grade ${TCAP_CLASS.grade} Analytics`,
-      subtitle:'Scale-score projection · performance levels · standards-based practice routing',
+      subtitle:'Scale-score projection · performance levels · standards-gap analysis',
       summary:[
         ['Completed', `${session.submitted}/${session.students}`],
         ['Meeting or above', `${counts.proficient + counts.aboveProficient}`],
-        ['Near Target (Razor\u2019s Edge)', `${razorRows.length}`],
-        ['Practice source', 'Mock item bank + source mix']
+        ['Closest to Meeting', `${razorRows.length}`],
+        ['Report basis', 'Cut scores + standards map']
       ],
       distribution:[
         ['Below',       counts.belowBasic,      '#fef2f2'],
@@ -25736,7 +26037,7 @@ function sessionAnalyticsModel(session) {
         score:`${r.pred.scaleScore} · ${r.pred.level.label}`,
         gap:`${r.pred.gapToNext.scalePointsToNext} pts to Meeting`,
         skill:tcapWeakestStandards(r, 1)[0]?.name || 'Evidence-based reading',
-        practice:`${r.pred.gapToNext.itemsToNext} items`
+        practice:'Review priority'
       })),
       note:'Projected, pending next diagnostic'
     };
@@ -25785,10 +26086,6 @@ function sessionAnalyticsModel(session) {
     ],
     note:'Generic assessment: no standardized blueprint attached'
   };
-}
-function openPracticeRecommendation(studentName, testType) {
-  const label = testType === 'tcap' ? 'TCAP' : testType === 'act' ? 'ACT' : 'generic';
-  alert(`Practice plan ready for ${studentName}.\nSource mix: mock item bank + Kira tagged items + AI-reviewed practice candidates.\n${label.toUpperCase()} MVP note: content source is demonstrative until the real item pool is connected.`);
 }
 function openRemoveStudentModal(studentName) {
   pendingRemoveStudentName = studentName;
@@ -25869,20 +26166,8 @@ function renderSessionAnalytics(session) {
       : '';
     return `
       <div class="session-card" style="margin-bottom:16px;padding:18px;background:#fff;border-radius:16px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap">
-          <div>
-            <h3 style="margin:0;font-size:18px;font-weight:900;color:#18181b">${model.title}</h3>
-            <p style="font-size:12px;color:#71717a;margin:4px 0 0;line-height:1.5">${tcapSubjectLabel(TCAP_CLASS.subject)} · Grade ${TCAP_CLASS.grade} · ${TCAP_CLASS.className} · ${session.submitted}/${session.students} completed · Scale-score projection <span style="display:inline-flex;align-items:center;font-size:10px;font-weight:800;letter-spacing:.3px;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;padding:1px 7px;border-radius:999px;text-transform:uppercase;margin-left:6px;vertical-align:1px">Shared</span></p>
-          </div>
-          ${_pickerChipHtml}
-        </div>
         ${_overrideBanner}
-        <!-- "Projected scores only" banner removed — the header subtitle
-             already carries "Scale-score projection", and the longer
-             disclosure lives in the cut-score editor + score-report
-             footer. Repeating a too-short version here only confused
-             teachers ("what does 'next checkpoint' mean?"). -->
-        <div id="sessionAnalyticsTcapPredictionsBody"></div>
+        <div id="sessionAnalyticsTcapPredictionsBody">${renderTcapClass('__return__', null) || ''}</div>
       </div>
     `;
   }
@@ -26596,8 +26881,8 @@ function renderSessionDetail() {
   //     dimension". This also satisfies the request that the lock chip
   //     appears to the right of Cut Scores.
   // SP rail lives ABOVE the tabs strip (sessionSubpartTabsWrap), not inside
-  // it. Every SP card is always visible with its own runtime state + action
-  // buttons — proctor doesn't have to "switch then act" via a dropdown.
+  // it. Every SP is visible as compact status; the selected SP owns the single
+  // focused action panel below the rail.
   // tabRightSlot is now empty in normal modes; only the cut-scores tab
   // surfaces a short reminder that cut scores apply session-wide, not per-SP.
   const spTabsEl = document.getElementById('sessionSubpartTabsWrap');
@@ -26606,7 +26891,7 @@ function renderSessionDetail() {
     // not per-SP. We keep the rail in the DOM (layout stable) but freeze
     // interactions and drop saturation — see `.sp-rail-disabled` in CSS.
     spTabsEl.innerHTML = isTcap
-      ? renderTcapSubpartRail(session, { disabled: tab === 'cut-scores' })
+      ? renderTcapSubpartRail(session, { disabled: tab === 'cut-scores', view })
       : '';
   }
 
@@ -28386,7 +28671,7 @@ function assignNextStep() {
     gradingModel: assignState.gradingMethod === 'AUTO_AI'
       ? 'Auto-grade · instant'
       : 'Manual review · teacher grades all items',
-    releaseRule:isTcap ? 'TCAP projections and practice plans release after teacher review.' : 'Teacher releases reports after final QA review.',
+    releaseRule:isTcap ? 'TCAP projections and standards-gap reports release after teacher review.' : 'Teacher releases reports after final QA review.',
     reportState:'pending_release',
     explanationSources:isTcap ? ['Answer Key','Standards Crosswalk','Skill Tags','Cut Score Profile'] : ['Answer Key','Skill Tags','Teacher Override'],
     students: totalSelected || (rosterNames.length || 12),
@@ -29480,7 +29765,7 @@ function renderNewTagEditorOverlay() {
         </div>` : ''}
       </div>
       <div class="ne-tag-edit-foot">
-        <div class="note">This does not block Preview or Assign. It only improves analytics and practice recommendations.</div>
+        <div class="note">This does not block Preview or Assign. It only improves analytics quality.</div>
         <div style="display:flex;gap:8px">
           <button class="btn-kira-outline" onclick="closeNewTagEditor()">Cancel</button>
           <button class="btn-kira-default" onclick="applyNewTagEdit()">Apply</button>
@@ -31493,7 +31778,7 @@ function renderNewTagInspector(item, selectedItems, activeFilter) {
       </div>
       <div class="ne-inspector-section">
         <div class="label">Why AI suggested this</div>
-        <div style="font-size:12px;color:#52525b;line-height:1.55">${newAiSuggestedFix(item)} The system will use the final skill to derive standards, ACT / TCAP / SAT projections, analytics, and practice recommendations.</div>
+        <div style="font-size:12px;color:#52525b;line-height:1.55">${newAiSuggestedFix(item)} The system will use the final skill to derive standards, ACT / TCAP / SAT projections, and analytics.</div>
         <div class="row" style="margin-top:10px">
           <button class="btn-kira-default" onclick="useSuggestedSkill(${item.id})">Use suggested skill</button>
           <button class="btn-kira-outline" data-ne-action="edit" data-ne-field="skill" data-ne-bulk="${bulkMode}">Change skill</button>
@@ -31802,6 +32087,10 @@ function renderPassageBlock(passage, firstSelected, dataAttr, editorType = 'gene
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg>
             Highlight in passage
           </button>
+          <div class="sep"></div>
+          <button type="button" class="rte-marker" onmousedown="event.preventDefault()" onclick="pqInsertMarkerFromToolbar('${bid}')" title="Click in the passage to place your cursor at the insertion point, then click here to anchor a [*] marker for the current question (ACT English insertion-question style)">
+            [*] Insert marker
+          </button>
         </div>
         ${passageContent}
       </div>
@@ -31846,6 +32135,107 @@ window.pqHighlightFromToolbar = function(bid) {
   }
   applyHL('hl-p');
 };
+
+/* ── ACT English [*] insertion-marker tool ────────────────────────────────
+   Inserts a non-editable [*] chip at the caret position, anchored (via
+   data-q) to the current active passage question. Mirrors the highlight
+   tool's contract:
+     • caret/selection must be inside this passage's panel
+     • an active question must be set (passageGoTo or auto-sync set it)
+     • re-running for the same question REPLACES any prior marker for that
+       question (one [*] per Q, real ACT English never has two)
+   Student-side rendering already maps .q-asterisk → .stu-hl-asterisk via
+   the existing replace() chain in builders, so no student-side change.   */
+window.pqInsertMarkerFromToolbar = function(bid) {
+  const block = document.getElementById(bid);
+  const panel = block?.querySelector('.passage-text-panel');
+  if (!panel) return;
+  if (!_activePassage || _activePassage.bid !== bid || !_activePassage.qNum) {
+    if (typeof iteToast === 'function') iteToast('Open a question on the right first — the marker anchors to the active question','info');
+    return;
+  }
+  const sel = window.getSelection();
+  const inPanel = sel && sel.rangeCount > 0 && sel.anchorNode && panel.contains(sel.anchorNode);
+  if (!inPanel) {
+    if (typeof iteToast === 'function') iteToast('Click in the passage to place your cursor at the insertion point first','info');
+    return;
+  }
+  const qNum = _activePassage.qNum;
+  // Remove any prior marker for this question so we never double-anchor
+  panel.querySelectorAll(`.q-asterisk[data-q="${qNum}"]`).forEach(n => {
+    const prev = n.previousSibling;
+    n.remove();
+    // Trim trailing whitespace text-node left behind
+    if (prev && prev.nodeType === 3 && /\s+$/.test(prev.textContent)) {
+      prev.textContent = prev.textContent.replace(/\s+$/, '');
+    }
+  });
+
+  // After mutation, the caret may have collapsed onto a now-removed node.
+  // Re-grab the selection and fall back to end-of-passage if needed.
+  let sel2 = window.getSelection();
+  let range;
+  if (sel2 && sel2.rangeCount > 0 && sel2.anchorNode && panel.contains(sel2.anchorNode)) {
+    range = sel2.getRangeAt(0);
+  } else {
+    range = document.createRange();
+    const lastP = panel.querySelector('p:last-of-type') || panel;
+    range.selectNodeContents(lastP);
+    range.collapse(false);
+  }
+  range.deleteContents();
+
+  const span = document.createElement('span');
+  span.className = 'q-asterisk active-ref';
+  span.dataset.q = qNum;
+  span.contentEditable = 'false';
+  span.textContent = '[*]';
+
+  // Insert a leading space if the previous char isn't whitespace already,
+  // so the marker doesn't fuse onto the end of a word.
+  const before = range.startContainer;
+  if (before && before.nodeType === 3 && range.startOffset > 0) {
+    const ch = before.textContent.charAt(range.startOffset - 1);
+    if (ch && !/\s/.test(ch)) {
+      const sp = document.createTextNode(' ');
+      range.insertNode(sp);
+      range.setStartAfter(sp);
+      range.collapse(true);
+    }
+  }
+  range.insertNode(span);
+  range.setStartAfter(span);
+  range.collapse(true);
+  if (sel2) { sel2.removeAllRanges(); sel2.addRange(range); }
+
+  if (typeof iteToast === 'function') iteToast(`[*] anchored to question ${qNum}`,'success');
+};
+
+/* Click-to-delete delegation for [*] markers. We use document-level
+   delegation so freshly-inserted markers (from the toolbar above) and
+   pre-existing mock markers both work without per-instance wiring. */
+(function _wireMarkerClickToDelete(){
+  if (window._markerClickWired) return;
+  window._markerClickWired = true;
+  document.addEventListener('click', (ev) => {
+    const ast = ev.target && ev.target.closest && ev.target.closest('.q-asterisk');
+    if (!ast) return;
+    const panel = ast.closest('.passage-text-panel');
+    if (!panel) return; // student-side renders use .stu-hl-asterisk, untouched
+    const qNum = ast.dataset.q;
+    if (!qNum) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    const ok = confirm(`Remove the [*] marker for question ${qNum}?`);
+    if (!ok) return;
+    const prev = ast.previousSibling;
+    ast.remove();
+    if (prev && prev.nodeType === 3 && /\s+$/.test(prev.textContent)) {
+      prev.textContent = prev.textContent.replace(/\s+$/, '');
+    }
+    if (typeof iteToast === 'function') iteToast(`[*] removed from question ${qNum}`,'info');
+  });
+})();
 
 /* ── Question stem editable input + ⋮ Add Image / Equation menu ──
    Mirrors production MultipleChoice from @kira-learning-platform/app-kits:
@@ -31896,31 +32286,44 @@ document.addEventListener('click', (e) => {
   }
 });
 
-/** Navigate to a specific question within a passage block */
+/** Navigate to a specific question within a passage block (carousel mode).
+   Hides all sibling slides, shows the target, briefly flashes it, and syncs
+   dot.active + the passage-side reference highlight. The viewport position
+   stays put — no scrollIntoView — so the teacher keeps their reading
+   context in the passage panel on the left. */
 function passageGoTo(bid, idx) {
   const block = document.getElementById(bid);
   if (!block) return;
   const slides = block.querySelectorAll('.pq-slide');
   const dots = block.querySelectorAll('.pq-dot:not(.add-dot)');
   const total = slides.length;
-  slides.forEach((s,i) => s.style.display = i===idx ? '' : 'none');
-  dots.forEach((d,i) => {
-    d.classList.toggle('active', i===idx);
-    if (i===idx) {
-      const dotsContainer = d.parentElement;
-      const dLeft = d.offsetLeft - dotsContainer.offsetLeft;
-      dotsContainer.scrollTo({ left: dLeft - dotsContainer.clientWidth / 2 + d.offsetWidth / 2, behavior: 'smooth' });
-    }
-  });
+  const slide = slides[idx];
+  if (!slide) return;
+
+  slides.forEach((s,i) => { s.style.display = (i===idx ? '' : 'none'); });
+  dots.forEach((d,i) => d.classList.toggle('active', i===idx));
+
+  // Brief flash on the now-visible slide as a visual ack for the dot click.
+  slide.classList.remove('pq-flash');
+  void slide.offsetWidth;
+  slide.classList.add('pq-flash');
+  setTimeout(() => slide.classList.remove('pq-flash'), 600);
+
+  // Center the active dot inside the horizontally-scrollable strip
+  const activeDot = dots[idx];
+  if (activeDot && activeDot.parentElement) {
+    const c = activeDot.parentElement;
+    c.scrollTo({ left: activeDot.offsetLeft - c.offsetLeft - c.clientWidth/2 + activeDot.offsetWidth/2, behavior: 'smooth' });
+  }
   setTimeout(() => updateDotsArrows(bid), 350);
-  // Bottom Prev/Next bar removed — top dot strip is the only navigator now.
+  // Legacy bottom Prev/Next buttons may still exist on older renders.
   const prevBtn = block.querySelector(`[id="${bid}-prev"]`);
   const nextBtn = block.querySelector(`[id="${bid}-next"]`);
   if (prevBtn) prevBtn.disabled = idx===0;
   if (nextBtn) nextBtn.disabled = idx===total-1;
 
-  // Track active passage + question for "Link Q" feature
-  const qNum = slides[idx]?.querySelector('.pq-num')?.textContent;
+  // Track active passage + question for "Link Q" / highlight / [*] marker
+  const qNum = slide.querySelector('.pq-num')?.textContent;
   _activePassage = { bid: bid, qNum: qNum || null };
 
   // Show only current question's highlight, dim all others
@@ -31948,6 +32351,46 @@ function passageNext(bid) {
   const active = block?.querySelector('.pq-dot.active');
   if (active) { const i = parseInt(active.dataset.idx); const total = block.querySelectorAll('.pq-slide').length; if (i < total-1) passageGoTo(bid, i+1); }
 }
+
+/* ── Marker safety pass for [*] insertion-question anchors ────────────────
+   Whenever a .passage-block is mounted (initial render or via dynamic
+   re-render), make sure all .q-asterisk nodes inside its passage text panel
+   are contenteditable=false. Otherwise teachers can accidentally type
+   inside the marker span and break the data-q linkage. Kept the function
+   name `_pqEnsureStackObserver` for now to avoid touching all callers; a
+   prior stack-mode IntersectionObserver was reverted (carousel mode lives
+   in passageGoTo). Idempotent — safe to call repeatedly per block.        */
+function _pqEnsureStackObserver(block) {
+  if (!block || !block.classList || !block.classList.contains('passage-block')) return;
+  block.querySelectorAll('.passage-text-panel .q-asterisk').forEach(n => {
+    if (n.getAttribute('contenteditable') !== 'false') n.setAttribute('contenteditable','false');
+  });
+}
+
+/* Auto-attach the marker safety pass to every .passage-block as it enters
+   the DOM. Decouples mounting from the ~5 callers of renderPassageBlock so
+   we don't have to thread an init hook through each one. */
+(function _pqWireMutationAutoInit(){
+  if (window._pqAutoInitWired) return;
+  window._pqAutoInitWired = true;
+  const scan = (node) => {
+    if (!(node instanceof Element)) return;
+    if (node.classList && node.classList.contains('passage-block')) _pqEnsureStackObserver(node);
+    node.querySelectorAll && node.querySelectorAll('.passage-block').forEach(_pqEnsureStackObserver);
+  };
+  if (document.body) document.querySelectorAll('.passage-block').forEach(_pqEnsureStackObserver);
+  const mo = new MutationObserver((mutations) => {
+    mutations.forEach(m => m.addedNodes.forEach(scan));
+  });
+  if (document.body) {
+    mo.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.passage-block').forEach(_pqEnsureStackObserver);
+      mo.observe(document.body, { childList: true, subtree: true });
+    });
+  }
+})();
 
 /* ── MC mode (Single ↔ Multi) + correct-answer toggling ──
    Mirrors production app's MultipleChoice/MultipleSelection switcher:
@@ -32507,6 +32950,7 @@ function _passageAddQImpl(block, slides, dots, slideHost, bid) {
   const slide = document.createElement('div');
   slide.className = 'pq-slide';
   slide.dataset.idx = newIdx;
+  // Carousel mode: hide by default, passageGoTo below will reveal + flash.
   slide.style.display = 'none';
   const newQ = {
     n: newNum, type: 'MC', pts: 1,
@@ -32540,7 +32984,10 @@ function _passageAddQImpl(block, slides, dots, slideHost, bid) {
 
   slideHost.appendChild(slide);
 
-  // Navigate to the new slide (passageGoTo updates the counter)
+  // Marker safety pass — keeps any q-asterisk nodes contenteditable=false.
+  _pqEnsureStackObserver(block);
+
+  // Carousel switch: hide siblings, show the new slide, flash, sync dots.
   passageGoTo(bid, newIdx);
   updateDotsArrows(bid);
 
@@ -32884,25 +33331,167 @@ function tcapPillHTML(level, opts = {}) {
 }
 
 // ── Heatmap cell color palette ──────────────────────────────────────
-// Soft pastel progression used across the Standards heatmap and the
-// expanded standard chips in Near Target Students. Single source of truth
-// so chip and heatmap visuals always agree.
-//   ≥85% → bg #EAF3DE / text #3B6D11  (pale green)
-//   ≥70% → bg #FAEEDA / text #854F0B  (pale cream)
-//   ≥50% → bg #FAECE7 / text #993C1D  (pale peach)
-//   <50% → bg #FCEBEB / text #A32D2D  (pale rose)
+// 4-tier mastery scale used by the Standards heatmap + Near Target chips.
+// Previous palette had ≥50% (peach) and <50% (rose) too close in hue, so
+// at-risk-only views read as a uniform pink wash and teachers couldn't tell
+// borderline-mastery from genuine-gap. Widened the gap between tier 3 and
+// tier 4 so a row with mostly 50-69% reads visibly different from a row
+// stuck under 50%. Color tokens still pass WCAG AA against their bg.
+//   ≥85% → Kira green success
+//   ≥70% → Kira blue reviewed / on-track
+//   ≥50% → Kira orange warning
+//   <50% → Kira red negative
 function tcapAcctBarColor(acc) {
-  if (acc >= 0.85) return '#3B6D11';
-  if (acc >= 0.70) return '#854F0B';
-  if (acc >= 0.50) return '#993C1D';
-  return '#A32D2D';
+  if (acc >= 0.85) return '#007C0F';
+  if (acc >= 0.70) return '#026BDB';
+  if (acc >= 0.50) return '#B14C00';
+  return '#D31510';
 }
 
 function tcapAccBg(acc) {
-  if (acc >= 0.85) return '#EAF3DE';
-  if (acc >= 0.70) return '#FAEEDA';
-  if (acc >= 0.50) return '#FAECE7';
-  return '#FCEBEB';
+  if (acc >= 0.85) return '#E3FADC';
+  if (acc >= 0.70) return '#E0F3FF';
+  if (acc >= 0.50) return '#FEF6EE';
+  return '#FFEBE7';
+}
+
+function tcapStdBands() {
+  return [
+    { id:'lt50', label:'<50%', min:-1, max:.4999, bg:'#FFEBE7', color:'#D31510' },
+    { id:'lt70', label:'50-69%', min:.50, max:.6999, bg:'#FEF6EE', color:'#B14C00' },
+    { id:'gte70', label:'70-84%', min:.70, max:.8499, bg:'#E0F3FF', color:'#026BDB' },
+    { id:'gte85', label:'≥85%', min:.85, max:2, bg:'#E3FADC', color:'#007C0F' },
+  ];
+}
+
+function tcapStandardSummary(std, rows) {
+  const values = rows
+    .map(r => ({ row:r, acc:(r.standards && r.standards[std.code] != null) ? r.standards[std.code] : null }))
+    .filter(x => x.acc != null)
+    .sort((a,b) => a.acc - b.acc);
+  const bands = tcapStdBands().map(b => {
+    const students = values.filter(x => x.acc >= b.min && x.acc <= b.max);
+    return { ...b, students, count:students.length };
+  });
+  const avg = values.length ? values.reduce((sum, x) => sum + x.acc, 0) / values.length : 0;
+  const below70 = bands[0].count + bands[1].count;
+  return { std, values, bands, avg, below70 };
+}
+
+function renderTcapStandardDistributionCards(standards, rows) {
+  const summaries = standards
+    .map(std => tcapStandardSummary(std, rows))
+    .sort((a,b) => (b.below70 - a.below70) || (a.avg - b.avg));
+  if (!summaries.length) {
+    return `<div style="padding:24px;text-align:center;color:#a8a29e;font-size:12px">No standards data yet — distribution cards will populate once students complete the diagnostic.</div>`;
+  }
+  return `<div class="tcap-std-list">${summaries.map(summary => {
+    const total = summary.values.length || 1;
+    const counts = summary.bands.map(b => {
+      const names = b.students.map(x => `${x.row.name} (${Math.round(x.acc * 100)}%)`).join(', ') || 'No students';
+      return `<span class="tcap-std-count" title="${escapeAttr(names)}"><b style="color:${b.color}">${b.count}</b> ${b.label}</span>`;
+    }).join('');
+    const segments = summary.bands.map(b => {
+      const names = b.students.map(x => `${x.row.name} (${Math.round(x.acc * 100)}%)`).join(', ') || 'No students';
+      const width = Math.max(0, (b.count / total) * 100);
+      return `<span class="tcap-std-seg" title="${escapeAttr(`${b.label}: ${names}`)}" style="width:${width}%;background:${b.bg}"></span>`;
+    }).join('');
+    return `<button type="button" class="tcap-std-card" onclick="tcapOpenStandardDrawer('${escapeAttr(summary.std.code)}')">
+      <div style="min-width:0">
+        <div class="tcap-std-code">${escapeHtml(summary.std.code)}</div>
+        <div class="tcap-std-name" title="${escapeAttr(summary.std.name || '')}">${escapeHtml(summary.std.name || summary.std.category || '')}</div>
+        <div class="tcap-std-meta">
+          <span class="tcap-std-risk">${summary.below70} below 70%</span>
+          <span>Avg ${Math.round(summary.avg * 100)}%</span>
+        </div>
+      </div>
+      <div>
+        <div class="tcap-std-bar" aria-label="${escapeAttr(summary.std.code)} mastery distribution">${segments}</div>
+        <div class="tcap-std-counts">${counts}</div>
+      </div>
+    </button>`;
+  }).join('')}</div>`;
+}
+
+function tcapEnsureStandardDrawer() {
+  if (document.getElementById('tcapStdDrawer')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'tcap-std-drawer-overlay';
+  overlay.id = 'tcapStdDrawerOverlay';
+  overlay.onclick = closeTcapStandardDrawer;
+  const drawer = document.createElement('aside');
+  drawer.className = 'tcap-std-drawer';
+  drawer.id = 'tcapStdDrawer';
+  drawer.setAttribute('aria-hidden', 'true');
+  drawer.innerHTML = `
+    <div class="tcap-std-drawer-head">
+      <div style="min-width:0">
+        <div class="tcap-std-drawer-kicker">Standard detail</div>
+        <div class="tcap-std-drawer-title" id="tcapStdDrawerTitle">Standard</div>
+        <div class="tcap-std-drawer-sub" id="tcapStdDrawerSub"></div>
+      </div>
+      <button class="tcap-std-drawer-close" onclick="closeTcapStandardDrawer()" aria-label="Close standard detail">×</button>
+    </div>
+    <div class="tcap-std-drawer-body" id="tcapStdDrawerBody"></div>`;
+  document.body.appendChild(overlay);
+  document.body.appendChild(drawer);
+}
+
+function tcapOpenStandardDrawer(code) {
+  tcapEnsureStandardDrawer();
+  const cls = TCAP_CLASS;
+  const gradeKey = tcapKey(cls.grade, cls.subject);
+  const std = (TCAP_PROFILE.standardsMap[gradeKey] || []).find(s => s.code === code);
+  if (!std) return;
+  const rows = tcapPredictAll(cls);
+  const summary = tcapStandardSummary(std, rows);
+  const total = summary.values.length || 1;
+  const distribution = summary.bands.map(b => {
+    const names = b.students.map(x => `${x.row.name} (${Math.round(x.acc * 100)}%)`).join(', ') || 'No students';
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:850;color:${b.color}">
+        <span>${b.label}</span><span>${b.count} student${b.count === 1 ? '' : 's'}</span>
+      </div>
+      <div title="${escapeAttr(names)}" style="height:8px;border-radius:999px;background:${b.bg};margin-top:5px;width:${Math.max(3, (b.count / total) * 100)}%"></div>
+    </div>`;
+  }).join('');
+  const studentRows = summary.values.map(x => {
+    const pct = Math.round(x.acc * 100);
+    const initials = x.row.name.split(/\s+/).map(p => p[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="tcap-std-student-row">
+      <div class="tcap-std-student-main">
+        <div class="tcap-std-student-avatar">${escapeHtml(initials)}</div>
+        <div style="min-width:0">
+          <div class="tcap-std-student-name">${escapeHtml(x.row.name)}</div>
+          <div class="tcap-std-student-meta">${escapeHtml(x.row.pred.level.label)} · projected scale ${x.row.pred.scaleScore}</div>
+        </div>
+      </div>
+      <span class="tcap-std-score" style="background:${tcapAccBg(x.acc)};color:${tcapAcctBarColor(x.acc)}">${pct}%</span>
+    </div>`;
+  }).join('');
+  document.getElementById('tcapStdDrawerTitle').textContent = `${std.code} · ${std.name || std.category || 'Standard'}`;
+  document.getElementById('tcapStdDrawerSub').textContent = `${summary.below70} of ${summary.values.length} students below 70% · average mastery ${Math.round(summary.avg * 100)}%`;
+  document.getElementById('tcapStdDrawerBody').innerHTML = `
+    <div style="border:1px solid #eef0f4;border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:900;color:#18181b;margin-bottom:10px">Mastery distribution</div>
+      ${distribution}
+    </div>
+    <div style="font-size:12px;font-weight:900;color:#18181b;margin:0 0 8px">Students</div>
+    <div>${studentRows}</div>`;
+  document.getElementById('tcapStdDrawerOverlay').classList.add('open');
+  const drawer = document.getElementById('tcapStdDrawer');
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden', 'false');
+}
+
+function closeTcapStandardDrawer() {
+  const overlay = document.getElementById('tcapStdDrawerOverlay');
+  const drawer = document.getElementById('tcapStdDrawer');
+  if (overlay) overlay.classList.remove('open');
+  if (drawer) {
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+  }
 }
 
 // ── Teacher: Class Predictions ────────────────────────────────────
@@ -32913,7 +33502,7 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
   const rows = tcapPredictAll(cls);
   const counts = tcapLevelCounts(rows);
   const total = rows.length;
-  // riskRows = everyone Below + Approaching (used for bucket assign + heatmap).
+  // riskRows = everyone Below + Approaching (used for diagnostic cohort views).
   // razorRows = the tight subset who are within 8 scale pts of Meeting per
   //             PRD §8 — these are the highest-leverage targeted-practice
   //             candidates (move 1 student → cross 1 cut → 1 more "Meeting").
@@ -32923,7 +33512,6 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
     r.pred.gapToNext &&
     r.pred.gapToNext.scalePointsToNext <= 8
   ).sort((a,b) => a.pred.gapToNext.scalePointsToNext - b.pred.gapToNext.scalePointsToNext);
-  const remainingRiskCount = riskRows.filter(r => !isTcapPracticeAssigned(r.id)).length;
   const classAvgScale = Math.round(rows.reduce((s,r) => s + r.pred.scaleScore, 0) / Math.max(1,total));
   const onTrackFloor = TCAPScoringAdapter.getCutScores(gradeKey).proficient[0];
   const attentionRows = [...rows]
@@ -32964,76 +33552,57 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
   // Click a row to open the full diagnostic; hover to inspect % per std.
   // ─────────────────────────────────────────────────────────────────────
   const heatStandards = stds.slice(0, 7);  // cap at 7 cols for readability
-  // Header columns: Student | Level | standard codes…
-  // Level is its own column (mirrors the Near Target Students table) so the
-  // Approaching / Meeting pills don't read as floating chips inside the
-  // student name cell.
-  const heatHeader = `<div style="display:grid;grid-template-columns:minmax(140px,1.4fr) 110px repeat(${heatStandards.length},minmax(54px,1fr));gap:6px;align-items:center;padding:0 4px 8px;border-bottom:1px solid #eef0f4">
+  // Header redesign per Analytics review:
+  //   1. LEVEL column dropped — the heatmap is already filtered to "near or
+  //      below cut" so a separate column is redundant. The pill moves
+  //      inline next to the student name (a small 6px dot · color-keyed),
+  //      reclaiming ~110px of grid width for actual standards data.
+  //   2. Standard-code headers are read-only labels. Practice delivery is
+  //      not supported in the current prototype, so this surface should not
+  //      promise push/assignment actions.
+  //   3. Cells append "%" so it reads as a unit, not a raw count.
+  const heatGrid = `minmax(160px,1.4fr) repeat(${heatStandards.length},minmax(58px,1fr))`;
+  const heatHeader = `<div style="display:grid;grid-template-columns:${heatGrid};gap:6px;align-items:center;padding:0 4px 8px;border-bottom:1px solid #eef0f4">
     <div style="font-size:11px;font-weight:800;color:#71717a;text-transform:uppercase;letter-spacing:.04em">Student</div>
-    <div style="font-size:11px;font-weight:800;color:#71717a;text-transform:uppercase;letter-spacing:.04em">Level</div>
-    ${heatStandards.map(s => `<div title="${s.name} · ${s.category}" style="font-size:10px;font-weight:900;color:#52525b;text-align:center;letter-spacing:.02em">${s.code}</div>`).join('')}
+    ${heatStandards.map(s => `<div title="${s.name} · ${s.category}" style="font-size:10px;font-weight:900;color:#52525b;text-align:center;letter-spacing:.02em;padding:5px 2px">${s.code}</div>`).join('')}
   </div>`;
   const heatBody = heatmapRows.slice(0, 12).map(r => {
     const cells = heatStandards.map(s => {
       const acc = (r.standards && r.standards[s.code] != null) ? r.standards[s.code] : null;
       if (acc == null) return `<div style="background:#fafafa;border:1px dashed #e7e5e4;border-radius:6px;padding:7px 4px;text-align:center;font-size:10px;color:#a8a29e">—</div>`;
       const pct = Math.round(acc * 100);
-      return `<div title="${r.name} · ${s.code} ${s.name}: ${pct}%" style="background:${tcapAccBg(acc)};border:1px solid rgba(0,0,0,.04);border-radius:6px;padding:7px 4px;text-align:center;font-size:11px;font-weight:900;color:${tcapAcctBarColor(acc)};font-variant-numeric:tabular-nums;cursor:pointer" onclick="tcapOpenStudentReport('${r.id}')">${pct}</div>`;
+      return `<div title="${r.name} · ${s.code} ${s.name}: ${pct}%" style="background:${tcapAccBg(acc)};border:1px solid rgba(0,0,0,.04);border-radius:6px;padding:7px 4px;text-align:center;font-size:11px;font-weight:900;color:${tcapAcctBarColor(acc)};font-variant-numeric:tabular-nums;cursor:pointer" onclick="tcapOpenStudentReport('${r.id}')">${pct}%</div>`;
     }).join('');
     const initials = r.name.split(/\s+/).map(w => w[0]).join('').slice(0,2);
-    return `<div class="tcap-heat-row" style="display:grid;grid-template-columns:minmax(140px,1.4fr) 110px repeat(${heatStandards.length},minmax(54px,1fr));gap:6px;align-items:center;padding:6px 4px;border-bottom:1px solid #f4f4f5;border-radius:6px;transition:background .15s ease">
-      <div style="display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer" onclick="tcapOpenStudentReport('${r.id}')" title="Open ${r.name}'s diagnostic">
+    // Inline level dot — 6px disc color-keyed to predictionLevel.color.
+    // Replaces the standalone Level column. Tooltip carries the full label.
+    const lvlDot = `<span title="${r.pred.level.label}" aria-label="${r.pred.level.label}" style="width:6px;height:6px;border-radius:999px;background:${r.pred.level.color};display:inline-block;flex-shrink:0"></span>`;
+    return `<div class="tcap-heat-row" style="display:grid;grid-template-columns:${heatGrid};gap:6px;align-items:center;padding:6px 4px;border-bottom:1px solid #f4f4f5;border-radius:6px;transition:background .15s ease">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer" onclick="tcapOpenStudentReport('${r.id}')" title="Open ${r.name}'s diagnostic — ${r.pred.level.label}">
         <div style="width:26px;height:26px;border-radius:999px;background:#f5f3ff;color:#6040ca;font-size:10px;font-weight:900;display:grid;place-items:center;flex-shrink:0">${initials}</div>
+        ${lvlDot}
         <span style="font-size:12px;font-weight:800;color:#18181b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0">${r.name}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:4px;min-width:0;cursor:pointer" onclick="tcapOpenStudentReport('${r.id}')" title="Open ${r.name}'s diagnostic">
-        ${tcapPillHTML(r.pred.level,{size:'sm'})}
-        <span class="tcap-heat-arrow" aria-hidden="true" style="margin-left:auto;font-size:13px;color:#6040ca;font-weight:900;opacity:0;transition:opacity .15s ease;flex-shrink:0">›</span>
+        <span class="tcap-heat-arrow" aria-hidden="true" style="font-size:13px;color:#6040ca;font-weight:900;opacity:0;transition:opacity .15s ease;flex-shrink:0">›</span>
       </div>
       ${cells}
     </div>`;
   }).join('');
-  // Legend swatches mirror `tcapAccBg` thresholds + the soft pastel palette
-  // shared with the expanded standard chips in Near Target Students.
+  // Legend swatches mirror the tcapAccBg thresholds (single source of truth).
   const heatLegend = `<div style="display:flex;align-items:center;gap:10px;font-size:10px;color:#71717a;font-weight:700;flex-wrap:wrap;flex-shrink:0">
-    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#EAF3DE;border:1px solid rgba(0,0,0,.06)"></span>≥85%</span>
-    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FAEEDA;border:1px solid rgba(0,0,0,.06)"></span>≥70%</span>
-    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FAECE7;border:1px solid rgba(0,0,0,.06)"></span>≥50%</span>
-    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FCEBEB;border:1px solid rgba(0,0,0,.06)"></span>&lt;50%</span>
+    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#DCFCE7;border:1px solid rgba(0,0,0,.06)"></span>≥85%</span>
+    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FEF3C7;border:1px solid rgba(0,0,0,.06)"></span>≥70%</span>
+    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FFE4D5;border:1px solid rgba(0,0,0,.06)"></span>≥50%</span>
+    <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FEE2E2;border:1px solid rgba(0,0,0,.06)"></span>&lt;50%</span>
   </div>`;
+  const standardCards = renderTcapStandardDistributionCards(heatStandards, rows);
 
-  // Razor's Edge / Near Target panel — PRD §10 module 3. Highest-leverage
-  // students (within 8 scale pts of Meeting) get the tight panel; the
-  // broader Below/Approaching cohort is reachable via the Risk Bucket CTA
-  // and the heatmap below. Each row makes the gap to Meeting explicit.
+  // Near Target panel — read-only diagnostic insight. It identifies students
+  // within 8 scale points of Meeting, but does not offer practice assignment:
+  // the current prototype does not support a real practice delivery mode.
   const razor = razorRows.slice(0,6).map(r => {
-    const weak = tcapWeakestStandards(r, 3);
     const gapPts = r.pred.gapToNext ? r.pred.gapToNext.scalePointsToNext : null;
     const cutScore = r.pred.gapToNext ? r.pred.gapToNext.nextCutScore : onTrackFloor;
-    const itemsToNext = r.pred.gapToNext ? r.pred.gapToNext.itemsToNext : null;
     const initials = r.name.split(/\s+/).map(w => w[0]).join('').slice(0,2);
-    // Standard chip — mirrors the Standards heatmap cell visual:
-    //   • standard code on top (10px / 500 / secondary text)
-    //   • percentage as a colored pill below (12px / 600 / 4×8 padding /
-    //     6px radius / bg via tcapAccBg / text via tcapAcctBarColor)
-    // Same palette as heatmap cells, so a teacher scanning a row and the
-    // heatmap below carries one mental color → accuracy mapping.
-    const weakCells = weak.map(w => {
-      const pct = Math.round(w.acc * 100);
-      return `<div title="${w.code} ${w.name}: ${pct}%" style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0">
-        <span style="font-size:10px;font-weight:500;color:#71717a;letter-spacing:.02em">${w.code}</span>
-        <span style="font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;background:${tcapAccBg(w.acc)};color:${tcapAcctBarColor(w.acc)};font-variant-numeric:tabular-nums;line-height:1.2">${pct}%</span>
-      </div>`;
-    }).join('');
-    // Per-row "Assign practice" button removed — bulk-assign action lives on
-    // the right-side Practice plan card AND at the top of the Predictions
-    // page (Risk Bucket CTA). The "✓ Practice assigned" badge stays as an
-    // inline status next to the name once a row's practice has been routed.
-    const practiceAssigned = isTcapPracticeAssigned(r.id);
-    // Weakest-standards cells are collapsed by default — kept the row
-    // legible at the basic-info level and surfaces standards on demand
-    // (clicking the chevron toggles the second row in-place).
-    const _weakId = `tcapWeak_${r.id}`;
     return `<div style="border:1px solid #ddd6fe;background:#fff;border-radius:12px;padding:12px 14px">
       <div style="display:flex;align-items:center;gap:12px">
         <div style="width:38px;height:38px;border-radius:999px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;color:#6040ca;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
@@ -33042,19 +33611,15 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
             <span style="font-weight:900;color:#18181b;font-size:13px">${r.name}</span>
             <span style="font-size:16px;font-weight:900;color:${r.pred.level.color};font-variant-numeric:tabular-nums">${r.pred.scaleScore}</span>
             ${tcapPillHTML(r.pred.level,{size:'sm'})}
-            ${practiceAssigned ? `<span class="tcap-practice-assigned" style="font-size:10px">✓ Practice assigned</span>` : ''}
           </div>
           <div style="font-size:11px;color:#52525b;margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             ${gapPts != null ? `<span style="color:#5b21b6;font-weight:800;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:999px;padding:2px 8px">▲ ${gapPts} pts to Meeting (cut ${cutScore})</span>` : ''}
-            ${itemsToNext != null ? `<span style="color:#71717a">${itemsToNext} targeted items can close it</span>` : ''}
           </div>
         </div>
-        <button onclick="(function(b){const w=document.getElementById('${_weakId}');const open=w.style.display!=='none';w.style.display=open?'none':'flex';b.textContent=open?'Show standards ›':'Hide standards ‹';})(this)" style="background:transparent;border:0;color:#5b21b6;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">Show standards ›</button>
       </div>
-      <div id="${_weakId}" style="display:none;gap:6px;align-items:flex-end;overflow-x:auto;padding:10px 0 0;margin-top:10px;border-top:1px dashed #ede9fe;flex-wrap:wrap">${weakCells}</div>
     </div>`;
   }).join('');
-  const razorEmpty = `<div style="padding:18px;border:1px dashed #ddd6fe;background:#faf5ff;border-radius:10px;text-align:center;color:#5b21b6;font-size:12px;font-weight:600">No Razor's Edge students this round — every Approaching student is more than 8 pts from Meeting. Use the Risk Bucket below for broader practice.</div>`;
+  const razorEmpty = `<div style="padding:18px;border:1px dashed #ddd6fe;background:#faf5ff;border-radius:10px;text-align:center;color:#5b21b6;font-size:12px;font-weight:600">No students are currently within 8 scale points of Meeting.</div>`;
 
   // Layout rationale (3 stacked sections):
   //   1. Prediction snapshot — full-width compact strip; it's a class-level
@@ -33062,10 +33627,10 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
   //      sidebar card. The 4 performance-level chips lay out horizontally
   //      (1 row × 4 cols) instead of cramped 2×2.
   //   2. Near Target Students — full-width action row. (Previously paired
-  //      with a Practice plan side card; removed per PM call so the
+  //      with an action side card; removed per PM call so the
   //      Analytics tab focuses purely on diagnostic insight rather than
   //      mixing in the practice-assignment workflow, which lives on the
-  //      Risk Bucket flow elsewhere.)
+  //      page stays read-only until practice delivery exists.)
   //   3. Standards heatmap — unchanged, full-width data view.
   const body = `
     <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:14px">
@@ -33082,37 +33647,29 @@ function renderTcapClass(targetBodyId = 'tcapClassBody', targetSubtitleId = 'tca
       <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);display:flex;flex-direction:column">
         <div style="margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Near Target Students</h3>
-            <span style="font-size:9px;font-weight:900;letter-spacing:.5px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:5px;padding:2px 6px;text-transform:uppercase">Razor's Edge</span>
+            <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Closest to Meeting</h3>
           </div>
-          <p style="font-size:11px;color:#71717a;margin:3px 0 0">Within 8 scale points of Meeting — the highest-leverage students for targeted practice this cycle.</p>
+          <p style="font-size:11px;color:#71717a;margin:3px 0 0">Students within 8 scale points of Meeting. Use this as a review priority list; practice delivery is not available in this prototype.</p>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px">${razor || razorEmpty}</div>
       </div>
     </div>
 
-    <!-- Standards heatmap (PRD §10) — full-width row beneath the action grid.
-         Surfaces per-standard accuracy across the highest-leverage students
-         so a teacher can see where to teach next, not just who to act on.
-         Legend moved to the title row (right side) so it's visible while
-         the user is scanning the grid, not after they've scrolled past.
-         Filter chips downgraded to plain labels — they describe state,
-         they don't accept input. -->
+    <!-- Standards distribution — standard-first drill-down. Replaces the full
+         student × standard matrix so the teacher can spot weakest standards
+         first; clicking a card opens a drawer and does not change page context. -->
     <div style="background:#fff;border:1px solid #eef0f4;border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin-bottom:16px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap">
         <div style="min-width:0">
-          <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Standards heatmap</h3>
-          <p style="font-size:11px;color:#71717a;margin:3px 0 0">Top ${Math.min(12, heatmapRows.length)} students near or below cut · ${heatStandards.length} standards</p>
+          <h3 style="margin:0;font-size:15px;font-weight:900;color:#18181b">Priority standards</h3>
+          <p style="font-size:11px;color:#71717a;margin:3px 0 0">${heatStandards.length} standards sorted by students below 70% · hover bar segments for names · click a card to open details</p>
         </div>
-        ${heatLegend}
       </div>
-      <div style="overflow-x:auto">
-        ${heatHeader}
-        ${heatBody || `<div style="padding:24px;text-align:center;color:#a8a29e;font-size:12px">No standards data yet — heatmap will populate once students complete the diagnostic.</div>`}
-      </div>
+      ${standardCards}
     </div>
 
   `;
+  if (targetBodyId === '__return__') return body;
   const target = document.getElementById(targetBodyId);
   if (target) target.innerHTML = body;
 }
@@ -33140,336 +33697,7 @@ function openTcapReportByName(studentName) {
   }
   tcapOpenStudentReport(studentId);
 }
-const tcapPracticeAssignedStudentIds = new Set();
-let tcapPracticeAssignedCount = 0;
-function isTcapPracticeAssigned(studentId) {
-  return tcapPracticeAssignedStudentIds.has(studentId);
-}
-let pendingPracticeAssign = null;
-function resetPracticeAssignModal() {
-  const icon = document.getElementById('practiceAssignIcon');
-  const cancelBtn = document.getElementById('practiceAssignCancelBtn');
-  const confirmBtn = document.getElementById('practiceAssignConfirmBtn');
-  if (icon) {
-    icon.className = 'modal-icon info';
-    icon.textContent = '🎯';
-  }
-  if (cancelBtn) cancelBtn.style.display = '';
-  if (confirmBtn) {
-    confirmBtn.textContent = 'Assign practice';
-    confirmBtn.onclick = confirmPracticeAssign;
-    confirmBtn.className = 'modal-confirm';
-  }
-}
-function tcapAssignOne(studentId) {
-  const stu = TCAP_CLASS.students.find(s => s.id === studentId);
-  const gradeKey = tcapKey(TCAP_CLASS.grade, TCAP_CLASS.subject);
-  const pred = stu ? TCAPScoringAdapter.predict(stu, gradeKey) : null;
-  const weak = stu ? tcapWeakestStandards(stu, 3) : [];
-  pendingPracticeAssign = { mode:'single', studentId, count: stu ? 1 : 0 };
-  resetPracticeAssignModal();
-  document.getElementById('practiceAssignTitle').textContent = `Assign practice to ${stu ? stu.name : 'student'}?`;
-  document.getElementById('practiceAssignSubtitle').textContent = `${TCAP_CLASS.className} · TCAP ${TCAP_CLASS.subject}`;
-  document.getElementById('practiceAssignBody').innerHTML = `
-    <p style="margin:0">This will create a personalized practice plan from the student's weakest standards and add it to Teacher Assignments.</p>
-    <div class="stat">
-      <div class="stat-item"><span class="val">${pred ? pred.scaleScore : '—'}</span><span class="lbl">Predicted scale</span></div>
-      <div class="stat-item"><span class="val">${pred ? pred.level.shortLabel : '—'}</span><span class="lbl">Level</span></div>
-      <div class="stat-item"><span class="val">${weak.length}</span><span class="lbl">Target skills</span></div>
-    </div>
-    <p style="margin:14px 0 0;font-size:12px;color:#52525b"><b>Targets:</b> ${weak.map(w => `${w.code} ${w.name}`).join(' · ') || 'Weakest standards from diagnostic'}</p>
-    <p style="margin:10px 0 0;font-size:12px;color:#71717a">Source mix: mock item bank + Kira tagged items + AI-reviewed practice candidates. Prototype demo only.</p>
-  `;
-  document.getElementById('practiceAssignModalOverlay').classList.add('open');
-}
-function tcapAssignRiskBucket() {
-  const rows = tcapPredictAll();
-  const riskRows = rows.filter(r => r.pred.level.index <= 1);
-  pendingPracticeAssign = { mode:'bucket', count:riskRows.length };
-  resetPracticeAssignModal();
-  document.getElementById('practiceAssignTitle').textContent = 'Assign practice to Risk Bucket?';
-  document.getElementById('practiceAssignSubtitle').textContent = `${TCAP_CLASS.className} · ${riskRows.length} students below Meeting`;
-  document.getElementById('practiceAssignBody').innerHTML = `
-    <p style="margin:0">This will create personalized practice plans for all students currently predicted below Meeting.</p>
-    <div class="stat">
-      <div class="stat-item"><span class="val">${riskRows.length}</span><span class="lbl">Students</span></div>
-      <div class="stat-item"><span class="val">3</span><span class="lbl">Weakest standards each</span></div>
-      <div class="stat-item"><span class="val">TCAP</span><span class="lbl">Practice route</span></div>
-    </div>
-    <p style="margin:14px 0 0;font-size:12px;color:#52525b"><b>Included:</b> ${riskRows.slice(0,4).map(r => r.name).join(', ')}${riskRows.length > 4 ? `, +${riskRows.length - 4} more` : ''}</p>
-    <p style="margin:10px 0 0;font-size:12px;color:#71717a">Each plan targets that student's weakest standards. Prototype demo only.</p>
-  `;
-  document.getElementById('practiceAssignModalOverlay').classList.add('open');
-}
-function closePracticeAssignModal() {
-  pendingPracticeAssign = null;
-  document.getElementById('practiceAssignModalOverlay').classList.remove('open');
-}
-function confirmPracticeAssign() {
-  const pending = pendingPracticeAssign;
-  const count = pending?.mode === 'single' ? 1 : (pending?.count || 0);
-  if (pending?.mode === 'single' && pending.studentId) {
-    tcapPracticeAssignedStudentIds.add(pending.studentId);
-  } else if (pending?.mode === 'bucket') {
-    const rows = tcapPredictAll();
-    rows.filter(r => r.pred.level.index <= 1).forEach(r => tcapPracticeAssignedStudentIds.add(r.id));
-  }
-  tcapPracticeAssignedCount = tcapPracticeAssignedStudentIds.size;
-  pendingPracticeAssign = null;
-  if (document.getElementById('sessionAnalyticsTcapPredictionsBody')) {
-    renderTcapClass('sessionAnalyticsTcapPredictionsBody', null);
-  }
-  if (document.getElementById('assessmentDetailBody') && document.getElementById('page-assessment-detail')?.classList.contains('active')) {
-    renderAssessmentDetail();
-  }
-  const icon = document.getElementById('practiceAssignIcon');
-  const cancelBtn = document.getElementById('practiceAssignCancelBtn');
-  const confirmBtn = document.getElementById('practiceAssignConfirmBtn');
-  if (icon) {
-    icon.className = 'modal-icon success';
-    icon.textContent = '✓';
-  }
-  document.getElementById('practiceAssignTitle').textContent = 'Practice assigned';
-  document.getElementById('practiceAssignSubtitle').textContent = count === 1 ? '1 student practice plan created' : `${count} student practice plans created`;
-  document.getElementById('practiceAssignBody').innerHTML = `
-    <p style="margin:0">The practice plan has been added to Teacher Assignments.</p>
-    <div class="stat">
-      <div class="stat-item"><span class="val">${count}</span><span class="lbl">Assigned</span></div>
-      <div class="stat-item"><span class="val">Ready</span><span class="lbl">Status</span></div>
-    </div>
-    <p style="margin:14px 0 0;font-size:12px;color:#71717a">Prototype note: production would show assignment status, due date, and student notification details here.</p>
-  `;
-  if (cancelBtn) cancelBtn.style.display = 'none';
-  if (confirmBtn) {
-    confirmBtn.textContent = 'Done';
-    confirmBtn.onclick = closePracticeAssignModal;
-    confirmBtn.className = 'modal-confirm success';
-  }
-}
-
 // ── Student: Diagnostic Report ────────────────────────────────────
-// ── TCAP Practice Preview helpers (Student Diagnostic Report) ──
-// Item pools by standard prefix. Each item is a "what we'd assign" preview, not a real
-// runnable item — practice runtime is a V2 deliverable. Type/desc/sec are illustrative
-// but realistic for the standard family.
-const _TCAP_PRACTICE_ITEM_POOL = {
-  RL: [
-    { type:'MC',         label:'Multiple Choice',      sec:75,  desc:'Pick the sentence that best states the central idea or theme.' },
-    { type:'Hot Text',   label:'Hot Text',             sec:120, desc:'Highlight the phrase that signals the theme.' },
-    { type:'CR',         label:'Constructed Response', sec:180, desc:'Summarize the passage in 2 sentences using your own words.' }
-  ],
-  RI: [
-    { type:'MC',         label:'Multiple Choice',      sec:90,  desc:"Identify the author's main purpose for including this paragraph." },
-    { type:'Two-Part',   label:'Two-Part Evidence',    sec:120, desc:'Pick the answer + cite the supporting evidence sentence.' },
-    { type:'CR',         label:'Constructed Response', sec:180, desc:'Explain how two informational ideas connect (cause→effect or compare→contrast).' }
-  ],
-  L: [
-    { type:'MC',         label:'Multiple Choice',      sec:60,  desc:'What does the figurative phrase mean in context?' },
-    { type:'FIB',        label:'Fill in the Blank',    sec:90,  desc:'Identify the device used: simile / metaphor / personification / idiom.' },
-    { type:'Two-Part',   label:'Two-Part Evidence',    sec:100, desc:'Pick the metaphor + explain the comparison being made.' }
-  ],
-  W: [
-    { type:'MC',         label:'Multiple Choice',      sec:75,  desc:'Which transition word best links the two paragraphs?' },
-    { type:'CR',         label:'Constructed Response', sec:240, desc:'Add one supporting detail that strengthens the topic sentence.' },
-    { type:'FIB',        label:'Fill in the Blank',    sec:60,  desc:'Choose the strongest organizational structure: chronological / problem-solution / cause-effect.' }
-  ]
-};
-function tcapMockPracticeItems(stdCode, count) {
-  const prefix = (stdCode || '').split('.')[0];
-  const pool = _TCAP_PRACTICE_ITEM_POOL[prefix] || _TCAP_PRACTICE_ITEM_POOL.RL;
-  return pool.slice(0, Math.max(1, count));
-}
-function tcapPracticeReason(acc) {
-  return acc < 0.45 ? 'Foundation gap — start with worked examples'
-       : acc < 0.6  ? 'Partial understanding — practice with feedback'
-       :              'Near-mastery — challenge items to consolidate';
-}
-function tcapFmtSec(sec) {
-  if (sec < 60) return sec + 's';
-  const m = Math.floor(sec/60), s = sec % 60;
-  return s ? `${m}m ${s}s` : `${m}m`;
-}
-function _tcapItemTypeColor(type) {
-  switch(type){
-    case 'MC':       return { bg:'#eef2ff', fg:'#4338ca', border:'#c7d2fe' };
-    case 'Two-Part': return { bg:'#fdf4ff', fg:'#a21caf', border:'#f5d0fe' };
-    case 'CR':       return { bg:'#fef3c7', fg:'#92400e', border:'#fde68a' };
-    case 'FIB':      return { bg:'#ecfdf5', fg:'#047857', border:'#a7f3d0' };
-    case 'Hot Text': return { bg:'#fff7ed', fg:'#c2410c', border:'#fed7aa' };
-    default:         return { bg:'#f4f4f5', fg:'#52525b', border:'#e4e4e7' };
-  }
-}
-function _tcapPreviewItemRow(item, idx) {
-  const c = _tcapItemTypeColor(item.type);
-  return `<div style="display:flex;gap:12px;padding:10px 12px;border:1px solid #eef0f4;border-radius:10px;background:#fff;align-items:flex-start">
-    <div style="width:22px;flex-shrink:0;font-size:11px;font-weight:700;color:#a1a1aa;text-align:center;padding-top:2px">${idx+1}</div>
-    <div style="flex:1;min-width:0">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap">
-        <span style="font-size:10px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:${c.fg};background:${c.bg};border:1px solid ${c.border};padding:2px 7px;border-radius:6px">${item.label}</span>
-        <span style="font-size:10.5px;color:#71717a;font-variant-numeric:tabular-nums">~${tcapFmtSec(item.sec)}</span>
-      </div>
-      <div style="font-size:12.5px;color:#3f3f46;line-height:1.45">${item.desc}</div>
-    </div>
-  </div>`;
-}
-function _tcapPreviewStandardCard(st, items) {
-  const pct = Math.round(st.acc * 100);
-  const totalSec = items.reduce((s,it) => s + it.sec, 0);
-  const itemsHtml = items.map((it,i) => _tcapPreviewItemRow(it,i)).join('');
-  return `<section style="margin-bottom:14px;padding:14px;border:1px solid #eef0f4;border-radius:12px;background:#fafafa">
-    <header style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px">
-      <div style="min-width:0;flex:1">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px">
-          <span style="font-size:13px;font-weight:800;color:#18181b">${st.code}</span>
-          <span style="font-size:12px;color:#52525b;font-weight:500">· ${st.name}</span>
-        </div>
-        <div style="font-size:11px;color:#71717a">${st.category} · ${tcapPracticeReason(st.acc)}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
-        <div style="font-size:11px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.3px;font-weight:700">Diagnostic</div>
-        <div style="font-size:15px;color:${tcapAcctBarColor(st.acc)};font-weight:800;font-variant-numeric:tabular-nums">${pct}%</div>
-      </div>
-    </header>
-    <div style="display:flex;flex-direction:column;gap:6px">${itemsHtml}</div>
-    <footer style="margin-top:10px;font-size:11px;color:#71717a;text-align:right;font-variant-numeric:tabular-nums">${items.length} items · ~${tcapFmtSec(totalSec)} total</footer>
-  </section>`;
-}
-function openTcapPracticePreview(scope) {
-  // scope === 'all' → full plan; otherwise scope is a standard code (e.g. 'RI.5.3')
-  const cls = TCAP_CLASS;
-  const stu = cls.students.find(s => s.id === cls.spotlightStudentId) || cls.students[0];
-  const weakest = tcapWeakestStandards(stu, 5);
-  const counts = [3,3,2,2,2];
-  const titleEl = document.getElementById('tcapPracticePreviewTitle');
-  const subEl   = document.getElementById('tcapPracticePreviewSubtitle');
-  const iconEl  = document.getElementById('tcapPracticePreviewIcon');
-  const bodyEl  = document.getElementById('tcapPracticePreviewBody');
-  if (scope === 'all') {
-    iconEl.textContent = '📋';
-    titleEl.textContent = 'Your practice plan';
-    const totalItems = weakest.reduce((sum,_st,i) => sum + counts[i], 0);
-    const totalSec = weakest.reduce((sum,st,i) => {
-      const items = tcapMockPracticeItems(st.code, counts[i]);
-      return sum + items.reduce((s,it)=>s+it.sec, 0);
-    }, 0);
-    subEl.textContent = `${weakest.length} standards · ${totalItems} items · ~${tcapFmtSec(totalSec)} total`;
-    bodyEl.innerHTML = `<p style="margin:0 0 14px;font-size:12.5px;color:#52525b;line-height:1.55">Each item is calibrated to your current level on that standard. After every miss, you'll see what the misconception was — that's how the gap closes faster than re-reading the passage.</p>` +
-      weakest.map((st,i) => _tcapPreviewStandardCard(st, tcapMockPracticeItems(st.code, counts[i]))).join('');
-  } else {
-    const idx = weakest.findIndex(w => w.code === scope);
-    const st = idx >= 0 ? weakest[idx] : weakest[0];
-    const c  = idx >= 0 ? counts[idx]  : 2;
-    const items = tcapMockPracticeItems(st.code, c);
-    const totalSec = items.reduce((s,it)=>s+it.sec, 0);
-    iconEl.textContent = '🎯';
-    titleEl.textContent = `Preview · ${st.code}`;
-    subEl.textContent = `${st.name} · ${items.length} items · ~${tcapFmtSec(totalSec)}`;
-    bodyEl.innerHTML = _tcapPreviewStandardCard(st, items);
-  }
-  const ov = document.getElementById('tcapPracticePreviewOverlay');
-  if (ov) {
-    ov.dataset.scope = scope;
-    ov.classList.add('open');
-  }
-}
-function closeTcapPracticePreview() {
-  const ov = document.getElementById('tcapPracticePreviewOverlay');
-  if (ov) ov.classList.remove('open');
-}
-// Boot the real TCAP student runner with a "practice mode" marker.
-// Routes to the closest matching TCS_POOLS pool by standard prefix
-// (RL/RI/L/W → ELA Reading; OA/NBT/NF/MD/G → Math; PS/LS/ESS → Science;
-// 7.21 etc → SS). Practice mode flags the session so the runner header
-// can later surface "Practice mode — doesn't affect your TCAP score";
-// the prototype just toasts that copy on launch for now.
-function startTcapPracticeFromPlan() {
-  const ov = document.getElementById('tcapPracticePreviewOverlay');
-  const scope = (ov && ov.dataset && ov.dataset.scope) || 'all';
-  closeTcapPracticePreview();
-  // Resolve a standards prefix → runner subject + pool.
-  const stdCode = (scope === 'all') ? '' : scope;
-  const stdPrefix = (stdCode.split('.')[0] || '').toUpperCase();
-  let runnerSubject = 'ELA Reading';
-  if (/^(OA|NBT|NF|MD|G|EE|RP|NS|SP|F|A|S)$/.test(stdPrefix)) runnerSubject = 'Math';
-  else if (/^(PS|LS|ESS|ETS)$/.test(stdPrefix)) runnerSubject = 'Science';
-  else if (/^\d+(\.\d+)?$/.test(stdPrefix) || /SS/i.test(stdPrefix)) runnerSubject = 'Social Studies';
-  // Stash a practice-mode marker so future runner header tweaks can
-  // surface a "Practice — not graded" chip; for now we just track the
-  // scope so re-opening the preview behaves correctly.
-  TCS_STATE.practiceMode = { stdCode, scope, startedAt: Date.now() };
-  // Route into the runner via switchRole + nav + tcsSwitchSubject so
-  // pool / brand / timer all sync. Land on Q1 of the test phase (skip
-  // launch + ready check — the student already passed those to reach
-  // the report page where they tapped Start practice).
-  switchRole('student', true);
-  if (typeof nav === 'function') nav('tcap-stu');
-  if (typeof tcsSwitchSubject === 'function') {
-    tcsSwitchSubject(runnerSubject, TCAP_CLASS && TCAP_CLASS.grade ? TCAP_CLASS.grade : 5);
-  }
-  if (typeof tcsDemo === 'function') tcsDemo('test', { idx: 0 });
-  if (typeof iteToast === 'function') {
-    const scopeLbl = scope === 'all' ? 'full plan' : scope;
-    iteToast(`Practice mode (${scopeLbl}) · doesn't affect your TCAP score`, 'info');
-  }
-}
-// Lazy-load html2canvas the first time the user clicks "Download as image".
-let _html2canvasLoading = null;
-function _loadHtml2Canvas() {
-  if (window.html2canvas) return Promise.resolve(window.html2canvas);
-  if (_html2canvasLoading) return _html2canvasLoading;
-  _html2canvasLoading = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-    s.async = true;
-    s.onload = () => resolve(window.html2canvas);
-    s.onerror = () => { _html2canvasLoading = null; reject(new Error('Failed to load html2canvas')); };
-    document.head.appendChild(s);
-  });
-  return _html2canvasLoading;
-}
-// Lucide Download + Loader2 SVGs, kept inline so we can swap on the button
-// during the lazy-load + render cycle. currentColor lets them inherit the
-// button text color (.modal-cancel → #52525b).
-const _LUCIDE_DOWNLOAD_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
-const _LUCIDE_LOADER_SVG   = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:tcSpin 0.7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
-
-function downloadTcapPracticePreview() {
-  const ov = document.getElementById('tcapPracticePreviewOverlay');
-  const card = ov && ov.querySelector('.stu-modal');
-  if (!card) return;
-  const scope = (ov.dataset && ov.dataset.scope) || 'all';
-  const safeScope = scope === 'all' ? 'plan' : scope.replace(/[^A-Za-z0-9.\-_]/g, '_');
-  const filename = `tcap-practice-${safeScope}.png`;
-  const btn  = document.getElementById('tcapPracticePreviewDlBtn');
-  const lbl  = document.getElementById('tcapPracticePreviewDlLabel');
-  const icon = document.getElementById('tcapPracticePreviewDlIcon');
-  const origLabel = lbl ? lbl.textContent : '';
-  if (btn)  btn.disabled = true;
-  if (lbl)  lbl.textContent = 'Generating…';
-  if (icon) icon.innerHTML = _LUCIDE_LOADER_SVG;
-  _loadHtml2Canvas()
-    .then(h2c => h2c(card, { backgroundColor: '#ffffff', scale: 2, useCORS: true, logging: false }))
-    .then(canvas => {
-      canvas.toBlob(blob => {
-        if (!blob) throw new Error('toBlob returned null');
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = filename;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        if (typeof iteToast === 'function') iteToast(`Saved ${filename}`, 'success');
-      }, 'image/png');
-    })
-    .catch(err => {
-      console.error('[tcap practice preview] download failed', err);
-      if (typeof iteToast === 'function') iteToast('Download failed — check your network and try again.', 'info');
-    })
-    .finally(() => {
-      if (btn)  btn.disabled = false;
-      if (lbl)  lbl.textContent = origLabel || 'Download as image';
-      if (icon) icon.innerHTML = _LUCIDE_DOWNLOAD_SVG;
-    });
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TCAP Item Review (bottom of TCAP Student Report)
@@ -34520,12 +34748,11 @@ function renderTcapStudentReport() {
     </div>`;
   }).join('<div style="align-self:center;color:#d4d4d8;font-weight:700">→</div>');
 
-  // Weakest + practice plan
+  // Weakest standards review
   const weakest = tcapWeakestStandards(stu, 5);
-  const practicePlan = weakest.map((st,i) => {
+  const standardsReview = weakest.map((st) => {
     const pct = Math.round(st.acc*100);
-    const itemsRec = [3,3,2,2,2][i] || 2;
-    const reason = st.acc < 0.45 ? 'Foundation gap — start with worked examples' : st.acc < 0.6 ? 'Partial understanding — practice with feedback' : 'Near-mastery — challenge items to consolidate';
+    const reason = st.acc < 0.45 ? 'Foundation gap — reteach with examples' : st.acc < 0.6 ? 'Partial understanding — review with feedback' : 'Near-mastery — quick check before the next diagnostic';
     return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #eef0f4;border-radius:10px;background:#fff">
       <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
         <div style="width:44px;height:44px;border-radius:10px;background:${tcapAccBg(st.acc)};color:${tcapAcctBarColor(st.acc)};font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${pct}%</div>
@@ -34534,7 +34761,7 @@ function renderTcapStudentReport() {
           <div style="font-size:11px;color:#71717a;margin-top:2px">${st.category} · ${reason}</div>
         </div>
       </div>
-      <div style="font-size:11px;color:#52525b;font-weight:600;font-variant-numeric:tabular-nums;flex-shrink:0">${itemsRec} items recommended</div>
+      <div style="font-size:11px;color:#52525b;font-weight:600;flex-shrink:0">Review priority</div>
     </div>`;
   }).join('');
 
@@ -34545,12 +34772,12 @@ function renderTcapStudentReport() {
     gapHTML = `<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #ddd6fe;border-radius:12px;padding:18px 20px;margin-bottom:16px">
       <div style="font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:#5b21b6;margin-bottom:8px">Gap to next level</div>
       <div style="font-size:16px;font-weight:700;color:#18181b;margin-bottom:4px">You're <span style="color:#5b21b6">${pred.gapToNext.scalePointsToNext} scale points</span> from <span style="color:${tgt.color}">${tgt.label}</span> (cut score ${pred.gapToNext.nextCutScore})</div>
-      <div style="font-size:13px;color:#52525b;line-height:1.5">Mastering your ${weakest.slice(0,2).map(w=>w.code).join(' and ')} weaknesses should lift you past the cut. Your plan below targets ~${pred.gapToNext.itemsToNext} calibrated items — that's typically enough to cross the boundary.</div>
+      <div style="font-size:13px;color:#52525b;line-height:1.5">Focus review on ${weakest.slice(0,2).map(w=>w.code).join(' and ')} first. These are the standards most likely to affect the next diagnostic result.</div>
     </div>`;
   } else {
     gapHTML = `<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:18px 20px;margin-bottom:16px">
       <div style="font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:#047857;margin-bottom:8px">Exceeding — keep it up</div>
-      <div style="font-size:15px;color:#18181b;line-height:1.5">You're predicted at the top tier (scale score ${pred.scaleScore} · ${cuts.aboveProficient[0]}+ cut). Maintenance practice will keep you above the cut score through the April TCAP window.</div>
+      <div style="font-size:15px;color:#18181b;line-height:1.5">You're predicted at the top tier (scale score ${pred.scaleScore} · ${cuts.aboveProficient[0]}+ cut). Continued review should keep you above the cut score through the April TCAP window.</div>
     </div>`;
   }
 
@@ -34660,12 +34887,11 @@ function renderTcapStudentReport() {
     <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start">
       <div style="background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04)">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-          <h3 style="margin:0;font-size:15px;font-weight:700;color:#18181b">🎯 Your Personalized Practice Plan</h3>
-          <span style="font-size:11px;color:#6040ca;font-weight:700;background:#f5f3ff;padding:3px 10px;border-radius:999px;border:1px solid #ddd6fe">AI · Aligned to TN standards</span>
+          <h3 style="margin:0;font-size:15px;font-weight:700;color:#18181b">Standards to Review</h3>
+          <span style="font-size:11px;color:#6040ca;font-weight:700;background:#f5f3ff;padding:3px 10px;border-radius:999px;border:1px solid #ddd6fe">Diagnostic insight</span>
         </div>
-        <p style="font-size:12px;color:#52525b;margin:0 0 12px;line-height:1.5">Focus on these ${weakest.length} standards this cycle. Each item is calibrated to your current level and explains the misconception when you miss it.</p>
-        <div style="display:flex;flex-direction:column;gap:8px">${practicePlan}</div>
-        <button onclick="openTcapPracticePreview('all')" style="width:100%;margin-top:14px;background:#6040ca;color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04)">📋 See your practice plan</button>
+        <p style="font-size:12px;color:#52525b;margin:0 0 12px;line-height:1.5">Focus review on these ${weakest.length} standards this cycle. Practice delivery is not available in this prototype.</p>
+        <div style="display:flex;flex-direction:column;gap:8px">${standardsReview}</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:16px">
@@ -34682,7 +34908,7 @@ function renderTcapStudentReport() {
   document.getElementById('tcapStudentBody').innerHTML = body;
   // Fill the new hero-bar student profile card (mirrors ACT/SAT chrome).
   // Uses the spotlight student from TCAP_CLASS — same student whose
-  // predicted level + practice plan is rendered in the body above.
+  // predicted level + standards review is rendered in the body above.
   renderTcapStudentInfoBar(stu, cls);
 }
 
@@ -34761,11 +34987,6 @@ function renderTcapConfig(targetElId) {
   const sel = parseTcapKey(tcapConfigGradeKey);
   const subjectMeta = DW_TCAP_CONFIG.subjects.find(s => s.id === sel.subject) || DW_TCAP_CONFIG.subjects[0];
   const cuts = TCAPScoringAdapter.getCutScores(tcapConfigGradeKey);
-  const cls = TCAP_CLASS;
-  const rows = tcapPredictAll(cls);
-  const counts = tcapLevelCounts(rows);
-  const total = rows.length;
-  const previewMatchesSel = (cls.grade === sel.grade && cls.subject === sel.subject);
 
   // Subject selector (4 subjects)
   const subjectButtons = DW_TCAP_CONFIG.subjects.map(s => {
@@ -34780,42 +35001,45 @@ function renderTcapConfig(targetElId) {
     return `<button onclick="tcapSetConfigGradeNum(${g})" style="min-width:42px;padding:8px 12px;border-radius:8px;border:1px solid ${active?'#6040ca':'#e4e4e7'};background:${active?'#f5f3ff':'#fff'};color:${active?'#5b21b6':'#52525b'};font-weight:${active?700:500};font-size:12px;cursor:pointer">G${g}</button>`;
   }).join('');
 
-  // Slider band — scale-score based, uses TCAP_PROFILE.scaleRange (300-450).
+  // Scale-score bands — default view explains ranges first; sliders are
+  // kept as an advanced edit affordance so teachers don't read the page as
+  // a parameter-tuning task.
   const range = TCAP_PROFILE.scaleRange;
-  const span = range.max - range.min;
   const lvls = TCAP_PROFILE.performanceLevels;
-
-  const segments = lvls.map((lvl, i) => {
+  const cutVisual = {
+    belowBasic:      { bg:'#FFEBE7', border:'#FFCDC3', color:'#D31510', desc:'Below grade-level expectation; needs substantial support.' },
+    approaching:     { bg:'#FEF6EE', border:'#F9DBAF', color:'#B14C00', desc:'Close to Meeting; review priority before the next diagnostic.' },
+    proficient:      { bg:'#E0F3FF', border:'#B5DFFF', color:'#026BDB', desc:'Meets grade-level expectation for this grade and subject.' },
+    aboveProficient: { bg:'#E3FADC', border:'#CCF5CC', color:'#007C0F', desc:'Above grade-level expectation; ready for extension work.' },
+  };
+  const rangeCards = lvls.map(lvl => {
     const lo = cuts[lvl.id][0];
     const hi = cuts[lvl.id][1];
-    const w = (hi - lo + 1) / span * 100;
-    return `<div style="width:${w}%;background:${lvl.bg};border-right:${i<3?`2px solid ${lvl.color}`:'none'};position:relative;height:100%">
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:700;color:${lvl.color};white-space:nowrap">${lvl.shortLabel}</div>
+    const v = cutVisual[lvl.id] || { bg:lvl.bg, border:lvl.border, color:lvl.color, desc:'' };
+    return `<div class="tcap-cut-card" style="background:${v.bg};border-color:${v.border}">
+      <div class="label" style="color:${v.color}">${lvl.fullLabel || lvl.label}</div>
+      <div class="range">${lo}–${hi}</div>
+      <div class="desc">${v.desc}</div>
     </div>`;
   }).join('');
 
   const sliders = lvls.slice(1).map((lvl, i) => {
     const val = cuts[lvl.id][0];
+    const v = cutVisual[lvl.id] || { color:lvl.color };
+    const prev = lvls[i];
+    const prevHi = val - 1;
     return `<div style="padding:12px 16px;background:#fafafa;border:1px solid #eef0f4;border-radius:10px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="width:10px;height:10px;border-radius:2px;background:${lvl.color}"></span>
-          <span style="font-size:12px;font-weight:700;color:#18181b">${lvl.label} starts at</span>
+        <div style="display:flex;align-items:flex-start;gap:8px;min-width:0">
+          <span style="width:10px;height:10px;border-radius:2px;background:${v.color}"></span>
+          <span style="min-width:0">
+            <span style="display:block;font-size:12px;font-weight:800;color:#18181b">${lvl.fullLabel || lvl.label} begins at ${val}</span>
+            <span style="display:block;font-size:11px;color:#71717a;margin-top:2px">${prev.fullLabel || prev.label} ends at ${prevHi}</span>
+          </span>
         </div>
-        <span style="font-size:14px;font-weight:800;color:${lvl.color};font-variant-numeric:tabular-nums">${val}</span>
+        <span style="font-size:14px;font-weight:800;color:${v.color};font-variant-numeric:tabular-nums">${val}</span>
       </div>
-      <input type="range" min="${range.min}" max="${range.max}" value="${val}" step="1" oninput="tcapCutSliderInput(${i},this.value)" onchange="tcapCutSliderInput(${i},this.value,true)" style="width:100%;accent-color:${lvl.color};cursor:pointer"/>
-    </div>`;
-  }).join('');
-
-  // Predicted counts comparison
-  const distRow = TCAP_PROFILE.performanceLevels.map(lvl => {
-    const n = counts[lvl.id];
-    const pct = total ? Math.round((n/total)*100) : 0;
-    return `<div style="flex:1;padding:10px 12px;background:${lvl.bg};border:1px solid ${lvl.border};border-radius:8px;text-align:center">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:${lvl.color}">${lvl.label}</div>
-      <div style="font-size:22px;font-weight:800;color:${lvl.color};line-height:1;margin-top:4px">${n}</div>
-      <div style="font-size:11px;color:${lvl.color};font-weight:600">${pct}%</div>
+      <input type="range" min="${range.min}" max="${range.max}" value="${val}" step="1" oninput="tcapCutSliderInput(${i},this.value)" onchange="tcapCutSliderInput(${i},this.value,true)" style="width:100%;accent-color:${v.color};cursor:pointer"/>
     </div>`;
   }).join('');
 
@@ -34850,33 +35074,26 @@ function renderTcapConfig(targetElId) {
       })()}
     </div>
 
-    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start">
+    <div style="display:grid;grid-template-columns:1fr;gap:16px;align-items:start">
       <div style="background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:22px;box-shadow:0 1px 2px rgba(0,0,0,.04)">
-        <h3 style="margin:0 0 6px;font-size:15px;font-weight:700;color:#18181b">Cut-Score Boundaries (scale score)</h3>
-        <p style="margin:0 0 16px;font-size:12px;color:#52525b">Drag the sliders to set where each level begins. The bar below shows the resulting bands across the ${range.min}–${range.max} TCAP scale-score range. ${previewMatchesSel ? 'Changes preview against the current class below.' : `Live preview reflects the demo class (G${cls.grade} ${cls.subject.toUpperCase()}); switch the selector to G${cls.grade} ${cls.subject.toUpperCase()} to see counts move.`}</p>
-        <div style="height:44px;border:1px solid #e4e4e7;border-radius:10px;overflow:hidden;display:flex;margin-bottom:8px">${segments}</div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#a1a1aa;font-weight:600;margin-bottom:20px">
-          <span>${range.min}</span><span>${Math.round(range.min + span*0.25)}</span><span>${Math.round(range.min + span*0.5)}</span><span>${Math.round(range.min + span*0.75)}</span><span>${range.max}</span>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <h3 style="margin:0 0 6px;font-size:15px;font-weight:800;color:#18181b">Performance Level Ranges</h3>
+            <p style="margin:0;font-size:12px;color:#52525b;line-height:1.5">Scale scores are mapped into four reporting levels for <b>Grade ${sel.grade} ${subjectMeta.label}</b>. These ranges drive projections and student reports.</p>
+          </div>
+          <span style="font-size:11px;color:#6d6d6d;background:#fafafa;border:1px solid #e6e6e6;border-radius:999px;padding:4px 10px">Scale ${range.min}–${range.max}</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:10px">${sliders}</div>
-      </div>
-
-      <div style="background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:22px;box-shadow:0 1px 2px rgba(0,0,0,.04)">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-          <h3 style="margin:0;font-size:15px;font-weight:700;color:#18181b">Live Class Preview</h3>
-          <span style="font-size:10px;background:#ecfdf5;color:#047857;padding:3px 8px;border-radius:999px;font-weight:700;letter-spacing:.3px;text-transform:uppercase">Live</span>
-        </div>
-        <p style="margin:0 0 14px;font-size:12px;color:#52525b">Mr. Rivera · Grade ${cls.grade} ${cls.subject.toUpperCase()} · ${total} students${previewMatchesSel ? '' : ' <span style="color:#a16207">(demo class differs from selection)</span>'}</p>
-        <div style="display:flex;gap:6px;margin-bottom:16px">${distRow}</div>
-        <div style="padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:12px;color:#78350f;line-height:1.5">
-          <b>What changes here?</b> Moving a boundary 5 pts can shift several students across levels. TN DOE publishes official cut scores each year — confirm yours match before the pilot starts.
-        </div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          ${inline
-            ? `<button onclick="setSessionDetailTab('analytics')" style="flex:1;background:#fff;border:1px solid #e4e4e7;color:#18181b;padding:10px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer">← Back to Analytics</button>`
-            : `<button onclick="loadSessionDetail('sess-tcap-1','analytics')" style="flex:1;background:#fff;border:1px solid #e4e4e7;color:#18181b;padding:10px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer">← Back to Analytics</button>`}
-          <button onclick="tcapOpenStudentReport('${cls.spotlightStudentId}')" style="flex:1;background:#fff;border:1px solid #e4e4e7;color:#18181b;padding:10px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer">Sample Student Report →</button>
-        </div>
+        <div class="tcap-cut-ranges">${rangeCards}</div>
+        <details class="tcap-cut-details">
+          <summary>
+            <span>Edit level thresholds <span class="hint">District admin only · advanced</span></span>
+            <span class="chev">▾</span>
+          </summary>
+          <div class="tcap-cut-edit-body">
+            <p style="margin:0 0 14px;font-size:12px;color:#52525b;line-height:1.5">Use this only when an LEA-supplied cut-score profile needs to be previewed. Each row edits the starting score for a level; the range cards above update after the value changes.</p>
+            <div style="display:flex;flex-direction:column;gap:10px">${sliders}</div>
+          </div>
+        </details>
       </div>
     </div>
   `;
