@@ -1945,6 +1945,27 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .assign-stepper input{width:60px;height:36px;border:1px solid #e4e4e7;border-radius:8px;text-align:center;font-size:14px;font-family:inherit;color:#18181b;outline:none}
 .assign-stepper input:focus{border-color:#7452e4;box-shadow:0 0 0 3px rgba(116,82,228,.12)}
 .assign-helper{font-size:11px;color:#a1a1aa;margin-top:-4px}
+/* Grading section — split layout for ACT (Core MC + Writing resolution).
+   The label sits above the select / radio group; helper text below carries
+   the trade-off. Pill on the section title surfaces the chosen Writing
+   path at-a-glance. */
+.assign-grading-label{font-size:12px;font-weight:600;color:#190d40;letter-spacing:.2px;text-transform:uppercase;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.assign-grading-label:not(:first-child){margin-top:14px}
+.assign-grading-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.3px;text-transform:none}
+.assign-grading-pill.pill-ok{background:#ecfdf5;color:#065f46}
+.assign-grading-pill.pill-warn{background:#fef3c7;color:#92400e}
+.assign-grading-divider{height:1px;background:#f1f5f9;margin:14px 0 14px}
+.assign-grading-radios{display:flex;flex-direction:column;gap:8px}
+.assign-grading-radios.is-disabled{opacity:.45;pointer-events:none}
+.assign-grading-radio{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid #e4e4e7;border-radius:8px;cursor:pointer;background:#fff;transition:.15s}
+.assign-grading-radio:hover{border-color:#cbd5e1;background:#fafafa}
+.assign-grading-radio.selected{border-color:#7452e4;background:#f5f3ff;box-shadow:0 0 0 3px rgba(116,82,228,.08)}
+.assign-grading-radio input[type="radio"]{margin:3px 0 0;accent-color:#7452e4}
+.assign-grading-radio-body{display:flex;flex-direction:column;gap:3px;flex:1}
+.assign-grading-radio-title{font-size:13px;font-weight:600;color:#18181b;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.assign-grading-radio-tag{font-size:10px;font-weight:600;color:#16a34a;background:#dcfce7;padding:1px 7px;border-radius:999px;letter-spacing:.2px}
+.assign-grading-radio-tag.tag-warn{color:#92400e;background:#fef3c7}
+.assign-grading-radio-sub{font-size:12px;color:#71717a;line-height:1.45}
 .assign-acc-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .assign-acc-title{font-size:14px;font-weight:500;color:#190d40;line-height:1.4}
 .assign-acc-sub{font-size:14px;color:#71717a;line-height:1.4}
@@ -27287,6 +27308,14 @@ function openAssignModal(type) {
     timeLimit: defaultDuration,
     extraTime: 0,
     gradingMethod: type === 'act' ? 'MANUAL' : 'AUTO_AI',
+    // ACT-specific. Path used to resolve a Writing rubric domain when
+    // |AI Rater 1 − AI Rater 2| > 2 on that domain.
+    //   'TEACHER'     — teacher acts as 3rd rater (default, ACT-aligned;
+    //                   matches ACT official 2-rater + human resolver design)
+    //   'AI_FALLBACK' — independent 3rd AI rater; median locks the score;
+    //                   if all 3 still spread > 4 (circuit breaker) → teacher
+    //                   Teacher Override stays available either way.
+    writingResolution: 'TEACHER',
     classes: _assignSeedClasses(type, isTcap, className),
     // TCAP-specific (only used when assessmentType === 'tcap'):
     //   - tcapSubject / tcapGrade : immutable, surfaced read-only in the
@@ -27525,8 +27554,25 @@ function renderAssignModal() {
     return `Scheduled window · ${baseLabel}`;
   })();
   const gradingTitle = 'Grading method';
-  const gradingSubtitle = 'Select AI for instant grading or Manual for teacher review';
-  const gradingValue = assignState.gradingMethod === 'AUTO_AI' ? 'AI grading (instant)' : 'Manual grading (teacher review)';
+  const gradingSubtitle = assignState.assessmentType === 'act'
+    ? 'How MC items grade and how Writing rater disagreements get resolved'
+    : 'Select AI for instant grading or Manual for teacher review';
+  const gradingValue = (() => {
+    const mcLabel = assignState.gradingMethod === 'AUTO_AI' ? 'MC instant' : 'MC teacher review';
+    if (assignState.assessmentType === 'act') {
+      // Only surface the Writing-resolution path when MC is on auto;
+      // when MC is Manual review, every item waits for teacher anyway,
+      // so the Writing fork is moot.
+      if (assignState.gradingMethod === 'AUTO_AI') {
+        const writingLabel = assignState.writingResolution === 'AI_FALLBACK'
+          ? 'Writing AI fallback'
+          : 'Writing teacher resolves';
+        return `${mcLabel} · ${writingLabel}`;
+      }
+      return 'All items wait for teacher review';
+    }
+    return assignState.gradingMethod === 'AUTO_AI' ? 'AI grading (instant)' : 'Manual grading (teacher review)';
+  })();
   const proctorTitle = 'Proctoring settings';
   const proctorSubtitle = 'Configure proctoring monitoring and limits';
   const proctorValue = assignState.antiCheatEnabled
@@ -27626,6 +27672,10 @@ function assignSetExtraTime(min) {
 }
 function assignSetGradingMethod(value) {
   assignState.gradingMethod = value;
+  renderAssignModal();
+}
+function assignSetWritingResolution(value) {
+  assignState.writingResolution = value;
   renderAssignModal();
 }
 function assignSetSearch(value) {
@@ -27975,18 +28025,85 @@ function _assignSectionSchedule() {
   `;
 }
 function _assignSectionGrading() {
-  // Same AUTO_AI / MANUAL select for every test type. TCAP doesn't need
-  // a TDOE-locked per-SP variant here — the AUTO_AI helper text already
-  // documents "Constructed responses still need teacher review", which
-  // captures the SP1 Writing essay routing implicitly.
   const v = assignState.gradingMethod || 'AUTO_AI';
-  return `
+  const isAct = assignState.assessmentType === 'act';
+
+  // ── Core MC grading (every test type) ──
+  // ACT writes more honestly: "Auto-release" / "Hold for teacher review"
+  // describes the gating behaviour, not the time-to-grade (MC is always
+  // instant under the hood). Other test types keep legacy labels for now.
+  const mcLabel = isAct ? 'Core MC grading' : 'Grading method';
+  const mcOptionAuto = isAct ? 'Auto-release · MC scores publish instantly' : 'AI grading (instant)';
+  const mcOptionManual = isAct ? 'Hold for teacher review · all items' : 'Manual grading (teacher review)';
+  const mcHelper = isAct
+    ? (v === 'AUTO_AI'
+        ? 'Multiple-choice items publish to students as soon as scoring finishes. Writing essays follow the path you choose below.'
+        : 'No item — MC or Writing — releases until you approve the report. The Writing path below is moot in this mode.')
+    : (v === 'AUTO_AI'
+        ? 'Selected response items grade instantly. Constructed responses still need teacher review.'
+        : 'All items wait for teacher review before reports are released to students.');
+
+  const mcBlock = `
+    <div class="assign-grading-label">${mcLabel}</div>
     <select class="assign-select" onchange="assignSetGradingMethod(this.value)">
-      <option value="AUTO_AI" ${v==='AUTO_AI'?'selected':''}>AI grading (instant)</option>
-      <option value="MANUAL" ${v==='MANUAL'?'selected':''}>Manual grading (teacher review)</option>
+      <option value="AUTO_AI" ${v==='AUTO_AI'?'selected':''}>${mcOptionAuto}</option>
+      <option value="MANUAL" ${v==='MANUAL'?'selected':''}>${mcOptionManual}</option>
     </select>
-    <div class="assign-helper">${v==='AUTO_AI' ? 'Selected response items grade instantly. Constructed responses still need teacher review.' : 'All items wait for teacher review before reports are released to students.'}</div>
+    <div class="assign-helper">${mcHelper}</div>
   `;
+
+  if (!isAct) return mcBlock;
+
+  // ── Writing scoring (ACT only) ────────────────────────────────────────
+  // Each rubric domain is dual-AI rated; when |r1 − r2| > 2 on a domain,
+  // who breaks the tie? Default = teacher (ACT-aligned, ~1 essay-domain
+  // in N), opt-in = independent 3rd AI rater (instant, accepts black-box
+  // tie-break). When Core MC is "Hold for teacher review", every essay
+  // already waits for teacher approval anyway, so we visually disable
+  // this radio group so it doesn't read as if the choice still matters.
+  const wr = assignState.writingResolution || 'TEACHER';
+  const writingDisabled = v !== 'AUTO_AI';
+  const teacherSelected = wr === 'TEACHER';
+  const aiSelected = wr === 'AI_FALLBACK';
+
+  const writingHelper = writingDisabled
+    ? 'Switch Core MC grading to <b>Auto-release</b> to choose how Writing handles rater disagreement.'
+    : (aiSelected
+        ? 'Writing essays release without your approval. A 3rd AI rater resolves rubric disagreements (median of 3) so students never wait. You can still review and override any domain on the Writing report afterward. The student\'s report shows an "AI consensus · 3 raters" disclosure.'
+        : 'Matches ACT official 2-rater + human resolver design. When 2 AI raters disagree by >2 on a domain, that single domain enters your Grader queue (typically &lt; 2 min per essay-domain).');
+
+  const writingBlock = `
+    <div class="assign-grading-divider"></div>
+    <div class="assign-grading-label">
+      Writing scoring · when raters disagree
+      <span class="assign-grading-pill ${aiSelected ? 'pill-warn' : 'pill-ok'}">${aiSelected ? 'AI fallback' : 'ACT-aligned'}</span>
+    </div>
+    <div class="assign-grading-radios ${writingDisabled ? 'is-disabled' : ''}">
+      <label class="assign-grading-radio ${teacherSelected && !writingDisabled ? 'selected' : ''}">
+        <input type="radio" name="writingResolution" value="TEACHER"
+               ${teacherSelected ? 'checked' : ''}
+               ${writingDisabled ? 'disabled' : ''}
+               onchange="assignSetWritingResolution('TEACHER')" />
+        <span class="assign-grading-radio-body">
+          <span class="assign-grading-radio-title">Teacher resolves <span class="assign-grading-radio-tag">Default · ACT-aligned</span></span>
+          <span class="assign-grading-radio-sub">Only the divergent domain enters your queue, not the whole essay.</span>
+        </span>
+      </label>
+      <label class="assign-grading-radio ${aiSelected && !writingDisabled ? 'selected' : ''}">
+        <input type="radio" name="writingResolution" value="AI_FALLBACK"
+               ${aiSelected ? 'checked' : ''}
+               ${writingDisabled ? 'disabled' : ''}
+               onchange="assignSetWritingResolution('AI_FALLBACK')" />
+        <span class="assign-grading-radio-body">
+          <span class="assign-grading-radio-title">AI fallback <span class="assign-grading-radio-tag tag-warn">Instant · black-box tie-break</span></span>
+          <span class="assign-grading-radio-sub">Independent 3rd AI rater; median locks the score. Extreme spread (≥ 5) still routes to you.</span>
+        </span>
+      </label>
+    </div>
+    <div class="assign-helper">${writingHelper}</div>
+  `;
+
+  return mcBlock + writingBlock;
 }
 /* ─────────────── Assign-modal — student picker render ────────────────
  * Three-band layout (PRD §5.7.3):
