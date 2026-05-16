@@ -1039,35 +1039,53 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .monitor-hero.tcap-monitor .tcap-insights-narrative .row .ico{width:13px;font-size:11px}
 /* Right column — collapse the giant disc + bring everything closer */
 .monitor-hero.tcap-monitor .monitor-hero-right{min-height:0;align-items:flex-start}
-.monitor-hero.tcap-monitor .timer-card{min-width:0;width:100%;align-items:stretch}
+/* ─── TCAP monitor — compact shadcn-flavored window strip ───
+ * The default ACT/SAT timer-card is a vertical hero (big circular timer
+ * on top, status + actions below). For TCAP we collapse it into a
+ * dense, dashboard-style strip: a top meta row (Duration · Status pill),
+ * an inline "from → until" line, a thin progress bar showing where the
+ * window currently sits, and a low-key End session link. Scoped via
+ * `.monitor-hero.tcap-monitor` so ACT/SAT keep their full hero. */
+.monitor-hero.tcap-monitor .timer-card{min-width:0;width:100%;align-items:stretch;gap:0}
 .monitor-hero.tcap-monitor .timer-card .timer-bg-disc{display:none}
 .monitor-hero.tcap-monitor .timer-card .timer-edit{display:none}
-.monitor-hero.tcap-monitor .timer-card .timer-head{flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.monitor-hero.tcap-monitor .timer-card .timer-head-limit{font-size:12px}
-.monitor-hero.tcap-monitor .timer-card .timer-head-limit b{font-size:14px}
 .monitor-hero.tcap-monitor .timer-card .schedule-clock{display:none}
-.monitor-hero.tcap-monitor .timer-status-pill{padding:2px 9px;margin-top:0}
-.monitor-hero.tcap-monitor .timer-status-pill .label{font-size:11px;font-weight:700}
-/* Schedule windows → horizontal single-line timeline */
-.monitor-hero.tcap-monitor .timer-scheduled{gap:10px;margin-top:0}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-windows{flex-direction:row;gap:14px;padding-left:0;margin-top:0;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-rail{position:relative;left:0;top:auto;bottom:auto;flex-direction:row;align-items:center;width:auto;flex:1;min-width:60px;order:2;height:auto}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-dot{width:8px;height:8px;box-shadow:none}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-dot.start{border-color:#7452e4;background:#7452e4}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-dot.end{border-color:#ef4444;background:#fff}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-line{flex:1;height:1px;width:auto;margin:0 4px;background:linear-gradient(90deg,#7452e4 0%,#7452e4 60%,#e4e4e7 60%,#e4e4e7 100%)}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row{display:flex;flex-direction:column;gap:1px;min-width:0;flex:0 0 auto}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row:first-of-type{order:1;align-items:flex-start;text-align:left}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row:last-of-type{order:3;align-items:flex-end;text-align:right}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .lab{font-size:9px;letter-spacing:.4px;color:#a1a1aa;font-weight:700}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .val{display:block;margin-top:1px}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .val .time{display:block;font-size:18px;font-weight:700;color:#190d40;line-height:1.2}
-.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .val .date{display:block;font-size:11px;color:#71717a;font-weight:600;margin-top:1px}
-/* End session → text-style link button, not a heavy outlined CTA */
+
+/* Top meta row — Duration label + value on left, Status pill on right.
+   Sits on top of a hairline divider (border-bottom of the row). */
+.monitor-hero.tcap-monitor .timer-card .timer-head{flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:0;padding-bottom:10px;border-bottom:1px solid #f4f4f5}
+.monitor-hero.tcap-monitor .timer-card .timer-head-limit{display:inline-flex;align-items:baseline;gap:6px;font-size:11px;font-weight:700;color:#a1a1aa;text-transform:uppercase;letter-spacing:.5px}
+.monitor-hero.tcap-monitor .timer-card .timer-head-limit b{font-size:14px;font-weight:600;color:#18181b;letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+.monitor-hero.tcap-monitor .timer-status-pill{padding:3px 10px;margin-top:0;border:1px solid #f4f4f5;background:#fff}
+.monitor-hero.tcap-monitor .timer-status-pill .label{font-size:11px;font-weight:600;letter-spacing:.2px}
+
+/* Window strip — single horizontal row of "from → until", with a thin
+   progress bar underneath. Implemented as a CSS grid so we can place
+   the from/to text above and the rail across both columns below
+   without touching the existing DOM (rail is the third .schedule-* child). */
+.monitor-hero.tcap-monitor .timer-scheduled{gap:0;margin-top:12px;align-items:stretch}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-windows{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"from to" "rail rail";gap:6px 16px;padding:0;margin-top:0;align-items:center}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row{display:flex;flex-direction:column;gap:2px;min-width:0}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row:first-of-type{grid-area:from;align-items:flex-start;text-align:left}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row:last-of-type{grid-area:to;align-items:flex-end;text-align:right}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .lab{font-size:9px;font-weight:700;color:#a1a1aa;letter-spacing:.5px;text-transform:uppercase}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .val{display:inline-flex;align-items:baseline;gap:6px;margin-top:0}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .val .time{display:inline;font-size:14px;font-weight:600;color:#18181b;line-height:1.2;font-variant-numeric:tabular-nums}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-row .val .date{display:inline;font-size:12px;color:#71717a;font-weight:500;margin-top:0}
+
+/* Rail → thin progress bar across both columns. Hide the dots; the
+   linear-gradient `.schedule-line` already encodes window progress
+   (60% filled with primary, rest neutral) so the dots are decoration. */
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-rail{grid-area:rail;position:relative;left:0;top:auto;bottom:auto;flex-direction:row;align-items:center;width:100%;flex:none;min-width:0;height:4px;margin-top:6px;order:0}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-dot{display:none}
+.monitor-hero.tcap-monitor .timer-scheduled .schedule-line{flex:1;height:4px;width:100%;margin:0;border-radius:999px;background:linear-gradient(90deg,#7452e4 0%,#7452e4 60%,#ececef 60%,#ececef 100%)}
+
+/* End session → low-key text link, right-aligned below the progress bar. */
+.monitor-hero.tcap-monitor .monitor-hero-right{min-height:0}
 .monitor-hero.tcap-monitor .timer-controls{margin-top:10px;justify-content:flex-end}
-.monitor-hero.tcap-monitor .timer-btn.danger{background:transparent;border-color:transparent;height:auto;padding:4px 8px;font-size:12px;font-weight:600;color:#b91c1c;border-radius:6px}
-.monitor-hero.tcap-monitor .timer-btn.danger:hover{background:#fef2f2;border-color:transparent}
-.monitor-hero.tcap-monitor .timer-btn.danger .ic{width:11px;height:11px}
+.monitor-hero.tcap-monitor .timer-btn.danger{background:transparent;border-color:transparent;height:auto;padding:4px 8px;font-size:12px;font-weight:500;color:#b91c1c;border-radius:6px;gap:4px}
+.monitor-hero.tcap-monitor .timer-btn.danger:hover{background:#fef2f2;border-color:transparent;color:#991b1b}
+.monitor-hero.tcap-monitor .timer-btn.danger .ic{width:8px;height:8px}
 @media (max-width:1100px){
   .monitor-hero{grid-template-columns:1fr;gap:24px}
   .monitor-hero-right{justify-content:flex-start}
