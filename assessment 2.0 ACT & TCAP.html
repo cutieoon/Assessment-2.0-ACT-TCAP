@@ -37995,10 +37995,11 @@ function stuActGoLocal(pk, localIdx) {
     answerHtml = `<textarea style="width:100%;min-height:100px;border:1px solid #e4e4e7;border-radius:10px;padding:12px;font-size:14px;font-family:inherit;resize:vertical" placeholder="Type your answer..." oninput="stuActAnswer(${globalIdx},'${pk}')">${savedAnswer || ''}</textarea>`;
   }
 
-  // Review / Pending exit affordance now lives in the player's top header
-  // (`stuAct-leftHeaderBtn` flips from "Directions" → "← Back to Report"),
-  // so we no longer render a banner above the question card. The
-  // explanation block below is still review-only.
+  // Review / Pending modes intentionally have no in-product exit affordance
+  // in the player chrome — the "Directions" button is hidden via
+  // stuActUpdateHeaderBtn(), and exit is driven by stuActExitReview /
+  // stuActExitPendingPreview (e.g. from the dev toolbar). The explanation
+  // block below is still review-only.
   let reviewExplanation = '';
   if (st.reviewMode) {
     if (q.type !== 'ACT_WRITING' && q.type !== 'ESSAY' && q.choices) {
@@ -41990,9 +41991,6 @@ function renderActAiInsights(coreScores, categories, d) {
   const topFocusHtml = focusBody ? `<li class="ai-insights-item top-focus">
     <span class="kicker"><span class="ki" aria-hidden="true">🎯</span> Top Practice Focus</span>
     <span class="body">${focusBody}</span>
-    <div class="cta-row">
-      <button class="primary" onclick="openActPracticeFocus()">Show practice focus →</button>
-    </div>
   </li>` : '';
 
   // Secondary rows — quieter visual; bullet emoji + grey kicker.
@@ -42153,18 +42151,20 @@ function stuActExitPendingPreview() {
   nav('stu-act-report');
 }
 
-// Player top-left header button: flips between "Directions" (in-test) and
-// "← Back to Report" (review-mode or pending-preview). Single button so
-// the post-test viewing chrome stays minimal and consistent across the
-// two read-only states.
+// Player top-left header button. In-test only: "Directions" affordance.
+// Review-mode / pending-preview hide the button entirely — keeping the
+// post-test player chrome minimal and avoiding a "Back to Report" CTA
+// that visually competes with the home icon. Exit from review/pending
+// modes goes through stuActExitReview / stuActExitPendingPreview, which
+// can still be triggered programmatically (e.g. from the dev toolbar).
 function stuActUpdateHeaderBtn() {
   const btn = document.getElementById('stuAct-leftHeaderBtn');
   if (!btn) return;
   const st = STU_STATE && STU_STATE.stuAct;
   if (st && (st.reviewMode || st.pendingPreview)) {
-    btn.textContent = '← Back to Report';
-    btn.onclick = st.pendingPreview ? stuActExitPendingPreview : stuActExitReview;
+    btn.style.display = 'none';
   } else {
+    btn.style.display = '';
     btn.textContent = 'Directions';
     btn.onclick = function() { stuShowDirections('stuAct'); };
   }
@@ -43084,9 +43084,6 @@ function renderActWritingAiInsights(d) {
   const topFocusHtml = `<li class="ai-insights-item top-focus">
     <span class="kicker"><span class="ki" aria-hidden="true">🎯</span> Top Practice Focus</span>
     <span class="body">${focusBody}</span>
-    <div class="cta-row">
-      <button class="primary" onclick="openActPracticeFocus()">Show practice focus →</button>
-    </div>
   </li>`;
 
   // ── Protect Strength — only when there is a clearly dominant domain.
