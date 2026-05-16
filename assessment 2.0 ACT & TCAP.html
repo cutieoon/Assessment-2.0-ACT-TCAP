@@ -18547,10 +18547,10 @@ const ITEM_TYPES = [
       <div class="ans-input">Type your answer here…</div>`
   },
   {
-    id:'gridin', name:'Grid-In / Numeric', icon:'🔢', phase:'must',
-    sub:'Bubble-grid numeric entry — integers, fractions, or decimals. Auto-graded against the keyed value with configurable tolerance, an optional accepted range, and an optional unit.',
-    subjects:['Math'], standards:['TCAP','SAT'],
-    scoring:'Auto · numeric tolerance', kira:'Supported', nameCn:'网格输入 / 数值题', subCn:'气泡网格数值输入 —— 整数、分数或小数均可。按答案 ± 容差自动批改，可选配可接受区间和单位。', scoringCn:'自动 · 数值容差', kiraCn:'已支持',
+    id:'gridin', name:'Grid-In / Numeric', icon:'🔢', phase:'phase2',
+    sub:'SAT-style bubble-grid numeric entry — integers, fractions, or decimals. Auto-graded against the keyed value with configurable tolerance, an optional accepted range, and an optional unit. Note — TCAP uses free-form numeric entry (textEntry) which is already covered by Fill in the Blank; SAT bubble grid is a separate UX shipped post-MVP.',
+    subjects:['Math'], standards:['SAT'],
+    scoring:'Auto · numeric tolerance', kira:'Supported', nameCn:'网格输入 / 数值题', subCn:'SAT 风格的气泡网格数值输入 —— 整数、分数或小数均可。按答案 ± 容差自动批改，可选配可接受区间和单位。注：TCAP 数学用自由数值输入（textEntry），由「填空题」覆盖即可；SAT 气泡网格是另一种 UX，放在 MVP 之后。', scoringCn:'自动 · 数值容差', kiraCn:'已支持',
     teacher:`
       <div class="editor-row"><span class="key">Stem</span><span>If 3x + 5 = 20, what is x?</span></div>
       <div class="mini-row-grp">
@@ -18616,10 +18616,10 @@ const ITEM_TYPES = [
       </div>`
   },
   {
-    id:'editing', name:'Editing Task', icon:'✍️', phase:'must',
-    sub:'Underlined phrases inside a passage each open a dropdown of "NO CHANGE" + 3 alternatives — the student decides whether and how to revise. Auto-graded per edit: each phrase scores 1 when the student picks the keyed option.',
-    subjects:['ELA'], standards:['TCAP','ACT-English','SBAC'],
-    scoring:'Auto · per-edit match', kira:'NOT supported · build needed', nameCn:'修改题', subCn:'段落里若干带下划线的短语，每处展开一个下拉，含 "NO CHANGE" + 3 个改写候选，学生决定是否替换以及如何替换。逐处自动批改：选项与答案一致就得 1 分。', scoringCn:'自动 · 逐处批改', kiraCn:'已支持',
+    id:'editing', name:'Editing Task', icon:'✍️', phase:'phase2',
+    sub:'Underlined phrases inside a passage each open a dropdown of "NO CHANGE" + 3 alternatives — the student decides whether and how to revise. Auto-graded per edit: each phrase scores 1 when the student picks the keyed option. Used as the signature item type in ACT English and SBAC editing claims; absent from released TCAP TNReady items, so descoped from TCAP MVP.',
+    subjects:['ELA'], standards:['ACT-English','SBAC'],
+    scoring:'Auto · per-edit match', kira:'NOT supported · Phase 2', nameCn:'修改题', subCn:'段落里若干带下划线的短语，每处展开一个下拉，含 "NO CHANGE" + 3 个改写候选，学生决定是否替换以及如何替换。逐处自动批改：选项与答案一致就得 1 分。ACT English 与 SBAC 的标志题型；TDOE 历年释放题里未见 TCAP 使用，因此从 TCAP MVP 中移出。', scoringCn:'自动 · 逐处批改', kiraCn:'暂未支持 · 第二阶段',
     teacher:`
       <div class="mini-tabs"><span class="mini-tab active">✎ Inline edits</span><span class="mini-tab">📝 Whole-sentence revise</span></div>
       <div class="editor-row"><span class="key">Passage</span><span style="line-height:1.7">The team <span class="mini-marker">{ed:1}</span> the championship last year, and they hope <span class="mini-marker">{ed:2}</span> repeat the win this season.</span></div>
@@ -18638,9 +18638,9 @@ const ITEM_TYPES = [
   // ─── MVP nice-to-have ───
   {
     id:'hottext', name:'Hot Text', icon:'🖍️', phase:'nice',
-    sub:'Student selects words or sentences inside a passage as the answer (e.g. supporting evidence). Auto-graded against a target-span set, with partial credit for each matching span.',
-    subjects:['ELA','SS'], standards:['TCAP','SBAC'],
-    scoring:'Auto · exact selection match', kira:'NOT supported · build needed', nameCn:'文本热区', subCn:'学生在语段中选中词或句作为答案（例如选出支持论点的证据）。自动按目标片段集合批改，命中一条得一条的分。', scoringCn:'自动 · 选区精确匹配', kiraCn:'已支持',
+    sub:'Student selects words or sentences inside a passage as the answer (e.g. supporting evidence). Auto-graded against a target-span set, with partial credit for each matching span. Common in SBAC ELA evidence-based items; absent from released TCAP TNReady, so retained as a nice-to-have rather than a TCAP MVP requirement.',
+    subjects:['ELA','SS'], standards:['SBAC'],
+    scoring:'Auto · exact selection match', kira:'NOT supported · build needed', nameCn:'文本热区', subCn:'学生在语段中选中词或句作为答案（例如选出支持论点的证据）。自动按目标片段集合批改，命中一条得一条的分。SBAC ELA 的"证据题"常见型态；TCAP 释放题里未见，因此保留为 nice-to-have，而非 TCAP MVP 必备。', scoringCn:'自动 · 选区精确匹配', kiraCn:'暂未支持 · 待开发',
     teacher:`
       <div class="mini-tabs"><span class="mini-tab active">Sentence</span><span class="mini-tab">Word</span><span class="mini-tab">Phrase</span><span class="mini-badge-new">In-place 3-state</span></div>
       <div class="editor-row"><span class="key">Prompt</span><span>Click the sentence(s) that support the main idea.</span></div>
@@ -18743,10 +18743,10 @@ const ITEM_TYPES = [
       </div>`
   },
   {
-    id:'graph', name:'Graphing / Number Line', icon:'📈', phase:'must',
-    sub:'Plot points, lines, regions, or inequalities on a coordinate plane or number line. Auto-graded by coordinate match within a configurable tolerance.',
-    subjects:['Math'], standards:['TCAP','SBAC'],
-    scoring:'Auto · coordinate match (with tolerance)', kira:'NOT supported · build needed', nameCn:'作图 / 数轴', subCn:'在坐标系或数轴上画点、线、区域或不等式。按坐标自动批改，容差可配置。', scoringCn:'自动 · 坐标匹配（含容差）', kiraCn:'暂未支持 · 待开发',
+    id:'graph', name:'Graphing / Number Line', icon:'📈', phase:'phase2',
+    sub:'Plot points, lines, regions, or inequalities on a coordinate plane or number line. Auto-graded by coordinate match within a configurable tolerance. Used in SBAC Math; TCAP Math released items render coordinate planes as static stimuli with MC / FIB responses rather than interactive plotting, so this item type is descoped from TCAP MVP.',
+    subjects:['Math'], standards:['SBAC'],
+    scoring:'Auto · coordinate match (with tolerance)', kira:'NOT supported · Phase 2', nameCn:'作图 / 数轴', subCn:'在坐标系或数轴上画点、线、区域或不等式。按坐标自动批改，容差可配置。SBAC Math 使用；TCAP Math 释放题中坐标系仅作为静态题面，作答仍走 MC / 填空，因此从 TCAP MVP 中移出。', scoringCn:'自动 · 坐标匹配（含容差）', kiraCn:'暂未支持 · 第二阶段',
     teacher:`
       <div class="mini-tabs"><span class="mini-tab">·</span><span class="mini-tab active">╱ Line</span><span class="mini-tab">∪</span><span class="mini-tab">▦</span><span class="mini-tab">═</span><span class="mini-tab">≥</span></div>
       <div class="editor-row"><span class="key">Stem</span><span>Plot the line y = x + 1</span></div>
@@ -23003,9 +23003,12 @@ const TCS_QUESTIONS_MATH_G8 = [
      instr:'Type directly, or tap the math symbols below.',
      placeholder:'Type your answer (e.g. x = ±2)',
    }},
-  // Graphing — TCAP Math SP2/SP3 high-frequency item for Grades 6-8.
-  // Promoted from Phase 2 to MVP must-have; rendered via the existing graph
-  // builder so the demo just works end-to-end.
+  // Graphing — kept in this Math SP2 demo so the editor preview shows what
+  // an interactive coordinate item would feel like. NOTE: descoped from TCAP
+  // MVP (Phase 2 in ITEM_TYPES) — released TDOE TCAP Math items render
+  // coordinate planes as static MC / FIB stimuli rather than asking the
+  // student to plot. Demo retained because the graph builder is built;
+  // production TCAP exams will swap this slot for an MC / FIB equivalent.
   {n:6, type:'graph',    part:1, subj:'Math', stdId:'8.F.A.3',    pts:1, label:'Graphing',
    content:{
      stem:'On the coordinate plane below, plot the line that represents the equation <b>y = 2x − 1</b>.',
@@ -28635,13 +28638,13 @@ function buildAddQMenu(secId) {
     <button class="add-q-menu-item primary" onclick="closeAddQMenu();addQType('${secId}','mc')"><span class="aqm-icon">📝</span>Multiple Choice<span class="aqm-sub">Single Answer · Multiple Answers</span><span class="add-q-menu-badge">COMMON</span></button>
     <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','twopart')"><span class="aqm-icon">🧬</span>Two-Part / Evidence<span class="add-q-menu-badge" style="background:#dcfce7;color:#15803d">TCAP</span></button>
     <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','fib')"><span class="aqm-icon">✏️</span>Fill in the Blank</button>
-    <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','gridIn')"><span class="aqm-icon">🔢</span>Grid-In / Numeric</button>
     <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','freeresponse')"><span class="aqm-icon">💬</span>Constructed Response</button>
     <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','essay')"><span class="aqm-icon">📄</span>Writing Prompt / Essay</button>
     <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','passage')"><span class="aqm-icon">📖</span>Reading Passage + Qs<span class="add-q-menu-badge">NEW</span></button>
     <div class="add-q-menu-section-label">MVP nice-to-have</div>
     <button class="add-q-menu-item" onclick="closeAddQMenu();addQType('${secId}','hottext')"><span class="aqm-icon">🖍️</span>Hot Text<span class="add-q-menu-badge" style="background:#fef3c7;color:#a16207">NICE</span></button>
     <div class="add-q-menu-section-label">Phase 2 — preview design</div>
+    <button class="add-q-menu-item phase2" onclick="closeAddQMenu();addQType('${secId}','gridIn')"><span class="aqm-icon">🔢</span>Grid-In / Numeric<span class="add-q-menu-badge phase2">PHASE 2</span></button>
     <button class="add-q-menu-item phase2" onclick="closeAddQMenu();addQType('${secId}','dragdrop')"><span class="aqm-icon">🧲</span>Drag & Drop / Gap Match<span class="add-q-menu-badge phase2">PHASE 2</span></button>
     <button class="add-q-menu-item phase2" onclick="closeAddQMenu();addQType('${secId}','inline')"><span class="aqm-icon">🔽</span>Inline Choice (Cloze)<span class="add-q-menu-badge phase2">PHASE 2</span></button>
     <button class="add-q-menu-item phase2" onclick="closeAddQMenu();addQType('${secId}','matrix')"><span class="aqm-icon">📊</span>Matrix / Tabular<span class="add-q-menu-badge phase2">PHASE 2</span></button>
