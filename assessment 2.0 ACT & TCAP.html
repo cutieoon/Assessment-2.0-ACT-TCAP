@@ -7735,6 +7735,12 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .qrec-cell.wrong{border-color:#ef4444;color:#b91c1c}
 .qrec-cell.blank{border-color:#cbd5e1;color:#94a3b8}
 .qrec-cell.essay{border-color:#a855f7;color:#7c3aed}
+.qrec-grid.tcap-grouped{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.qrec-sp-group{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:start;gap:12px;padding:10px 0;border-top:1px solid #f4f4f5}
+.qrec-sp-group:first-child{border-top:0;padding-top:0}
+.qrec-sp-label{display:flex;flex-direction:column;gap:2px;padding-top:3px;font-size:11px;font-weight:800;color:#52525b;letter-spacing:.3px;text-transform:uppercase}
+.qrec-sp-label .muted{font-size:10.5px;font-weight:600;color:#a1a1aa;letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qrec-sp-cells{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
 .qrec-empty{padding:24px;text-align:center;color:#94a3b8;font-size:13px}
 .qrec-cta-row{display:flex;justify-content:center;margin-top:24px}
 .qrec-cta{background:#6040ca;color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.2px;transition:.15s;display:inline-flex;align-items:center;gap:6px}
@@ -34728,13 +34734,14 @@ function renderTcapItemReview() {
     </tbody>
   </table>`;
 
-  // Filter tabs — All / Wrong / Correct / Rubric (pending row only when present)
+  // Filter tabs follow the ACT report mental model: review-priority buckets
+  // first, lower-priority correct items last.
   const counts = { all:inScope.length, wrong:overall.wrong, correct:overall.correct, pending:overall.pending };
   const filterDefs = [
     { id:'all',     label:'All',     dot:'' },
     { id:'wrong',   label:'Wrong',   dot:'wrong' },
-    { id:'correct', label:'Correct', dot:'correct' },
     { id:'pending', label:'Rubric',  dot:'essay' },
+    { id:'correct', label:'Correct', dot:'correct' },
   ].filter(f => f.id === 'all' || counts[f.id] > 0);
   const filterTabsHtml = filterDefs.map(f =>
     `<button class="qrec-filter-tab ${_tcapReviewFilter === f.id ? 'is-active' : ''}" onclick="setTcapReviewFilter('${f.id}')">${f.dot ? `<span class="qrec-filter-dot ${f.dot}"></span>` : ''}${f.label}<span class="qrec-filter-count">${counts[f.id]}</span></button>`
@@ -34747,8 +34754,7 @@ function renderTcapItemReview() {
     if (_tcapReviewFilter === 'pending') return r._status === 'pending';
     return true;
   });
-  const gridHtml = filtered.length
-    ? filtered.map(r => {
+  const renderTcapReviewCell = (r) => {
         const statusCls = r._status === 'correct' ? 'correct'
                        : r._status === 'wrong'   ? 'wrong'
                        : 'essay';
@@ -34756,7 +34762,18 @@ function renderTcapItemReview() {
                          : r._status === 'correct' ? 'Correct' : 'Wrong';
         const tip = `${r._sp} · Q${r.n} · ${statusLabel} · click to open in review mode`;
         return `<button class="qrec-cell ${statusCls}" title="${tip}" onclick="openTcapResultsReview(${r.n}, '${r._sp}')">${r.n}</button>`;
-      }).join('')
+  };
+  const gridHtml = filtered.length
+    ? (_tcapReviewSp === 'all'
+      ? sps.map(sp => {
+          const rows = filtered.filter(r => r._sp === sp);
+          if (!rows.length) return '';
+          return `<div class="qrec-sp-group">
+            <div class="qrec-sp-label">${sp}<span class="muted">${tcapItemSpLabel(subjectId, sp)}</span></div>
+            <div class="qrec-sp-cells">${rows.map(renderTcapReviewCell).join('')}</div>
+          </div>`;
+        }).join('')
+      : filtered.map(renderTcapReviewCell).join(''))
     : '<div class="qrec-empty">No items match this filter.</div>';
 
   // CTA opens the first item in the current scope. The TCS shell takes over
@@ -34768,16 +34785,16 @@ function renderTcapItemReview() {
   const ctaDisabled = !firstItem;
 
   return `<div id="tcap-review-anchor" class="qrec-card" style="margin-top:24px">
-    <h3 class="qrec-title">📝 Item-by-item review</h3>
+    <h3 class="qrec-title">Item-by-item review</h3>
     <div class="qrec-tabs">${tabsHtml}</div>
     ${statsTableHtml}
     <div class="qrec-record-head">
       <span class="h">My Answer Record</span>
       <div class="qrec-filter-tabs">${filterTabsHtml}</div>
     </div>
-    <div class="qrec-grid">${gridHtml}</div>
+    <div class="qrec-grid ${_tcapReviewSp === 'all' ? 'tcap-grouped' : ''}">${gridHtml}</div>
     <div class="qrec-cta-row">
-      <button class="qrec-cta" ${ctaDisabled ? 'disabled' : ''} onclick="openTcapResultsReview(${ctaN}, '${ctaSp}')">📖 Open in Review Mode</button>
+      <button class="qrec-cta" ${ctaDisabled ? 'disabled' : ''} onclick="openTcapResultsReview(${ctaN}, '${ctaSp}')">Open in Review Mode</button>
     </div>
     <p class="qrec-cta-note">Opens the original test interface with your answer, the correct answer, and an explanation on each item.</p>
   </div>`;
