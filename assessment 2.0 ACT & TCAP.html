@@ -35,6 +35,7 @@ body.lang-cn .en{display:none!important}body.lang-en .cn{display:none!important}
 .page-view.report-page{height:100vh;overflow-y:auto}
 #page-tcap-config{overflow-y:auto}
 #page-tcap-config>div{padding-bottom:120px!important}
+#page-tcap-config>.org-admin-mock{padding-bottom:0!important}
 #page-student-profiles{overflow-y:auto}
 #page-student-profiles>div{padding-bottom:120px!important}
 #page-tcap-diag-report{height:100vh;overflow-y:auto}
@@ -4807,6 +4808,94 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 .tcap-threshold-help{font-size:11px;color:#6d6d6d;margin:4px 0 0 18px;line-height:1.4}
 .tcap-threshold-input{width:96px;height:36px;border:1px solid #d5d5d5;border-radius:8px;background:#fff;color:#383a42;font:800 14px/1 var(--font-family,inherit);text-align:center;font-variant-numeric:tabular-nums}
 .tcap-threshold-input:focus{outline:2px solid #b5dfff;border-color:#58acf5}
+.tcap-admin-placement{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;margin-bottom:16px;align-items:start}
+.tcap-admin-card{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.tcap-admin-card h3{margin:0 0 6px;font-size:14px;font-weight:900;color:#18181b;letter-spacing:-.1px}
+.tcap-admin-card p{margin:0;font-size:12px;color:#52525b;line-height:1.55}
+.tcap-admin-path{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tcap-admin-path span{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:#f8f8f8;border:1px solid #e6e6e6;color:#383a42;font-size:11px;font-weight:800}
+.tcap-admin-path .active{background:#f1edff;border-color:#ddd3ff;color:#6040ca}
+.tcap-admin-cap-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tcap-admin-cap{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:10px;background:#fafafa;border:1px solid #f0f0f0}
+.tcap-admin-cap .dot{width:8px;height:8px;border-radius:999px;background:#7452e4;margin-top:5px;flex-shrink:0}
+.tcap-admin-cap b{display:block;font-size:12px;color:#18181b;margin-bottom:1px}
+.tcap-admin-cap span{display:block;font-size:11px;color:#71717a;line-height:1.45}
+.tcap-admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tcap-admin-actions button{height:36px;padding:0 12px;border-radius:8px;border:1px solid #e4e4e7;background:#fff;color:#383a42;font:750 12px/1 var(--font-family,inherit);cursor:pointer}
+.tcap-admin-actions button.primary{background:#7452e4;border-color:#7452e4;color:#fff}
+.tcap-admin-actions button.disabled{cursor:not-allowed;opacity:.62;background:#f4f4f5;color:#71717a}
+.tcap-admin-workflow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.tcap-admin-step{border:1px solid #e6e6e6;background:#fafafa;border-radius:10px;padding:10px}
+.tcap-admin-step.active{background:#f1edff;border-color:#ddd3ff}
+.tcap-admin-step .k{font-size:10px;font-weight:850;letter-spacing:.3px;text-transform:uppercase;color:#71717a;margin-bottom:4px}
+.tcap-admin-step .v{font-size:12px;font-weight:850;color:#18181b;line-height:1.3}
+.tcap-admin-step.active .v{color:#6040ca}
+.tcap-profile-source{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tcap-profile-option{width:100%;border:1px solid #e6e6e6;background:#fff;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;text-align:left;cursor:pointer;font:inherit}
+.tcap-profile-option.active{border-color:#ddd3ff;background:#f7f5ff;box-shadow:inset 3px 0 0 #7452e4}
+.tcap-profile-option b{display:block;font-size:12px;color:#18181b;margin-bottom:2px}
+.tcap-profile-option span{display:block;font-size:11px;color:#71717a;line-height:1.35}
+.tcap-profile-option .status{font-size:10px;font-weight:850;color:#6040ca;background:#f1edff;border:1px solid #ddd3ff;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.tcap-assessment-link-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.tcap-assessment-link{border:1px solid #e6e6e6;background:#fff;border-radius:10px;padding:10px 12px}
+.tcap-assessment-link .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.tcap-assessment-link b{font-size:12px;color:#18181b}
+.tcap-assessment-link p{margin:3px 0 0;font-size:11px;color:#71717a;line-height:1.4}
+.tcap-assessment-link .pill{font-size:10px;font-weight:800;color:#007c0f;background:#e3fadc;border:1px solid #ccf5cc;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.tcap-admin-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.tcap-admin-metric{background:#fafafa;border:1px solid #f0f0f0;border-radius:10px;padding:10px}
+.tcap-admin-metric .n{font-size:18px;font-weight:900;color:#18181b;line-height:1}
+.tcap-admin-metric .l{font-size:10.5px;color:#71717a;margin-top:5px;line-height:1.25}
+.tcap-assessment-map{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.tcap-assessment-map-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.tcap-assessment-map h3{margin:0;font-size:15px;font-weight:900;color:#18181b}
+.tcap-assessment-map p{margin:4px 0 0;font-size:12px;color:#52525b;line-height:1.5;max-width:760px}
+.tcap-assessment-map .cta{height:34px;border:1px solid #ddd3ff;background:#f1edff;color:#6040ca;border-radius:8px;padding:0 12px;font:800 12px/1 var(--font-family,inherit);cursor:pointer;white-space:nowrap}
+.tcap-link-flow{display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr);gap:8px;align-items:stretch}
+.tcap-link-node{border:1px solid #e6e6e6;background:#fafafa;border-radius:10px;padding:12px}
+.tcap-link-node.active{background:#f7f5ff;border-color:#ddd3ff;box-shadow:inset 3px 0 0 #7452e4}
+.tcap-link-node .k{font-size:10px;font-weight:850;letter-spacing:.3px;text-transform:uppercase;color:#71717a;margin-bottom:5px}
+.tcap-link-node .v{font-size:13px;font-weight:900;color:#18181b;line-height:1.25;margin-bottom:5px}
+.tcap-link-node .d{font-size:11px;color:#71717a;line-height:1.4}
+.tcap-link-arrow{display:flex;align-items:center;justify-content:center;color:#7452e4;font-size:18px;font-weight:900}
+.tcap-policy-note{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.tcap-policy-note div{border:1px solid #f0f0f0;background:#fafafa;border-radius:10px;padding:10px 12px}
+.tcap-policy-note b{display:block;font-size:12px;color:#18181b;margin-bottom:2px}
+.tcap-policy-note span{display:block;font-size:11px;color:#71717a;line-height:1.4}
+.org-settings-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 16px}
+.org-settings-tab{height:32px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#52525b;font:650 12px/1 var(--font-family,inherit);cursor:default}
+.org-settings-tab.active{background:#3c2686;color:#fff;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.org-settings-tab.disabled{color:#a1a1aa;background:#f8f8f8}
+.org-settings-policy-shell{display:block}
+.org-settings-policy-nav{background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:8px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.org-settings-policy-nav button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;background:transparent;border-radius:9px;padding:10px 11px;color:#52525b;font:750 12px/1.25 var(--font-family,inherit);text-align:left;cursor:pointer}
+.org-settings-policy-nav button.active{background:#f1edff;color:#6040ca}
+.org-settings-policy-nav .tag{font-size:10px;color:#71717a;background:#f4f4f5;border:1px solid #e4e4e7;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.org-settings-policy-main{min-width:0}
+.tcap-policy-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+.tcap-policy-main{min-width:0}
+.tcap-policy-side{display:flex;flex-direction:column;gap:12px;position:sticky;top:16px}
+.tcap-section-card{background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.tcap-section-card h3{margin:0;font-size:15px;font-weight:800;color:#18181b}
+.tcap-section-card .sub{font-size:11px;color:#71717a}
+.org-admin-mock{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:100vh;background:#f7f7f8}
+.org-admin-side{background:#190d40;color:#d8d0ff;display:flex;flex-direction:column;padding:18px 10px 14px;min-height:100vh}
+.org-admin-brand{display:flex;align-items:center;justify-content:space-between;padding:0 2px 18px 4px;color:#fff;font-size:21px;font-weight:950;letter-spacing:-.04em}
+.org-admin-collapse{font-size:18px;color:#b9a9ff;font-weight:800}
+.org-admin-nav{display:flex;flex-direction:column;gap:5px}
+.org-admin-nav button{height:36px;border:0;border-radius:7px;background:transparent;color:#d8d0ff;font:750 13px/1 var(--font-family,inherit);display:flex;align-items:center;gap:10px;padding:0 10px;text-align:left;cursor:default}
+.org-admin-nav button.active{background:#6040ca;color:#fff}
+.org-admin-nav .nav-ic{width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid currentColor;border-radius:4px;font-size:10px;line-height:1;opacity:.9}
+.org-admin-footer{margin-top:auto;padding:12px 0 0 4px;color:#c8bfff}
+.org-admin-org{font-size:11px;line-height:1.35;color:#d8d0ff;margin-bottom:10px}
+.org-admin-org .muted{display:block;color:#a99be8}
+.org-admin-user{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:750;color:#ede9fe}
+.org-admin-avatar{width:18px;height:18px;border-radius:999px;background:#a78bfa;box-shadow:0 0 0 2px rgba(255,255,255,.1)}
+.org-admin-main{min-width:0;overflow-y:auto;padding:28px 24px 120px}
+.org-admin-main-inner{max-width:1180px;margin:0 auto}
+@media (max-width:900px){.org-settings-policy-shell{grid-template-columns:1fr}}
+@media (max-width:900px){.org-admin-mock{grid-template-columns:1fr}.org-admin-side{min-height:auto}.org-admin-nav{flex-direction:row;flex-wrap:wrap}.org-admin-footer{display:none}.tcap-policy-grid{grid-template-columns:1fr}.tcap-policy-side{position:static}}
+@media (max-width:900px){.tcap-admin-placement,.tcap-admin-workflow,.tcap-admin-metrics,.tcap-policy-note{grid-template-columns:1fr}.tcap-link-flow{grid-template-columns:1fr}.tcap-link-arrow{display:none}.tcap-cut-ranges{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .heat-cell.empty{background:#f8fafc;color:#cbd5e1;border-color:#f1f5f9}
 .heat-cell.highlight{outline:2px solid #ef4444;outline-offset:2px;background:#fee2e2}
 @media (max-width:1100px){.act-score-layout{grid-template-columns:1fr}.act-core-grid,.act-derived-grid,.act-readiness-grid,.act-compare-grid{grid-template-columns:1fr}.act-score-head{flex-direction:column}}
@@ -9737,13 +9826,13 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
           <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">TCAP · Tennessee</span>
           <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#7c3aed;background:#ede9fe;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Predictive · Pilot</span>
-          <span id="tcapClassCutBadge" style="font-size:11px;color:#52525b;background:#f4f4f5;border:1px solid #e4e4e7;padding:3px 10px;border-radius:999px;cursor:pointer" onclick="nav('tcap-config')" title="View cut-score profile">⚙️ Cut-score profile: District default</span>
+          <span id="tcapClassCutBadge" style="font-size:11px;color:#52525b;background:#f4f4f5;border:1px solid #e4e4e7;padding:3px 10px;border-radius:999px;cursor:pointer" onclick="nav('tcap-config')" title="View score-level rule">Score rule: District default</span>
         </div>
         <h1 style="font-size:24px;font-weight:800;color:#18181b;margin:0">TCAP Class Predictions</h1>
         <p style="font-size:13px;color:#52525b;margin:4px 0 0" id="tcapClassSubtitle"></p>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <button onclick="nav('tcap-config')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">⚙️ Cut-score profile</button>
+        <button onclick="nav('tcap-config')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">Score rule</button>
       </div>
     </div>
     <div id="tcapClassBody"></div>
@@ -9773,29 +9862,57 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
 
 <!-- Admin: TCAP Cut Score Config -->
 <div class="page-view" id="page-tcap-config">
-  <div class="max-w-screen-2xl mx-auto" style="padding:28px 24px;max-width:1200px">
-    <button id="tcapConfigBackBtn" onclick="backToTcapAnalytics()" style="display:none;margin-bottom:12px;background:none;border:none;color:#6040ca;font-size:12px;font-weight:800;cursor:pointer;padding:0">← Back to Analytics</button>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
-          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;padding:3px 10px;border-radius:999px;text-transform:uppercase">District Admin</span>
-          <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">TCAP</span>
+  <div class="org-admin-mock">
+    <aside class="org-admin-side" aria-label="Organization admin navigation">
+      <div class="org-admin-brand"><span>kira</span><span class="org-admin-collapse">≪</span></div>
+      <nav class="org-admin-nav">
+        <button><span class="nav-ic">↗</span>Analytics</button>
+        <button><span class="nav-ic">⌂</span>Schools</button>
+        <button><span class="nav-ic">○</span>People</button>
+        <button><span class="nav-ic">□</span>Assets</button>
+        <button class="active"><span class="nav-ic">◇</span>Settings</button>
+      </nav>
+      <div class="org-admin-footer">
+        <div class="org-admin-org">Xiaoyue's workspace<span class="muted">Admin account</span></div>
+        <div class="org-admin-user"><span class="org-admin-avatar"></span>Andrea</div>
+      </div>
+    </aside>
+    <main class="org-admin-main">
+      <div class="org-admin-main-inner">
+        <button id="tcapConfigBackBtn" onclick="backToTcapAnalytics()" style="display:none;margin-bottom:12px;background:none;border:none;color:#6040ca;font-size:12px;font-weight:800;cursor:pointer;padding:0">← Back to Analytics</button>
+        <div style="font-size:12px;color:#71717a;margin-bottom:4px">Organization / Xiaoyue's workspace</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Organization Settings</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;padding:3px 10px;border-radius:999px;text-transform:uppercase">Policies</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.3px;color:#71717a;background:#f4f4f5;border:1px solid #e4e4e7;padding:3px 10px;border-radius:999px;text-transform:uppercase">Phase 2 mock</span>
+            </div>
+            <h1 style="font-size:24px;font-weight:800;color:#18181b;margin:0">TCAP Assessment Policies</h1>
+            <p style="font-size:13px;color:#52525b;margin:4px 0 0;max-width:760px">District-level score policy used by TCAP assessments. Teachers do not set these numbers inside an assessment; Kira applies the current score rule automatically based on grade and subject.</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onclick="loadSessionDetail('sess-tcap-1','analytics')" style="background:#fff;color:#6040ca;border:1px solid #ddd3ff;padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Open TCAP Analytics</button>
+            <button onclick="iteToast('CSV upload is a Phase 2 district-admin flow. This prototype shows placement only.','info')" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">Upload CSV · Phase 2</button>
+          </div>
         </div>
-        <h1 style="font-size:24px;font-weight:800;color:#18181b;margin:0">Cut-Score Profile</h1>
-        <p style="font-size:13px;color:#52525b;margin:4px 0 0;max-width:720px">Review the district cut-score profile used for TCAP projections. Admin demo controls can preview changes, but this is not part of the teacher's core assessment flow.</p>
+        <div class="org-settings-tabs" aria-label="Organization settings tabs">
+          <button class="org-settings-tab disabled">Feature Access</button>
+          <button class="org-settings-tab disabled">Connections</button>
+          <button class="org-settings-tab active">Policies</button>
+          <button class="org-settings-tab disabled">Branding</button>
+          <button class="org-settings-tab disabled">Notifications</button>
+          <button class="org-settings-tab disabled">Data & Privacy</button>
+        </div>
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
+          <div style="width:18px;height:18px;border-radius:999px;border:1px solid #f59e0b;color:#92400e;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;line-height:1;flex-shrink:0">!</div>
+          <div style="font-size:12px;color:#78350f;line-height:1.55">
+            <b>This page is not the assessment builder.</b> It defines the score-level rule that TCAP assessments read. Phase 1 is read-only; Phase 2 adds official upload, versioning, audit log, and publishing.
+          </div>
+        </div>
+        <div id="tcapConfigBody"></div>
       </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="tcapResetCutScores()" style="background:#fff;color:#18181b;border:1px solid #e4e4e7;padding:10px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">↺ Reset to District Default</button>
-        <button onclick="tcapSaveCutScores()" style="background:#16a34a;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">💾 Admin demo: Save</button>
-      </div>
-    </div>
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
-      <div style="font-size:18px;line-height:1;flex-shrink:0">⚠️</div>
-      <div style="font-size:12px;color:#78350f;line-height:1.55">
-        <b>Kira demo data · not official TDOE cut scores.</b> Scale-score range (300–450) and the 25 cut-score profiles shown below are an internal Kira demo baseline. TDOE does not publish raw scale-score cut points — actual cut scores are LEA-confidential and refreshed via standard-setting after each spring administration. Before pilot we will replace these with the LEA-supplied profile.
-      </div>
-    </div>
-    <div id="tcapConfigBody"></div>
+    </main>
   </div>
 </div>
 
@@ -10707,7 +10824,7 @@ body.contrast-sepia .stu-exam-header,body.contrast-sepia .stu-exam-footer{backgr
   <button onclick="switchRole('teacher',true);openTcapEdit('sess-tcap-ss-g7')">TN-1d ✎ TCAP Editor · Social Studies G7 (2 SP)</button>
   <button onclick="switchRole('teacher',true);loadSessionDetail('sess-tcap-1','analytics')">TN-2 🎯 TCAP Analytics</button>
   <button onclick="switchRole('student',true);nav('tcap-diag-report')">TN-3 📈 Student Diagnostic Report</button>
-  <button onclick="switchRole('teacher',true);nav('tcap-config')">TN-4 ⚙️ Cut Score Config</button>
+  <button onclick="switchRole('teacher',true);nav('tcap-config')">TN-4 ⚙️ Org Settings · TCAP Policies</button>
   <div class="sep">Student · ACT / SAT</div>
   <button onclick="switchRole('student',true);openStudentLaunch('sess-generic-1', false)">S-0 🚀 Launch</button>
   <button onclick="switchRole('student',true);nav('stu-ready')">S-1 ✅ Ready Check</button>
@@ -26206,6 +26323,7 @@ function renderTcapAnalyticsLevelRanges() {
       <div style="min-width:180px">
         <div style="font-size:11px;font-weight:900;color:#18181b;letter-spacing:.2px">Score level guide</div>
         <div style="font-size:11px;color:#71717a;line-height:1.4">Grade ${TCAP_CLASS.grade} ${subjectLabel} · scale ${range.min}–${range.max}</div>
+        <button onclick="openTcapCutScoresFromAnalytics()" style="margin-top:5px;border:0;background:none;color:#6040ca;font-size:11px;font-weight:850;padding:0;cursor:pointer;font-family:inherit">Managed in District Admin Settings</button>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">${cards}</div>
     </div>`;
@@ -35030,6 +35148,8 @@ function downloadTcapReport() {
 // ── Admin: Cut Score Config ───────────────────────────────────────
 let tcapConfigGradeKey = 'g5_ela';
 let tcapConfigReturnToAnalytics = false;
+let tcapConfigProfileSource = 'district'; // district | official | draft
+let tcapImpactPreviewOpen = false;
 function openTcapCutScoresFromAnalytics() {
   tcapConfigReturnToAnalytics = true;
   nav('tcap-config');
@@ -35059,6 +35179,7 @@ function renderTcapConfig(targetElId) {
   const sel = parseTcapKey(tcapConfigGradeKey);
   const subjectMeta = DW_TCAP_CONFIG.subjects.find(s => s.id === sel.subject) || DW_TCAP_CONFIG.subjects[0];
   const cuts = TCAPScoringAdapter.getCutScores(tcapConfigGradeKey);
+  const profileChanged = JSON.stringify(TCAP_CUT_STATE[tcapConfigGradeKey]) !== JSON.stringify(TCAP_PROFILE.defaultCutScores[tcapConfigGradeKey]);
 
   // Subject selector (4 subjects)
   const subjectButtons = DW_TCAP_CONFIG.subjects.map(s => {
@@ -35113,20 +35234,114 @@ function renderTcapConfig(targetElId) {
   const thresholdEditor = inline ? '' : `
         <details class="tcap-cut-details">
           <summary>
-            <span>Edit level thresholds <span class="hint">District admin only · advanced</span></span>
+            <span>Phase 2 threshold editor mock <span class="hint">District admin only · not in teacher Assessment</span></span>
             <span class="chev">▾</span>
           </summary>
           <div class="tcap-cut-edit-body">
-            <p style="margin:0 0 14px;font-size:12px;color:#52525b;line-height:1.5">Use this only when an LEA-supplied cut-score profile needs to be previewed. Enter the first score for each level; the previous level automatically ends one point earlier.</p>
+            <p style="margin:0 0 14px;font-size:12px;color:#52525b;line-height:1.5">This shows where a district admin would preview an LEA-supplied cut-score profile in Phase 2. Teachers only see the read-only ranges in Analytics and student reports.</p>
             <div class="tcap-threshold-list">${sliders}</div>
           </div>
         </details>`;
 
+  const profileOptions = [
+    { id:'district', title:'District default score rule', meta:'Current Phase 1 rule · used by TCAP diagnostics', status:'Current' },
+    { id:'official', title:'TDOE / Pearson official upload', meta:'Phase 2 source file with versioning and audit log', status:'Phase 2' },
+    { id:'draft', title:'Draft rule / impact preview', meta:'Temporary scenario for checking level movement before publishing', status:profileChanged ? 'Edited' : 'Draft' },
+  ].map(opt => {
+    const active = tcapConfigProfileSource === opt.id;
+    return `<button class="tcap-profile-option ${active?'active':''}" onclick="tcapSetProfileSource('${opt.id}')">
+      <span><b>${opt.title}</b><span>${opt.meta}</span></span>
+      <span class="status">${opt.status}</span>
+    </button>`;
+  }).join('');
+
+  const linkedAssessments = [
+    { name:'TCAP Diagnostic · ELA Grade 5', meta:'Teacher assessment setup · cut scores locked', status:'Live', action:'analytics' },
+    { name:'Class Analytics Score Level Guide', meta:'Read-only explanation of Below / Approaching / Meets / Exceeds', status:'Uses profile', action:'analytics' },
+    { name:'Student score report', meta:'Performance level label and next-step recommendations', status:'Uses profile', action:'student' },
+  ].map(item => `<div class="tcap-assessment-link">
+      <div class="top"><b>${item.name}</b><span class="pill">${item.status}</span></div>
+      <p>${item.meta}</p>
+    </div>`).join('');
+
+  const levelForScore = (cutsObj, score) => {
+    for (const lvl of lvls) {
+      const band = cutsObj[lvl.id];
+      if (band && score >= band[0] && score <= band[1]) return lvl;
+    }
+    return lvls[0];
+  };
+  const defaultCuts = TCAP_PROFILE.defaultCutScores[tcapConfigGradeKey] || cuts;
+  const impactScores = [619, 631, 646, 661, 684, 706];
+  const impactRows = impactScores.map((score, idx) => {
+    const before = levelForScore(defaultCuts, score);
+    const after = levelForScore(cuts, score);
+    const moved = before.id !== after.id;
+    return `<div style="display:grid;grid-template-columns:72px 1fr 1fr 64px;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #f0f0f0">
+      <b style="font-size:12px;color:#18181b">S${idx+1} · ${score}</b>
+      <span style="font-size:11px;color:#71717a">${before.fullLabel || before.label}</span>
+      <span style="font-size:11px;font-weight:850;color:${moved ? '#6040ca' : '#71717a'}">${after.fullLabel || after.label}</span>
+      <span style="font-size:10px;font-weight:850;text-align:center;border-radius:999px;padding:2px 6px;background:${moved ? '#f1edff' : '#f8f8f8'};color:${moved ? '#6040ca' : '#71717a'}">${moved ? 'moves' : 'same'}</span>
+    </div>`;
+  }).join('');
+  const movedCount = impactScores.filter(score => levelForScore(defaultCuts, score).id !== levelForScore(cuts, score).id).length;
+  const impactPreview = (!inline && tcapImpactPreviewOpen) ? `
+    <div style="margin-top:16px;border:1px solid #ddd3ff;background:#f7f5ff;border-radius:12px;padding:14px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px">
+        <div>
+          <h4 style="margin:0;font-size:13px;font-weight:900;color:#3c2686">Impact preview on current assessment</h4>
+          <p style="margin:3px 0 0;font-size:11px;color:#6040ca;line-height:1.45">Mock preview using six class scores. Production would recalculate every submitted diagnostic before publishing a new profile.</p>
+        </div>
+        <span style="font-size:11px;font-weight:850;color:#6040ca;background:#fff;border:1px solid #ddd3ff;border-radius:999px;padding:3px 8px">${movedCount} level change${movedCount === 1 ? '' : 's'}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:72px 1fr 1fr 64px;gap:10px;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.3px;color:#71717a;padding:4px 0">
+        <span>Student</span><span>Before</span><span>After</span><span>Delta</span>
+      </div>
+      ${impactRows}
+    </div>` : '';
+
   const body = `
+    ${inline ? '' : `<div class="org-settings-policy-shell">
+      <div class="org-settings-policy-main">
+        <div class="tcap-assessment-map">
+          <div class="tcap-assessment-map-head">
+            <div>
+              <h3>What this page controls</h3>
+              <p>This page controls the score-level rule used by TCAP assessments. Assessment creation stays simple: teachers choose grade and subject; Kira uses this organization policy to translate scale scores into performance levels.</p>
+            </div>
+            <button class="cta" onclick="loadSessionDetail('sess-tcap-1','analytics')">View in Analytics</button>
+          </div>
+          <div class="tcap-link-flow" aria-label="Assessment policy flow">
+            <div class="tcap-link-node">
+              <div class="k">Teacher Assessment Flow</div>
+              <div class="v">Create TCAP Diagnostic</div>
+              <div class="d">Teacher selects Grade ${sel.grade} + ${subjectMeta.label}. No cut-score editing appears in the assessment builder.</div>
+            </div>
+            <div class="tcap-link-arrow">→</div>
+            <div class="tcap-link-node active">
+              <div class="k">Org Settings Policy</div>
+              <div class="v">Current rule: Grade ${sel.grade} ${subjectMeta.label}</div>
+              <div class="d">District admin owns the score-level thresholds. Assessment uses this rule automatically.</div>
+            </div>
+            <div class="tcap-link-arrow">→</div>
+            <div class="tcap-link-node">
+              <div class="k">Teacher + Student Output</div>
+              <div class="v">Analytics & reports</div>
+              <div class="d">Scale scores are translated into Below / Approaching / Meeting / Exceeding labels.</div>
+            </div>
+          </div>
+          <div class="tcap-policy-note">
+            <div><b>Why this exists</b><span>Cut scores need district-level consistency. If every assessment could edit them, reports would not be comparable across teachers or classes.</span></div>
+            <div><b>Phase 1 scope</b><span>Use this score-level rule read-only in Analytics and reports. Official upload, version control, and publishing workflow stay Phase 2.</span></div>
+          </div>
+        </div>
+        <div class="tcap-policy-grid">
+          <div class="tcap-policy-main">
+      `}
     <div style="background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <h3 style="margin:0;font-size:15px;font-weight:700;color:#18181b">Grade · Subject Profile</h3>
-        <span style="font-size:11px;color:#71717a">Cut scores apply per (grade × subject). Edit one at a time.</span>
+        <h3 style="margin:0;font-size:15px;font-weight:700;color:#18181b">Grade · Subject Rule</h3>
+        <span style="font-size:11px;color:#71717a">District rule applies per (grade × subject). Assessment uses it read-only.</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:10px">
@@ -35158,14 +35373,47 @@ function renderTcapConfig(targetElId) {
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div>
             <h3 style="margin:0 0 6px;font-size:15px;font-weight:800;color:#18181b">Performance Level Ranges</h3>
-            <p style="margin:0;font-size:12px;color:#52525b;line-height:1.5">Scale scores are mapped into four reporting levels for <b>Grade ${sel.grade} ${subjectMeta.label}</b>. These ranges drive projections and student reports.</p>
+            <p style="margin:0;font-size:12px;color:#52525b;line-height:1.5">Scale scores are mapped into four reporting levels for <b>Grade ${sel.grade} ${subjectMeta.label}</b>. In Phase 1, teachers see this as read-only context; Phase 2 would let district admins manage the profile source and versions.</p>
           </div>
-          <span style="font-size:11px;color:#6d6d6d;background:#fafafa;border:1px solid #e6e6e6;border-radius:999px;padding:4px 10px">Scale ${range.min}–${range.max}</span>
+          <span style="font-size:11px;color:#6d6d6d;background:#fafafa;border:1px solid #e6e6e6;border-radius:999px;padding:4px 10px">Scale ${range.min}–${range.max} · demo</span>
         </div>
         <div class="tcap-cut-ranges">${rangeCards}</div>
+        ${impactPreview}
         ${thresholdEditor}
       </div>
     </div>
+    ${inline ? '' : `
+          </div>
+          <aside class="tcap-policy-side">
+            <div class="tcap-admin-card">
+              <h3>Score rule source</h3>
+              <p>Phase 1 uses the district/default source. Phase 2 can upload official files and preview changes before publishing.</p>
+              <div class="tcap-admin-path">
+                <span>Settings</span>
+                <span>Policies</span>
+                <span class="active">TCAP</span>
+              </div>
+              <div class="tcap-profile-source">${profileOptions}</div>
+            </div>
+            <div class="tcap-admin-card">
+              <h3>Used by Assessment</h3>
+              <p>Current rule: <b>Grade ${sel.grade} ${subjectMeta.label}</b>.</p>
+              <div class="tcap-admin-metrics">
+                <div class="tcap-admin-metric"><div class="n">3</div><div class="l">surfaces</div></div>
+                <div class="tcap-admin-metric"><div class="n">${profileChanged ? '1' : '0'}</div><div class="l">draft edits</div></div>
+                <div class="tcap-admin-metric"><div class="n">25</div><div class="l">rules</div></div>
+              </div>
+              <div class="tcap-assessment-link-list">${linkedAssessments}</div>
+              <div class="tcap-admin-actions">
+                <button onclick="loadSessionDetail('sess-tcap-1','analytics')">Open Analytics</button>
+                <button onclick="tcapPreviewCutImpact()">Preview Impact</button>
+                <button class="${profileChanged?'primary':'disabled'}" onclick="tcapSaveCutScores()">Save Draft</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>`}
   `;
   const targetEl = document.getElementById(targetElId || 'tcapConfigBody');
   if (targetEl) targetEl.innerHTML = body;
@@ -35173,22 +35421,46 @@ function renderTcapConfig(targetElId) {
   const classBadge = document.getElementById('tcapClassCutBadge');
   if (classBadge) {
     const changed = JSON.stringify(TCAP_CUT_STATE[tcapConfigGradeKey]) !== JSON.stringify(TCAP_PROFILE.defaultCutScores[tcapConfigGradeKey]);
-    classBadge.innerHTML = `⚙️ Cut-score profile: ${changed ? '<b style="color:#5b21b6">Custom</b>' : 'District default'}`;
+    classBadge.innerHTML = `Score rule: ${changed ? '<b style="color:#5b21b6">Custom</b>' : 'District default'}`;
   }
 }
 
 function tcapSetConfigGrade(k) { tcapConfigGradeKey = k; renderTcapConfig(); }
+function tcapSetProfileSource(source) {
+  tcapConfigProfileSource = source;
+  if (source === 'official') {
+    iteToast('Official TDOE / Pearson upload is Phase 2. This prototype shows the intended placement and workflow.', 'info');
+  } else if (source === 'draft') {
+    iteToast('Draft override selected. Use the threshold editor and Preview Impact to see assessment-level changes.', 'info');
+  } else {
+    iteToast('District default profile selected. Current TCAP assessments reference this profile read-only.', 'ok');
+  }
+  renderTcapConfig();
+}
+function tcapSetPolicyPanel(panel) {
+  if (panel !== 'assessment') {
+    iteToast('Only Assessment Policies are mocked for this TCAP prototype. Access/Data policies are placeholders.', 'info');
+    return;
+  }
+  renderTcapConfig();
+}
+function tcapPreviewCutImpact() {
+  tcapImpactPreviewOpen = !tcapImpactPreviewOpen;
+  renderTcapConfig();
+}
 // New 4-subject × full-grade selectors. Switching subject snaps the grade if the
 // new subject doesn't cover the current grade (e.g. ELA G4 → SS G6).
 function tcapSetConfigSubject(subjectId) {
   const sel = parseTcapKey(tcapConfigGradeKey);
   const newGrade = tcapSnapGradeToSubject(sel.grade, subjectId);
   tcapConfigGradeKey = `g${newGrade}_${subjectId}`;
+  tcapImpactPreviewOpen = false;
   renderTcapConfig();
 }
 function tcapSetConfigGradeNum(g) {
   const sel = parseTcapKey(tcapConfigGradeKey);
   tcapConfigGradeKey = `g${g}_${sel.subject}`;
+  tcapImpactPreviewOpen = false;
   renderTcapConfig();
 }
 
@@ -35207,6 +35479,7 @@ function tcapCutSliderInput(i, val, commit) {
   val = Math.max(min, Math.min(max, val));
   cuts[boundaryLevel][0] = val;
   cuts[prevLevel][1] = val - 1;
+  tcapConfigProfileSource = 'draft';
   renderTcapConfig();
 }
 
@@ -35437,6 +35710,7 @@ const teacherPages = [
     ]},
   {id:'act',label:'ACT Editor',icon:'📝',title:'ACT Editor'},
   {id:'tcap-edit',label:'TCAP Editor',icon:'🏛',title:'TCAP Sections Editor'},
+  {id:'tcap-config',label:'Org Settings',icon:'⚙️',title:'Organization Settings · TCAP Policies'},
   {id:'new-edit',label:'Tag Edit',icon:'🏷️',title:'Tag Edit'},
 ];
 const studentPages = [
